@@ -1,0 +1,22 @@
+{
+  "name": "arabic-reel",
+  "private": true,
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts",
+    "transcribe": "python scripts/transcribe.py",
+    "new-episode": "node scripts/new-episode.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4",
+    "@remotion/google-fonts": "^4",
+    "prism-react-renderer": "^2",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.534"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "^7"
+  }
+}
