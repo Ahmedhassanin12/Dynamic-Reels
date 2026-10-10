@@ -1,5 +1,5 @@
 // Usage: npm run new-episode -- my-episode-id
-import { mkdirSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 
 const id = process.argv[2];
 if (!id || !/^[a-z0-9-]+$/.test(id)) {
@@ -33,4 +33,24 @@ export const ${name} = defineEpisode({
 `,
 );
 
-console.log(`Created ${dir} and public/episodes/${id}\n\nNow register it in src/episodes/index.ts:\n  import { ${name} } from './${id}';\n  export const EPISODES = [..., ${name}] satisfies Episode[];`);
+// Auto-register in index.ts
+const indexFile = 'src/episodes/index.ts';
+let indexContent = readFileSync(indexFile, 'utf-8');
+
+const importLine = `import { ${name} } from './${id}';`;
+indexContent = indexContent.replace(
+  /(\n\/\*\* Add new episodes here)/,
+  `\n${importLine}$1`
+);
+
+indexContent = indexContent.replace(
+  /export const EPISODES = \[(.*?)\] satisfies Episode\[\];/,
+  (match, p1) => {
+    const list = p1.trim() ? `${p1}, ${name}` : name;
+    return `export const EPISODES = [${list}] satisfies Episode[];`;
+  }
+);
+
+writeFileSync(indexFile, indexContent);
+
+console.log(`Created ${dir} and automatically registered '${name}' in ${indexFile}`);
