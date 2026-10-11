@@ -45,6 +45,8 @@ export const LOOKUP = { hitDelayFrames: 44, resultDelayFrames: 56 } as const;
 
 export const CAPTION = {
   wordsPerChunk: 3,
+  /** Pause threshold between words to trigger a new caption chunk early */
+  maxGapSeconds: 0.35,
   holdSeconds: 0.5,
   fontSize: 64,
   maxWidth: 640,

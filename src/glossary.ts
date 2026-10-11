@@ -1,3 +1,5 @@
+import GLOSSARY_DATA from './glossary.json';
+
 export type GlossaryEntry = {
   /** what Whisper writes (one or more consecutive words); Latin or Arabic spelling */
   say: string[];
@@ -5,23 +7,9 @@ export type GlossaryEntry = {
   show: string;
 };
 
-/** Add entries as you notice Whisper mis-spelling your English terms. Longest matches win. */
-export const GLOSSARY = [
-  // Big-O: you say "O of one" / "O of n"
-  { say: ['o', 'of', 'one'], show: 'O(1)' },
-  { say: ['او', 'اوف', 'وان'], show: 'O(1)' },
-  { say: ['o', 'of', 'n'], show: 'O(n)' },
-  { say: ['او', 'اوف', 'ان'], show: 'O(n)' },
-  // Terms you say in English but Whisper may write in Arabic letters.
-  // Single-word entries must NOT also be real Arabic words, or every use of that word gets replaced.
-  // (e.g. 'كي' -> 'key' was removed: كي also means "so that". If needed, add it as a multi-word phrase.)
-  { say: ['فاليو'], show: 'value' },
-  { say: ['هاش'], show: 'hash' },
-  { say: ['ماب'], show: 'Map' },
-  { say: ['اراي'], show: 'Array' },
-  { say: ['ستاك'], show: 'Stack' },
-  { say: ['كيو'], show: 'Queue' },
-  { say: ['لوب'], show: 'loop' },
-  { say: ['فانكشن'], show: 'function' },
-  { say: ['يوزر'], show: 'user' },
-] satisfies GlossaryEntry[];
+/**
+ * Glossary of spoken terms to captions replacements.
+ * Stored in glossary.json so scripts/transcribe.py can also use them to seed Whisper's prompt.
+ */
+export const GLOSSARY: GlossaryEntry[] = GLOSSARY_DATA;
+

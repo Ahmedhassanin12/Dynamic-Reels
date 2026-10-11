@@ -1,0 +1,15 @@
+[
+  { "say": ["o", "of", "one"], "show": "O(1)" },
+  { "say": ["او", "اوف", "وان"], "show": "O(1)" },
+  { "say": ["o", "of", "n"], "show": "O(n)" },
+  { "say": ["او", "اوف", "ان"], "show": "O(n)" },
+  { "say": ["فاليو"], "show": "value" },
+  { "say": ["هاش"], "show": "hash" },
+  { "say": ["ماب"], "show": "Map" },
+  { "say": ["اراي"], "show": "Array" },
+  { "say": ["ستاك"], "show": "Stack" },
+  { "say": ["كيو"], "show": "Queue" },
+  { "say": ["لوب"], "show": "loop" },
+  { "say": ["فانكشن"], "show": "function" },
+  { "say": ["يوزر"], "show": "user" }
+]

@@ -1,5 +1,6 @@
-import { TIMELINE } from '../config';
+import { CODE_DEMO, CODE_SNAP, LOOKUP, MOTION, SCAN, TIMELINE } from '../config';
 import type { Episode, SceneConfig, Word } from '../types';
+import { typingFrames } from './code';
 import { normalizeText as normalize } from './text';
 
 export type TimelineItem = { scene: SceneConfig; from: number; durationInFrames: number };
@@ -29,6 +30,38 @@ const resolveAnchor = (scene: SceneConfig, words: Word[], searchFrom: number): n
   return partial;
 };
 
+/** Estimated minimum frames required for the scene's key animations to finish cleanly. */
+export const getMinSceneFrames = (scene: SceneConfig): number => {
+  switch (scene.kind) {
+    case 'statement':
+      return 15;
+    case 'array':
+      return scene.mode === 'scan'
+        ? (scene.target + 1) * SCAN.framesPerCell + 15
+        : SCAN.jumpDelayFrames + 15;
+    case 'code':
+      return typingFrames(scene.code) + (scene.highlightLines?.length ? CODE_SNAP.focusFadeFrames : 0) + 15;
+    case 'codeDemo': {
+      const codeTyping = typingFrames(scene.code);
+      const vizFrames =
+        scene.viz.type === 'scan'
+          ? (scene.viz.target + 1) * SCAN.framesPerCell + 20
+          : LOOKUP.resultDelayFrames + 20;
+      return codeTyping + CODE_DEMO.vizDelayFrames + vizFrames;
+    }
+    case 'steps':
+      return scene.steps.length * MOTION.stagger + 15;
+    case 'compare': {
+      const maxItems = Math.max(...scene.sides.map((s) => s.items.length), 0);
+      return scene.sides.length * MOTION.stagger + maxItems * MOTION.stagger + 15;
+    }
+    case 'diagram':
+      return scene.nodes.length * MOTION.stagger * 2 + 15;
+    case 'qa':
+      return MOTION.answerDelayFrames + 20;
+  }
+};
+
 export const getDurationInFrames = (episode: Episode, fps: number) =>
   Math.ceil(((episode.words.at(-1)?.end ?? 0) + TIMELINE.tailSeconds) * fps);
 
@@ -47,6 +80,15 @@ export const resolveTimeline = (episode: Episode, fps: number): TimelineItem[] =
     const from = starts[i];
     const durationInFrames = (starts[i + 1] ?? total) - from;
     if (durationInFrames <= 0) throw new Error(`Scene "${scene.id}" starts at or after the next scene. Check the order of "at" anchors.`);
+
+    const minFrames = getMinSceneFrames(scene);
+    if (durationInFrames < minFrames) {
+      console.warn(
+        `Scene "${scene.id}" (${scene.kind}): duration is ${durationInFrames} frames (~${(durationInFrames / fps).toFixed(2)}s), ` +
+          `but its animation needs at least ${minFrames} frames (~${(minFrames / fps).toFixed(2)}s) to complete.`,
+      );
+    }
+
     return { scene, from, durationInFrames };
   });
 };

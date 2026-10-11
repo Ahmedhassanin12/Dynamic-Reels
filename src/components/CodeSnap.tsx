@@ -18,6 +18,10 @@ const { chrome } = CODE_SNAP;
 export const CodeSnap = ({ code, language = 'tsx', filename = 'snippet', highlightLines = [] }: Props) => {
   const frame = useCurrentFrame();
 
+  const lines = code.split('\n');
+  const maxLineLength = Math.max(...lines.map((l) => l.length), 0);
+  const fontSize = maxLineLength > 38 || lines.length > 7 ? 30 : CODE_SNAP.fontSize;
+
   const typingEnd = typingFrames(code);
   const shown = code.slice(0, Math.floor(frame * CODE_SNAP.charsPerFrame));
   const cursorOn = Math.floor(frame / 15) % 2 === 0 && frame < typingEnd + 45;
@@ -71,7 +75,7 @@ export const CodeSnap = ({ code, language = 'tsx', filename = 'snippet', highlig
 
       <Highlight theme={CODE_THEME} code={shown} language={language}>
         {({ tokens, getTokenProps }) => (
-          <pre style={{ margin: 0, padding: '22px 0 30px', fontFamily: CODE_FONT, fontSize: CODE_SNAP.fontSize, lineHeight: 1.65 }}>
+          <pre style={{ margin: 0, padding: '22px 0 30px', fontFamily: CODE_FONT, fontSize, lineHeight: 1.65 }}>
             {tokens.map((line, i) => {
               const isFocused = highlightLines.includes(i + 1);
               return (

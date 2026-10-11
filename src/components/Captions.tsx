@@ -9,7 +9,7 @@ export const Captions = ({ words }: { words: Word[] }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
-  const chunks = useMemo(() => groupWords(words, CAPTION.wordsPerChunk), [words]);
+  const chunks = useMemo(() => groupWords(words, CAPTION.wordsPerChunk, CAPTION.maxGapSeconds), [words]);
   const active = findActiveChunk(chunks, t, CAPTION.holdSeconds);
 
   if (!active) return null;

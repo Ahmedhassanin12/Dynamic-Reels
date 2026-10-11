@@ -1,5 +1,6 @@
 import { Composition } from 'remotion';
-import { FPS, SIZE } from './config';
+import { getAudioDurationInSeconds } from '@remotion/media-utils';
+import { FPS, SIZE, TIMELINE } from './config';
 import { EPISODES } from './episodes';
 import { getDurationInFrames } from './lib/timeline';
 import { Reel } from './Reel';
@@ -15,6 +16,19 @@ export const Root = () => (
         durationInFrames={getDurationInFrames(episode, FPS)}
         fps={FPS}
         {...SIZE}
+        calculateMetadata={async () => {
+          if (!episode.voice) {
+            return { durationInFrames: getDurationInFrames(episode, FPS) };
+          }
+          try {
+            const audioSeconds = await getAudioDurationInSeconds(episode.voice);
+            return {
+              durationInFrames: Math.ceil((audioSeconds + TIMELINE.tailSeconds) * FPS),
+            };
+          } catch {
+            return { durationInFrames: getDurationInFrames(episode, FPS) };
+          }
+        }}
       />
     ))}
   </>
