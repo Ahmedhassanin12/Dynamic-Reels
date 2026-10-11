@@ -4,7 +4,7 @@
 
 By combining React-based scene composition with automated word-level speech-to-text synchronization, it transforms an audio file and a declarative script into a fully animated `.mp4` video.
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 *   **Core Engine**: [Remotion](https://www.remotion.dev/) (React 19, TypeScript) for programmatic video rendering.
 *   **Speech-to-Text**: Python with `faster-whisper` for offline, word-level Arabic transcription.
@@ -39,7 +39,7 @@ The architecture relies on a **Declarative Timeline** driven by the transcribed 
 3.  **Captions**: The `Captions.tsx` component parses `words.json` and renders spring-animated Arabic captions that pop up in real-time as words are spoken.
 4.  **Scene Registry**: The `src/scenes/registry.ts` maps semantic scene declarations (like `kind: 'codeDemo'`) to their respective React components, making the engine highly extensible.
 
-## 🔄 The Pipeline Workflow
+##  The Pipeline Workflow
 
 Creating a new reel follows a well-defined 5-step pipeline:
 
