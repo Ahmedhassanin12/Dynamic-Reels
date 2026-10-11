@@ -1,5 +1,5 @@
 """Word-level Arabic timestamps for one episode.
-Setup: pip install faster-whisper
+Setup: pip install -r requirements.txt
 Usage: python scripts/transcribe.py <episode-id> [audio-file-name]
 Reads  src/episodes/<id>/<audio>  (default voice.mp3)
 Writes src/episodes/<id>/words.json and prints numbered words (handy for "at" anchors).

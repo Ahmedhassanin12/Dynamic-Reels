@@ -94,4 +94,4 @@ export const CODE_THEME = {
 } satisfies PrismTheme;
 
 /** Put your PNG in /public and set the file name. null => placeholder. (Keep your own values here.) */
-export const CHARACTER = { src: "main.png" as string | null, width: 370, height: 870 } as const;
+export const CHARACTER = { src: "main.png" as string | null, width: 370, height: 570 } as const;

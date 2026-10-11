@@ -5,7 +5,8 @@
     "dev": "remotion studio src/index.ts",
     "render": "remotion render src/index.ts",
     "transcribe": "python scripts/transcribe.py",
-    "new-episode": "node scripts/new-episode.mjs"
+    "new-episode": "node scripts/new-episode.mjs",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@remotion/cli": "^4",

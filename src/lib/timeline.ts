@@ -12,11 +12,21 @@ const resolveAnchor = (scene: SceneConfig, words: Word[], searchFrom: number): n
     return scene.at;
   }
   const needle = normalize(scene.at);
-  const index = words.findIndex((w, i) => i >= searchFrom && normalize(w.text).includes(needle));
-  if (index === -1) {
+  if (!needle) throw new Error(`Scene "${scene.id}": anchor "${scene.at}" has no letters or digits to match.`);
+
+  // Exact word match first: a substring match on a short anchor (e.g. "من") could hit an earlier, unrelated word.
+  const exact = words.findIndex((w, i) => i >= searchFrom && normalize(w.text) === needle);
+  if (exact !== -1) return exact;
+
+  const partial = words.findIndex((w, i) => i >= searchFrom && normalize(w.text).includes(needle));
+  if (partial === -1) {
     throw new Error(`Scene "${scene.id}": no word matching "${scene.at}" after word ${searchFrom}. Check words.json.`);
   }
-  return index;
+  console.warn(
+    `Scene "${scene.id}": no exact match for "${scene.at}", using partial match "${words[partial].text}" (word ${partial}). ` +
+      `Use the exact word or its index to silence this.`,
+  );
+  return partial;
 };
 
 export const getDurationInFrames = (episode: Episode, fps: number) =>

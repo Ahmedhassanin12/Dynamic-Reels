@@ -12,8 +12,9 @@ export const GLOSSARY = [
   { say: ['او', 'اوف', 'وان'], show: 'O(1)' },
   { say: ['o', 'of', 'n'], show: 'O(n)' },
   { say: ['او', 'اوف', 'ان'], show: 'O(n)' },
-  // Terms you say in English but Whisper may write in Arabic letters
-  { say: ['كي'], show: 'key' },
+  // Terms you say in English but Whisper may write in Arabic letters.
+  // Single-word entries must NOT also be real Arabic words, or every use of that word gets replaced.
+  // (e.g. 'كي' -> 'key' was removed: كي also means "so that". If needed, add it as a multi-word phrase.)
   { say: ['فاليو'], show: 'value' },
   { say: ['هاش'], show: 'hash' },
   { say: ['ماب'], show: 'Map' },

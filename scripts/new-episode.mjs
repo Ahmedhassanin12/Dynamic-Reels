@@ -15,6 +15,31 @@ if (existsSync(dir)) {
 
 const name = id.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
 
+// Plan the src/episodes/index.ts edit first, so nothing is created if it can't be registered.
+const indexFile = 'src/episodes/index.ts';
+const fail = (msg) => {
+  console.error(`${msg}\nNothing was created. Fix ${indexFile} or register the episode by hand.`);
+  process.exit(1);
+};
+
+const original = readFileSync(indexFile, 'utf-8');
+const eol = original.includes('\r\n') ? '\r\n' : '\n';
+const lines = original.split(/\r?\n/);
+
+if (lines.some((line) => line.includes(`from './${id}'`))) fail(`'${id}' is already imported in ${indexFile}.`);
+
+const lastImport = lines.findLastIndex((line) => line.startsWith('import '));
+if (lastImport === -1) fail(`Could not find any import lines in ${indexFile}.`);
+lines.splice(lastImport + 1, 0, `import { ${name} } from './${id}';`);
+
+const EPISODES_RE = /(export const EPISODES = \[)([\s\S]*?)(\])/;
+let indexContent = lines.join(eol);
+if (!EPISODES_RE.test(indexContent)) fail(`Could not find "export const EPISODES = [...]" in ${indexFile}.`);
+indexContent = indexContent.replace(EPISODES_RE, (_, open, items, close) => {
+  const kept = items.replace(/[\s,]*$/, '');
+  return `${open}${kept ? `${kept}, ` : ''}${name}${close}`;
+});
+
 mkdirSync(dir, { recursive: true });
 writeFileSync(`${dir}/words.json`, JSON.stringify([{ text: 'مرحبا', start: 0.2, end: 0.8 }], null, 1));
 writeFileSync(
@@ -33,25 +58,6 @@ export const ${name} = defineEpisode({
 });
 `,
 );
-
-// Auto-register in index.ts
-const indexFile = 'src/episodes/index.ts';
-let indexContent = readFileSync(indexFile, 'utf-8');
-
-const importLine = `import { ${name} } from './${id}';`;
-indexContent = indexContent.replace(
-  /(\n\/\*\* Add new episodes here)/,
-  `\n${importLine}$1`
-);
-
-indexContent = indexContent.replace(
-  /export const EPISODES = \[(.*?)\] satisfies Episode\[\];/,
-  (match, p1) => {
-    const list = p1.trim() ? `${p1}, ${name}` : name;
-    return `export const EPISODES = [${list}] satisfies Episode[];`;
-  }
-);
-
 writeFileSync(indexFile, indexContent);
 
-console.log(`Created ${dir} and automatically registered '${name}' in ${indexFile}`);
+console.log(`Created ${dir} and registered '${name}' in ${indexFile}`);
