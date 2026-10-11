@@ -19,13 +19,12 @@ arabic-reel/
 ├── scripts/                  # Workflow utility scripts
 │   ├── new-episode.mjs       # Scaffolds boilerplate for new episodes
 │   └── transcribe.py         # Uses Whisper to transcribe audio -> words.json
-├── public/
-│   └── episodes/             # Static assets (primarily voice.mp3 files)
+├── public/                   # Global static assets (e.g. character image)
 └── src/                      # Source code
     ├── Root.tsx / Reel.tsx   # Core Remotion compositions & video player setup
     ├── types.ts              # Type definitions (Scene configs, Words, etc.)
     ├── components/           # Core UI elements (Captions, Character, Transitions)
-    ├── episodes/             # Episode definitions (Script logic + words.json)
+    ├── episodes/             # One self-contained folder per episode (index.ts + words.json + voice.mp3)
     ├── lib/                  # Utilities (Captions parsing, timeline resolving)
     ├── scenes/               # Scene templates (Statement, Code, Diagram, Compare)
     └── viz/                  # Data/Algorithmic visualizers (e.g., ScanViz, LookupViz)
@@ -45,9 +44,9 @@ The architecture relies on a **Declarative Timeline** driven by the transcribed 
 Creating a new reel follows a well-defined 5-step pipeline:
 
 1.  **Scaffold**: 
-    Run `npm run new-episode -- <topic-name>`. This creates the required folders in `src/episodes/` and `public/episodes/`.
+    Run `npm run new-episode -- <topic-name>`. This creates `src/episodes/<topic-name>/` and registers the episode in `src/episodes/index.ts`.
 2.  **Voiceover**: 
-    Record the audio track and place it at `public/episodes/<topic-name>/voice.mp3`.
+    Record the audio track and place it at `src/episodes/<topic-name>/voice.mp3`. In the episode's `index.ts`, uncomment `import voice from './voice.mp3'` and set `voice` (instead of `null`).
 3.  **Transcribe**: 
     Run `npm run transcribe -- <topic-name>`. The Python script utilizes `faster-whisper` to analyze the audio and generate a `words.json` file containing highly accurate start/end timestamps for every spoken Arabic word.
 4.  **Authoring**: 

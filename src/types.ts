@@ -33,7 +33,7 @@ export type SceneOf<K extends SceneKind> = Extract<SceneConfig, { kind: K }>;
 export type Episode = {
   id: string;
   title: string;
-  /** file name inside public/episodes/<id>/ , or null for a silent preview */
+  /** imported audio asset (e.g. `import voice from './voice.mp3'`), or null for a silent preview */
   voice: string | null;
   words: Word[];
   scenes: SceneConfig[];

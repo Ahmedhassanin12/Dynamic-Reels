@@ -16,17 +16,18 @@ if (existsSync(dir)) {
 const name = id.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
 
 mkdirSync(dir, { recursive: true });
-mkdirSync(`public/episodes/${id}`, { recursive: true });
 writeFileSync(`${dir}/words.json`, JSON.stringify([{ text: 'مرحبا', start: 0.2, end: 0.8 }], null, 1));
 writeFileSync(
   `${dir}/index.ts`,
   `import { defineEpisode } from '../../lib/episode';
 import words from './words.json';
+// After recording, put voice.mp3 in this folder, then uncomment:
+// import voice from './voice.mp3';
 
 export const ${name} = defineEpisode({
   id: '${id}',
   title: '${id}',
-  voice: null,
+  voice: null, // -> voice
   words,
   scenes: [{ id: 'hook', kind: 'statement', at: 0, text: 'اكتب الهوك هنا' }],
 });

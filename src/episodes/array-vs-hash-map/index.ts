@@ -1,10 +1,11 @@
 import { defineEpisode } from '../../lib/episode';
+import voice from './voice.mp3';
 import words from './words.json';
 
 export const arrayVsHashMap = defineEpisode({
   id: 'array-vs-hash-map',
   title: 'Array vs Hash Map',
-  voice: 'voice.mp3',
+  voice,
   words,
   scenes: [
     {

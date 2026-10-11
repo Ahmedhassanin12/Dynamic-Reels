@@ -1,7 +1,7 @@
 """Word-level Arabic timestamps for one episode.
 Setup: pip install faster-whisper
 Usage: python scripts/transcribe.py <episode-id> [audio-file-name]
-Reads  public/episodes/<id>/<audio>  (default voice.mp3)
+Reads  src/episodes/<id>/<audio>  (default voice.mp3)
 Writes src/episodes/<id>/words.json and prints numbered words (handy for "at" anchors).
 """
 import json
@@ -16,7 +16,7 @@ model = WhisperModel("large-v3", compute_type="int8")
 # The prompt nudges Whisper to write English terms in Latin letters instead of Arabic transliteration.
 PROMPT = "key, value, hash, Map, Array, Stack, Queue, loop, function, user, O(1), O(n)"
 segments, _ = model.transcribe(
-    f"public/episodes/{episode}/{audio}", language="ar", word_timestamps=True, initial_prompt=PROMPT
+    f"src/episodes/{episode}/{audio}", language="ar", word_timestamps=True, initial_prompt=PROMPT
 )
 
 words = [

@@ -1,5 +1,5 @@
 import { useMemo, type FC } from 'react';
-import { AbsoluteFill, Html5Audio, Sequence, staticFile, useVideoConfig } from 'remotion';
+import { AbsoluteFill, Html5Audio, Sequence, useVideoConfig } from 'remotion';
 import { Captions } from './components/Captions';
 import { Character } from './components/Character';
 import { SceneTransition } from './components/SceneTransition';
@@ -20,7 +20,7 @@ export const Reel = ({ episode }: { episode: Episode }) => {
         backgroundSize: '48px 48px',
       }}
     >
-      {episode.voice && <Html5Audio src={staticFile(`episodes/${episode.id}/${episode.voice}`)} />}
+      {episode.voice && <Html5Audio src={episode.voice} />}
 
       {timeline.map(({ scene, from, durationInFrames }, i) => {
         // The registry is keyed by scene.kind, so the component always matches the scene it receives.
