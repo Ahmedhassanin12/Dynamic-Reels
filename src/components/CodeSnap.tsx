@@ -1,8 +1,9 @@
 import { Highlight } from 'prism-react-renderer';
 import { interpolate, useCurrentFrame } from 'remotion';
-import { CODE_SNAP, CODE_THEME, THEME } from '../config';
+import { CODE_SNAP } from '../config';
 import { typingFrames } from '../lib/code';
 import { CODE_FONT } from '../lib/fonts';
+import { useTheme } from '../lib/theme';
 
 type Props = {
   code: string;
@@ -10,17 +11,26 @@ type Props = {
   filename?: string;
   /** 1-based line numbers to focus on once typing finishes */
   highlightLines?: number[];
+  /** Optional floating corner badge (e.g. "O(n) · slow") */
+  tagText?: string;
+  tagTone?: 'good' | 'bad' | 'neutral';
 };
 
-const BADGES: Record<string, string> = { typescript: 'TS', tsx: 'TSX', javascript: 'JS', jsx: 'JSX', python: 'PY', json: '{}', css: 'CSS', bash: '$' };
-const { chrome } = CODE_SNAP;
-
-export const CodeSnap = ({ code, language = 'tsx', filename = 'snippet', highlightLines = [] }: Props) => {
+export const CodeSnap = ({
+  code,
+  language = 'tsx',
+  filename = 'snippet.ts',
+  highlightLines = [],
+  tagText,
+  tagTone = 'neutral',
+}: Props) => {
+  const theme = useTheme();
+  const { chrome, dots, prism } = theme.code;
   const frame = useCurrentFrame();
 
   const lines = code.split('\n');
   const maxLineLength = Math.max(...lines.map((l) => l.length), 0);
-  const fontSize = maxLineLength > 38 || lines.length > 7 ? 30 : CODE_SNAP.fontSize;
+  const fontSize = maxLineLength > 42 || lines.length > 7 ? CODE_SNAP.compactFontSize : CODE_SNAP.fontSize;
 
   const typingEnd = typingFrames(code);
   const shown = code.slice(0, Math.floor(frame * CODE_SNAP.charsPerFrame));
@@ -32,84 +42,146 @@ export const CodeSnap = ({ code, language = 'tsx', filename = 'snippet', highlig
       })
     : 0;
 
-  return (
-    <div
-      style={{
-        direction: 'ltr',
-        textAlign: 'left',
-        overflow: 'hidden',
-        borderRadius: 18,
-        background: chrome.editor,
-        border: `1px solid ${chrome.border}`,
-        boxShadow: THEME.shadow,
-        fontFamily: CODE_FONT,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 22px', background: chrome.titleBar }}>
-        {CODE_SNAP.dots.map((color) => (
-          <span key={color} style={{ width: 20, height: 20, borderRadius: '50%', background: color }} />
-        ))}
-        <span style={{ flex: 1, textAlign: 'center', marginRight: 70, color: chrome.lineNumber, fontSize: 24 }}>{filename}</span>
-      </div>
+  const tagColor = tagTone === 'good' ? theme.good : tagTone === 'bad' ? theme.bad : theme.ink;
+  const tagBorder = tagTone === 'good' ? theme.goodBorder : tagTone === 'bad' ? theme.badBorder : theme.border;
 
-      <div style={{ display: 'flex', background: chrome.tabBar }}>
+  return (
+    <div style={{ position: 'relative', width: '100%' }}>
+      {tagText && (
+        <div
+          style={{
+            position: 'absolute',
+            top: -16,
+            right: 18,
+            zIndex: 5,
+            background: chrome.titleBar,
+            border: `1px solid ${tagBorder}`,
+            borderRadius: 8,
+            padding: '4px 14px',
+            fontFamily: CODE_FONT,
+            fontSize: 17,
+            fontWeight: 600,
+            color: tagColor,
+            boxShadow: theme.shadowSm,
+          }}
+        >
+          {tagText}
+        </div>
+      )}
+
+      <div
+        style={{
+          direction: 'ltr',
+          textAlign: 'left',
+          overflow: 'hidden',
+          borderRadius: 16,
+          background: chrome.editor,
+          border: `1px solid ${chrome.border}`,
+          boxShadow: theme.shadow,
+          fontFamily: CODE_FONT,
+        }}
+      >
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 14,
-            padding: '14px 28px',
-            background: chrome.editor,
-            borderTop: `3px solid ${THEME.ink}`,
-            color: chrome.text,
-            fontSize: 26,
+            justifyContent: 'space-between',
+            padding: '12px 20px',
+            background: chrome.titleBar,
+            borderBottom: `1px solid ${chrome.border}`,
           }}
         >
-          <span style={{ background: THEME.ink, color: THEME.onInk, borderRadius: 6, padding: '0 8px', fontSize: 20, fontWeight: 500 }}>
-            {BADGES[language] ?? language.slice(0, 2).toUpperCase()}
-          </span>
-          {filename}
-          <span style={{ color: chrome.lineNumber, marginLeft: 8 }}>×</span>
-        </div>
-      </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {dots.map((color) => (
+              <span
+                key={color}
+                style={{ width: CODE_SNAP.dotSize, height: CODE_SNAP.dotSize, borderRadius: '50%', background: color }}
+              />
+            ))}
+          </div>
 
-      <Highlight theme={CODE_THEME} code={shown} language={language}>
-        {({ tokens, getTokenProps }) => (
-          <pre style={{ margin: 0, padding: '22px 0 30px', fontFamily: CODE_FONT, fontSize, lineHeight: 1.65 }}>
-            {tokens.map((line, i) => {
-              const isFocused = highlightLines.includes(i + 1);
-              return (
-                <div
-                  key={i}
-                  style={{
-                    display: 'flex',
-                    opacity: isFocused ? 1 : 1 - focus * CODE_SNAP.dimAmount,
-                    background: isFocused ? `rgba(255, 255, 255, ${focus * 0.07})` : undefined,
-                    borderLeft: `5px solid ${isFocused && focus > 0 ? THEME.ink : 'transparent'}`,
-                  }}
-                >
-                  <span style={{ width: 80, paddingRight: 28, textAlign: 'right', color: isFocused && focus > 0 ? chrome.text : chrome.lineNumber, flexShrink: 0 }}>
-                    {i + 1}
-                  </span>
-                  <span style={{ whiteSpace: 'pre' }}>
-                    {line.map((token, k) => {
-                      const props = getTokenProps({ token });
-                      return (
-                        <span key={k} className={props.className} style={props.style}>
-                          {token.content.replace(/\n/g, '')}
-                        </span>
-                      );
-                    })}
-                    {i === tokens.length - 1 && cursorOn && (
-                      <span style={{ display: 'inline-block', width: 3, height: '1.1em', marginLeft: 2, background: chrome.text, verticalAlign: 'text-bottom' }} />
-                    )}
-                  </span>
-                </div>
-              );
-            })}
-          </pre>
-        )}
-      </Highlight>
+          <span style={{ color: theme.muted, fontSize: 18, fontWeight: 500 }}>
+            ts — ~/src/{filename}
+          </span>
+
+          <span
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: 3,
+              background: tagColor,
+              opacity: 0.85,
+            }}
+          />
+        </div>
+
+        <Highlight theme={prism} code={shown} language={language}>
+          {({ tokens, getTokenProps }) => (
+            <pre
+              style={{
+                margin: 0,
+                padding: '22px 0 26px',
+                fontFamily: CODE_FONT,
+                fontSize,
+                lineHeight: 1.7,
+                fontWeight: 500,
+              }}
+            >
+              {tokens.map((line, i) => {
+                const isFocused = highlightLines.includes(i + 1);
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      display: 'flex',
+                      padding: '2px 0',
+                      opacity: isFocused ? 1 : 1 - focus * CODE_SNAP.dimAmount,
+                      background: isFocused && focus > 0 ? chrome.currentLine : undefined,
+                      borderLeft: `3px solid ${isFocused && focus > 0 ? theme.ink : 'transparent'}`,
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 52,
+                        paddingRight: 18,
+                        textAlign: 'right',
+                        color: isFocused && focus > 0 ? chrome.text : chrome.lineNumber,
+                        flexShrink: 0,
+                        fontSize: fontSize - 4,
+                        userSelect: 'none',
+                      }}
+                    >
+                      {i + 1}
+                    </span>
+                    <span style={{ whiteSpace: 'pre' }}>
+                      {line.map((token, k) => {
+                        const props = getTokenProps({ token });
+                        return (
+                          <span key={k} className={props.className} style={props.style}>
+                            {token.content.replace(/\n/g, '')}
+                          </span>
+                        );
+                      })}
+                      {i === tokens.length - 1 && cursorOn && (
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            width: 2,
+                            height: '1.1em',
+                            marginLeft: 2,
+                            background: theme.ink,
+                            verticalAlign: 'text-bottom',
+                          }}
+                        />
+                      )}
+                    </span>
+                  </div>
+                );
+              })}
+            </pre>
+          )}
+        </Highlight>
+      </div>
     </div>
   );
 };

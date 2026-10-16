@@ -1,3 +1,5 @@
+import type { ThemeName } from './config';
+
 export type Word = { text: string; start: number; end: number };
 
 type Base = {
@@ -33,6 +35,7 @@ export type SceneOf<K extends SceneKind> = Extract<SceneConfig, { kind: K }>;
 export type Episode = {
   id: string;
   title: string;
+  theme?: ThemeName;
   /** imported audio asset (e.g. `import voice from './voice.mp3'`), or null for a silent preview */
   voice: string | null;
   words: Word[];

@@ -3,21 +3,22 @@ import { AbsoluteFill, Html5Audio, Sequence, useVideoConfig } from 'remotion';
 import { Captions } from './components/Captions';
 import { Character } from './components/Character';
 import { SceneTransition } from './components/SceneTransition';
-import { THEME, TRANSITION } from './config';
+import { TRANSITION } from './config';
+import { ThemeProvider, useTheme } from './lib/theme';
 import { resolveTimeline } from './lib/timeline';
 import { SCENE_REGISTRY } from './scenes/registry';
 import type { Episode, SceneConfig } from './types';
 
-export const Reel = ({ episode }: { episode: Episode }) => {
+const ReelStage = ({ episode }: { episode: Episode }) => {
+  const theme = useTheme();
   const { fps } = useVideoConfig();
   const timeline = useMemo(() => resolveTimeline(episode, fps), [episode, fps]);
 
   return (
     <AbsoluteFill
       style={{
-        background: THEME.bg,
-        backgroundImage: `linear-gradient(${THEME.grid} 1px, transparent 1px), linear-gradient(90deg, ${THEME.grid} 1px, transparent 1px)`,
-        backgroundSize: '48px 48px',
+        backgroundColor: theme.bg,
+        backgroundImage: theme.bgGlow,
       }}
     >
       {episode.voice && <Html5Audio src={episode.voice} />}
@@ -41,3 +42,9 @@ export const Reel = ({ episode }: { episode: Episode }) => {
     </AbsoluteFill>
   );
 };
+
+export const Reel = ({ episode }: { episode: Episode }) => (
+  <ThemeProvider theme={episode.theme}>
+    <ReelStage episode={episode} />
+  </ThemeProvider>
+);

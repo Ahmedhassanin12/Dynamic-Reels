@@ -1,3 +1,4 @@
+import { DEFAULT_THEME } from '../config';
 import { GLOSSARY, type GlossaryEntry } from '../glossary';
 import type { Episode, Word } from '../types';
 import { normalizeText } from './text';
@@ -65,5 +66,5 @@ export const validateEpisode = (episode: Episode): string[] => {
 export const defineEpisode = (episode: Episode): Episode => {
   const errors = validateEpisode(episode);
   if (errors.length) throw new Error(`Episode "${episode.id}" has ${errors.length} problem(s):\n- ${errors.join('\n- ')}`);
-  return { ...episode, words: applyGlossary(episode.words) };
+  return { ...episode, theme: episode.theme ?? DEFAULT_THEME, words: applyGlossary(episode.words) };
 };

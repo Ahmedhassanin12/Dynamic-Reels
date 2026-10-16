@@ -3,29 +3,141 @@ import type { PrismTheme } from 'prism-react-renderer';
 export const FPS = 30;
 export const SIZE = { width: 1080, height: 1920 } as const;
 
-const SHARED = {
-  bg: '#0f1115',
-  paper: '#1a1d24',
-  text: '#f2f3f5',
-  muted: '#8b90a0',
-  border: '#2b303b',
-  grid: 'rgba(255, 255, 255, 0.035)',
-  shadow: '0 24px 60px rgba(0, 0, 0, 0.5)',
-  shadowSm: '0 12px 30px rgba(0, 0, 0, 0.4)',
+export type CodeChrome = {
+  editor: string;
+  titleBar: string;
+  tabBar: string;
+  border: string;
+  lineNumber: string;
+  currentLine: string;
+  text: string;
+};
+
+export type CodeSyntax = {
+  keyword: string;
+  builtin: string;
+  function: string;
+  string: string;
+  number: string;
+  variable: string;
+  comment: string;
+  operator: string;
+};
+
+export type Theme = {
+  bg: string;
+  bgGlow: string;
+  paper: string;
+  paperElevated: string;
+  text: string;
+  muted: string;
+  dim: string;
+  border: string;
+  borderStrong: string;
+  ink: string;
+  onInk: string;
+  tint: string;
+  good: string;
+  onGood: string;
+  goodTint: string;
+  goodBorder: string;
+  goodShadow: string;
+  bad: string;
+  onBad: string;
+  badTint: string;
+  badBorder: string;
+  badShadow: string;
+  grid: string;
+  shadow: string;
+  shadowSm: string;
+  code: {
+    dots: readonly [string, string, string];
+    chrome: CodeChrome;
+    syntax: CodeSyntax;
+    prism: PrismTheme;
+  };
+};
+
+const makePrismTheme = (chrome: CodeChrome, syntax: CodeSyntax): PrismTheme => ({
+  plain: { color: chrome.text, backgroundColor: 'transparent' },
+  styles: [
+    { types: ['comment'], style: { color: syntax.comment, fontStyle: 'italic' } },
+    { types: ['keyword', 'tag', 'operator', 'boolean'], style: { color: syntax.keyword } },
+    { types: ['function', 'method'], style: { color: syntax.function } },
+    { types: ['string', 'char', 'attr-value'], style: { color: syntax.string } },
+    { types: ['number'], style: { color: syntax.number } },
+    { types: ['builtin', 'class-name', 'maybe-class-name'], style: { color: syntax.builtin } },
+    { types: ['property', 'parameter', 'variable', 'constant'], style: { color: syntax.variable } },
+    { types: ['punctuation'], style: { color: syntax.operator } },
+  ],
+});
+
+const SHARED_UI = {
+  bg: '#060608',
+  bgGlow:
+    'radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.035) 0%, rgba(34, 197, 94, 0.02) 40%, transparent 72%)',
+  paper: '#0d0e11',
+  paperElevated: '#131419',
+  text: '#f4f4f5',
+  muted: '#8e929f',
+  dim: '#525560',
+  border: 'rgba(255, 255, 255, 0.09)',
+  borderStrong: 'rgba(255, 255, 255, 0.16)',
+  good: '#22c55e',
+  onGood: '#05140b',
+  goodTint: 'rgba(34, 197, 94, 0.11)',
+  goodBorder: 'rgba(34, 197, 94, 0.38)',
+  goodShadow: '0 0 50px rgba(34, 197, 94, 0.08)',
+  bad: '#ef4444',
+  onBad: '#190505',
+  badTint: 'rgba(239, 68, 68, 0.11)',
+  badBorder: 'rgba(239, 68, 68, 0.35)',
+  badShadow: '0 0 50px rgba(239, 68, 68, 0.07)',
+  grid: 'transparent',
+  shadow: '0 32px 80px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.07)',
+  shadowSm: '0 20px 50px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
 } as const;
 
-/** `ink` is the brand accent, `onInk` is the text color used on top of it. Switch palette with PALETTE_NAME. */
-export const PALETTES = {
-  amber: { ...SHARED, ink: '#ffb020', onInk: '#14110a', tint: 'rgba(255, 176, 32, 0.14)' },
-  mint: { ...SHARED, ink: '#34d399', onInk: '#04140d', tint: 'rgba(52, 211, 153, 0.14)' },
-  rose: { ...SHARED, ink: '#fb7185', onInk: '#1a0509', tint: 'rgba(251, 113, 133, 0.14)' },
-} as const;
+const SHARED_CHROME: CodeChrome = {
+  editor: '#0b0c0e',
+  titleBar: '#121317',
+  tabBar: '#121317',
+  border: 'rgba(255, 255, 255, 0.09)',
+  lineNumber: '#525663',
+  currentLine: 'rgba(255, 255, 255, 0.04)',
+  text: '#e4e4e7',
+};
 
-export const PALETTE_NAME: keyof typeof PALETTES = 'amber';
-export const THEME = PALETTES[PALETTE_NAME];
+const SHARED_SYNTAX: CodeSyntax = {
+  keyword: '#f87171',
+  builtin: '#f59e0b',
+  function: '#fbbf24',
+  string: '#4ade80',
+  number: '#fb923c',
+  variable: '#fde68a',
+  comment: '#52525b',
+  operator: '#71717a',
+};
+
+const SHARED_CODE = {
+  dots: ['#ff5f57', '#febc2e', '#28c840'] as const,
+  chrome: SHARED_CHROME,
+  syntax: SHARED_SYNTAX,
+  prism: makePrismTheme(SHARED_CHROME, SHARED_SYNTAX),
+};
+
+/** `ink` is the brand accent, `onInk` is the text color used on top of it. Each episode can pick its own theme. */
+export const THEMES = {
+  amber: { ...SHARED_UI, ink: '#f59e0b', onInk: '#060608', tint: 'rgba(245, 158, 11, 0.12)', code: SHARED_CODE },
+  mint: { ...SHARED_UI, ink: '#22c55e', onInk: '#04140d', tint: 'rgba(34, 197, 94, 0.12)', code: SHARED_CODE },
+  rose: { ...SHARED_UI, ink: '#f43f5e', onInk: '#1a0509', tint: 'rgba(244, 63, 94, 0.12)', code: SHARED_CODE },
+} as const satisfies Record<string, Theme>;
+
+export type ThemeName = keyof typeof THEMES;
+export const DEFAULT_THEME: ThemeName = 'amber';
 
 /** Stage = the top area for scenes; the bottom is reserved for character + captions. */
-export const STAGE = { top: 130, reservedBottom: 560 } as const;
+export const STAGE = { top: 170, paddingX: 84, reservedBottom: 580 } as const;
 
 export const TIMELINE = {
   /** scenes start slightly before the anchor word so visuals lead the voice */
@@ -35,7 +147,7 @@ export const TIMELINE = {
 
 export const MOTION = {
   spring: { damping: 14, stiffness: 160 },
-  distance: 50,
+  distance: 36,
   stagger: 10,
   answerDelayFrames: 30,
 } as const;
@@ -48,8 +160,11 @@ export const CAPTION = {
   /** Pause threshold between words to trigger a new caption chunk early */
   maxGapSeconds: 0.35,
   holdSeconds: 0.5,
-  fontSize: 64,
+  fontSize: 52,
   maxWidth: 640,
+  right: 60,
+  bottom: 220,
+  handleSize: 11,
   spring: { damping: 14, stiffness: 180 },
 } as const;
 
@@ -57,43 +172,19 @@ export const CAPTION = {
 export const TRANSITION = {
   enterSpring: { damping: 16, stiffness: 140 },
   overlapFrames: 8,
-  distance: 60,
+  distance: 48,
 } as const;
 
 export const CODE_SNAP = {
-  fontSize: 36,
+  fontSize: 28,
+  compactFontSize: 24,
   charsPerFrame: 1.6,
   focusFadeFrames: 12,
-  dimAmount: 0.5,
-  dots: ['#ff5f57', '#febc2e', '#28c840'],
-  /** VS Code Dark+ chrome */
-  chrome: {
-    editor: '#1e1e1e',
-    titleBar: '#323233',
-    tabBar: '#252526',
-    border: '#3c3c3c',
-    lineNumber: '#858585',
-    currentLine: '#2a2d2e',
-    text: '#d4d4d4',
-  },
+  dimAmount: 0.52,
+  dotSize: 11,
 } as const;
 
-export const CODE_DEMO = { vizDelayFrames: 10, vizHeight: 400 } as const;
-
-/** VS Code Dark+ syntax colors. */
-export const CODE_THEME = {
-  plain: { color: CODE_SNAP.chrome.text, backgroundColor: CODE_SNAP.chrome.editor },
-  styles: [
-    { types: ['keyword', 'tag', 'boolean'], style: { color: '#569cd6' } },
-    { types: ['builtin', 'class-name', 'maybe-class-name'], style: { color: '#4ec9b0' } },
-    { types: ['function'], style: { color: '#dcdcaa' } },
-    { types: ['string', 'char', 'attr-value'], style: { color: '#ce9178' } },
-    { types: ['number'], style: { color: '#b5cea8' } },
-    { types: ['property', 'parameter', 'variable', 'constant'], style: { color: '#9cdcfe' } },
-    { types: ['comment'], style: { color: '#6a9955', fontStyle: 'italic' } },
-    { types: ['operator', 'punctuation'], style: { color: '#d4d4d4' } },
-  ],
-} satisfies PrismTheme;
+export const CODE_DEMO = { vizDelayFrames: 10, vizHeight: 340 } as const;
 
 /** Put your PNG in /public and set the file name. null => placeholder. (Keep your own values here.) */
-export const CHARACTER = { src: "main.png" as string | null, width: 370, height: 570 } as const;
+export const CHARACTER = { src: 'main.png' as string | null, width: 370, height: 570 } as const;

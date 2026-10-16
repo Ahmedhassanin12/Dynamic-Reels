@@ -1,13 +1,16 @@
 import { spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { Box } from '../components/Box';
 import { Enter } from '../components/Enter';
-import { MOTION, SCAN, THEME } from '../config';
+import { MOTION, SCAN } from '../config';
 import { CODE_FONT } from '../lib/fonts';
+import { useTheme } from '../lib/theme';
 import type { SceneOf } from '../types';
 import { SceneFrame } from './SceneFrame';
 
 export const ArrayScene = ({ label, title, cells, target, mode }: SceneOf<'array'>) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const theme = useTheme();
 
   const jumped = spring({ frame: frame - SCAN.jumpDelayFrames, fps, config: MOTION.spring }) > 0.01;
   const activeIndex = mode === 'scan' ? Math.min(target, Math.floor(frame / SCAN.framesPerCell)) : jumped ? target : -1;
@@ -16,35 +19,39 @@ export const ArrayScene = ({ label, title, cells, target, mode }: SceneOf<'array
   return (
     <SceneFrame label={label} title={title}>
       <Enter>
-        <div style={{ display: 'flex', gap: 10, direction: 'ltr' }}>
-          {cells.map((cell, i) => {
-            const active = i === activeIndex;
-            const visited = mode === 'scan' && i < activeIndex;
-            return (
-              <div
-                key={`${cell}-${i}`}
-                style={{
-                  flex: 1,
-                  aspectRatio: '1',
-                  display: 'grid',
-                  placeItems: 'center',
-                  fontSize: 34,
-                  border: `2px solid ${active ? THEME.ink : THEME.border}`,
-                  borderRadius: 12,
-                  background: active ? THEME.ink : visited ? THEME.tint : THEME.paper,
-                  color: active ? THEME.onInk : THEME.text,
-                  transform: active ? 'scale(1.12)' : undefined,
-                }}
-              >
-                {cell}
-              </div>
-            );
-          })}
-        </div>
+        <Box style={{ display: 'flex', flexDirection: 'column', gap: 22, direction: 'ltr', fontFamily: CODE_FONT }}>
+          <div style={{ display: 'flex', gap: 10 }}>
+            {cells.map((cell, i) => {
+              const active = i === activeIndex;
+              const visited = mode === 'scan' && i < activeIndex;
+              return (
+                <div
+                  key={`${cell}-${i}`}
+                  style={{
+                    flex: 1,
+                    aspectRatio: '1',
+                    display: 'grid',
+                    placeItems: 'center',
+                    fontSize: 24,
+                    fontWeight: 600,
+                    border: `1px solid ${active ? theme.ink : visited ? theme.borderStrong : theme.border}`,
+                    borderRadius: 10,
+                    background: active ? theme.ink : visited ? theme.tint : theme.paperElevated,
+                    color: active ? theme.onInk : theme.text,
+                    transform: active ? 'scale(1.06)' : undefined,
+                  }}
+                >
+                  {cell}
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ fontSize: 22, letterSpacing: 3, color: theme.muted }}>
+            CHECKS: <span style={{ color: theme.text, fontWeight: 700 }}>{checks}</span>
+          </div>
+        </Box>
       </Enter>
-      <div style={{ marginTop: 40, direction: 'ltr', fontSize: 40, letterSpacing: 4, fontFamily: CODE_FONT }}>
-        CHECKS: {checks}
-      </div>
     </SceneFrame>
   );
 };
+

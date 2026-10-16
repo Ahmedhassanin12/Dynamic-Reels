@@ -1,28 +1,53 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { THEME } from '../config';
+import { useTheme } from '../lib/theme';
 
-const TONES = {
-  paper: { background: THEME.paper, color: THEME.text },
-  ink: { background: THEME.ink, color: THEME.onInk },
-} as const satisfies Record<string, CSSProperties>;
+export type BoxTone = 'paper' | 'ink' | 'good' | 'bad';
 
-type Props = { tone?: keyof typeof TONES; children: ReactNode; style?: CSSProperties };
+type Props = { tone?: BoxTone; children: ReactNode; style?: CSSProperties };
 
-export const Box = ({ tone = 'paper', children, style }: Props) => (
-  <div
-    dir="rtl"
-    style={{
-      ...TONES[tone],
-      border: `2px solid ${THEME.border}`,
-      borderRadius: 22,
-      boxShadow: THEME.shadowSm,
-      padding: '22px 28px',
-      overflow: 'hidden',
-      direction: 'rtl',
-      unicodeBidi: 'isolate',
-      ...style,
-    }}
-  >
-    {children}
-  </div>
-);
+export const Box = ({ tone = 'paper', children, style }: Props) => {
+  const theme = useTheme();
+  const tones: Record<BoxTone, CSSProperties> = {
+    paper: {
+      background: theme.paper,
+      color: theme.text,
+      border: `1px solid ${theme.border}`,
+      boxShadow: theme.shadowSm,
+    },
+    ink: {
+      background: theme.ink,
+      color: theme.onInk,
+      border: `1px solid ${theme.ink}`,
+      boxShadow: theme.shadowSm,
+    },
+    good: {
+      background: theme.paper,
+      color: theme.text,
+      border: `1px solid ${theme.goodBorder}`,
+      boxShadow: `${theme.goodShadow}, ${theme.shadowSm}`,
+    },
+    bad: {
+      background: theme.paper,
+      color: theme.text,
+      border: `1px solid ${theme.badBorder}`,
+      boxShadow: `${theme.badShadow}, ${theme.shadowSm}`,
+    },
+  };
+
+  return (
+    <div
+      dir="rtl"
+      style={{
+        ...tones[tone],
+        borderRadius: 16,
+        padding: '24px 28px',
+        overflow: 'hidden',
+        direction: 'rtl',
+        unicodeBidi: 'isolate',
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+};

@@ -10,11 +10,22 @@ import { SceneFrame } from './SceneFrame';
 /** Code on top, and below it a live picture of what that code does, so it makes sense even without the voice. */
 export const CodeDemoScene = ({ label, title, code, language, filename, highlightLines, viz, result }: SceneOf<'codeDemo'>) => {
   const Viz = VIZ_REGISTRY[viz.type] as FC<VizProps<VizType>>;
+  const isScan = viz.type === 'scan';
+  const tone = isScan ? 'bad' : 'good';
+  const pill = isScan ? 'BEFORE · LINEAR SCAN' : 'AFTER · HASH MAP';
+  const tagText = result ? `${result} · ${isScan ? 'slow' : 'instant'}` : undefined;
 
   return (
-    <SceneFrame label={label} title={title}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
-        <CodeSnap code={code} language={language} filename={filename} highlightLines={highlightLines} />
+    <SceneFrame label={label} title={title} pill={pill} pillTone={tone}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+        <CodeSnap
+          code={code}
+          language={language}
+          filename={filename}
+          highlightLines={highlightLines}
+          tagText={tagText}
+          tagTone={tone}
+        />
         <div style={{ minHeight: CODE_DEMO.vizHeight }}>
           <Sequence from={typingFrames(code) + CODE_DEMO.vizDelayFrames} layout="none">
             <Viz viz={viz} result={result} />
@@ -24,3 +35,4 @@ export const CodeDemoScene = ({ label, title, code, language, filename, highligh
     </SceneFrame>
   );
 };
+
