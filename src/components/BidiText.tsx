@@ -22,9 +22,9 @@ export const BidiText = ({ children, style, as: Tag = 'bdi' }: Props) => {
     );
   }
 
-  // Match full Latin/alphanumeric runs starting with an alphanumeric character (e.g. "100K user", "Hash Map", "users.find()")
+  // Match full Latin/alphanumeric runs starting with an alphanumeric character (e.g. "100K user", "Hash Map", "users.find()", "Map<string, User>")
   // Preceding punctuation (like ":" in "الحلقة الجاية: Stack") and trailing punctuation stay in the RTL stream with the Arabic text.
-  const parts = children.split(/([a-zA-Z0-9][a-zA-Z0-9_#$@%<>():.\/-]*(?:\s+[a-zA-Z0-9][a-zA-Z0-9_#$@%<>():.\/-]*)*)/g);
+  const parts = children.split(/([a-zA-Z0-9][a-zA-Z0-9_#$@%<>()\[\]{}:.\/=+*^'"]*(?:(?:\s+|,\s*)[a-zA-Z0-9][a-zA-Z0-9_#$@%<>()\[\]{}:.\/=+*^'"]*)*)/g);
 
   return (
     <Tag dir="rtl" style={{ unicodeBidi: 'isolate', ...style }}>
