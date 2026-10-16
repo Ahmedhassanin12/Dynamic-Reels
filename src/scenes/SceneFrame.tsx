@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { BidiText } from '../components/BidiText';
 import { STAGE, THEME } from '../config';
 import { ARABIC_FONT, CODE_FONT } from '../lib/fonts';
 
@@ -18,7 +19,11 @@ export const SceneFrame = ({ label, title, children }: Props) => (
     }}
   >
     {label && <div style={{ fontSize: 28, letterSpacing: 6, color: THEME.ink, fontFamily: CODE_FONT }}>{label}</div>}
-    {title && <div style={{ fontSize: 84, marginTop: 10, textAlign: 'start', unicodeBidi: 'plaintext' }}>{title}</div>}
+    {title && (
+      <div dir="rtl" style={{ fontSize: 84, marginTop: 10, textAlign: 'start', direction: 'rtl' }}>
+        <BidiText>{title}</BidiText>
+      </div>
+    )}
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>{children}</div>
   </div>
 );

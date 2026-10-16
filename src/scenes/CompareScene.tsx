@@ -1,3 +1,4 @@
+import { BidiText } from '../components/BidiText';
 import { Box } from '../components/Box';
 import { Enter } from '../components/Enter';
 import { MOTION } from '../config';
@@ -11,12 +12,12 @@ export const CompareScene = ({ label, title, sides }: SceneOf<'compare'>) => (
         <Enter key={sideIndex} delay={sideIndex * MOTION.stagger} style={{ flex: 1 }}>
           <Box style={{ padding: 0, height: '100%' }}>
             <Box tone="ink" style={{ boxShadow: 'none', border: 'none', borderRadius: 0, textAlign: 'center', fontSize: 50 }}>
-              {side.title}
+              <BidiText>{side.title}</BidiText>
             </Box>
             <div style={{ padding: '24px 24px 32px', display: 'flex', flexDirection: 'column', gap: 22, fontSize: 40, lineHeight: 1.4 }}>
               {side.items.map((item, i) => (
                 <Enter key={i} delay={(sideIndex + 1) * MOTION.stagger + (i + 1) * MOTION.stagger}>
-                  {item}
+                  <BidiText>{item}</BidiText>
                 </Enter>
               ))}
             </div>

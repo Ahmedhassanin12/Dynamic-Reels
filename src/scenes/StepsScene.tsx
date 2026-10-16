@@ -1,3 +1,4 @@
+import { BidiText } from '../components/BidiText';
 import { Box } from '../components/Box';
 import { Enter } from '../components/Enter';
 import { MOTION } from '../config';
@@ -13,7 +14,7 @@ export const StepsScene = ({ label, title, steps }: SceneOf<'steps'>) => (
             <Box tone="ink" style={{ boxShadow: 'none', padding: 0, width: 72, height: 72, display: 'grid', placeItems: 'center', fontSize: 40, flexShrink: 0 }}>
               {i + 1}
             </Box>
-            <span>{step}</span>
+            <BidiText as="span">{step}</BidiText>
           </Box>
         </Enter>
       ))}

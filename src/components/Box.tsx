@@ -10,6 +10,7 @@ type Props = { tone?: keyof typeof TONES; children: ReactNode; style?: CSSProper
 
 export const Box = ({ tone = 'paper', children, style }: Props) => (
   <div
+    dir="rtl"
     style={{
       ...TONES[tone],
       border: `2px solid ${THEME.border}`,
@@ -17,7 +18,8 @@ export const Box = ({ tone = 'paper', children, style }: Props) => (
       boxShadow: THEME.shadowSm,
       padding: '22px 28px',
       overflow: 'hidden',
-      unicodeBidi: 'plaintext',
+      direction: 'rtl',
+      unicodeBidi: 'isolate',
       ...style,
     }}
   >

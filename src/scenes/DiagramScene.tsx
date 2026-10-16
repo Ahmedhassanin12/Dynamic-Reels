@@ -1,3 +1,4 @@
+import { BidiText } from '../components/BidiText';
 import { Box } from '../components/Box';
 import { Enter } from '../components/Enter';
 import { MOTION, THEME } from '../config';
@@ -11,7 +12,7 @@ export const DiagramScene = ({ label, title, nodes, highlight }: SceneOf<'diagra
         <Enter key={i} delay={i * MOTION.stagger * 2} style={{ width: '100%', textAlign: 'center' }}>
           {i > 0 && <div style={{ fontSize: 56, lineHeight: 1, color: THEME.ink, marginBottom: 8 }}>↓</div>}
           <Box tone={i === highlight ? 'ink' : 'paper'} style={{ fontSize: 46 }}>
-            {node}
+            <BidiText>{node}</BidiText>
           </Box>
         </Enter>
       ))}
