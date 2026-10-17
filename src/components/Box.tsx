@@ -15,9 +15,9 @@ export const Box = ({ tone = 'paper', children, style }: Props) => {
       boxShadow: theme.shadowSm,
     },
     ink: {
-      background: theme.ink,
-      color: theme.onInk,
-      border: `1px solid ${theme.ink}`,
+      background: theme.paperElevated,
+      color: theme.text,
+      border: `1px solid ${theme.borderStrong}`,
       boxShadow: theme.shadowSm,
     },
     good: {

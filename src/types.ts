@@ -59,6 +59,24 @@ export type EventLoopStep = {
   note?: string;
 };
 
+export type StackSlot = {
+  name: string;
+  value: string;
+  /** Optional Heap object id this variable points to (e.g. "0x4F2A") */
+  ref?: string;
+  changed?: boolean;
+};
+
+export type HeapObject = {
+  id: string;
+  label: string;
+  entries: Record<string, string>;
+  /** Optional property key that was mutated through a shared reference */
+  mutatedKey?: string;
+};
+
+export type ComplexityCurve = 'O(1)' | 'O(log n)' | 'O(n)' | 'O(n²)';
+
 export type VizConfig =
   | { type: 'scan'; cells: string[]; target: number }
   | { type: 'lookup'; key: string; buckets: number; hit: number; valuePreview?: string; subtitle?: string }
@@ -77,6 +95,18 @@ export type VizConfig =
       cells: (string | number)[];
       targetIndex: number;
       framesPerStep?: number;
+    }
+  | {
+      type: 'memory';
+      stack: StackSlot[];
+      heap: HeapObject[];
+      note?: string;
+    }
+  | {
+      type: 'complexity';
+      curves?: ComplexityCurve[];
+      highlight?: ComplexityCurve;
+      note?: string;
     };
 
 export type VizType = VizConfig['type'];
@@ -89,6 +119,15 @@ export type StepItem = {
   /** Optional inline code snippet for the step */
   code?: string;
   tone?: 'good' | 'bad' | 'warn' | 'ink';
+};
+
+export type DiagramNode = {
+  title: string;
+  /** Secondary subtitle or code detail inside the node */
+  sub?: string;
+  /** Monospace pill badge (e.g. "CLIENT", "200 OK", "DIFF O(N)") */
+  badge?: string;
+  tone?: 'good' | 'bad' | 'warn' | 'ink' | 'paper';
 };
 
 export type CompareSide = {
@@ -151,7 +190,19 @@ export type SceneConfig =
       showStack?: boolean;
     })
   | (Base & { kind: 'compare'; pill?: string; sides: [CompareSide, CompareSide] })
-  | (Base & { kind: 'diagram'; nodes: string[]; highlight?: number })
+  | (Base & {
+      kind: 'diagram';
+      nodes: Array<string | DiagramNode>;
+      highlight?: number;
+      pill?: string;
+      layout?: 'vertical' | 'pipeline' | 'architecture';
+      /** Labels rendered on the arrows between consecutive nodes (e.g. ["GET /api/user", "SELECT *"]) */
+      edgeLabels?: string[];
+      /** Optional return/response edge labels for request-response architecture flows */
+      returnEdgeLabels?: string[];
+      /** Optional bottom sub-layer panel (e.g. React Hooks row + diffing note) */
+      subLayer?: { label: string; items: string[]; note?: string };
+    })
   | (Base & {
       kind: 'qa';
       question: string;
@@ -167,6 +218,17 @@ export type SceneConfig =
       correctIndex?: number;
       /** Custom frame delay before revealing the answer and highlighting `correctIndex` */
       revealDelayFrames?: number;
+    })
+  | (Base & {
+      kind: 'transition';
+      fromTitle: string;
+      fromBadge?: string;
+      fromSub?: string;
+      toTitle: string;
+      toBadge?: string;
+      toSub?: string;
+      bridgeText?: string;
+      pill?: string;
     });
 
 export type SceneKind = SceneConfig['kind'];

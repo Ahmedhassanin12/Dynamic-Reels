@@ -100,10 +100,16 @@ export const validateEpisode = (episode: Episode): string[] => {
       }
     }
     if (scene.kind === 'diagram') {
-      if (scene.nodes.length === 0) {
-        fail('nodes must not be empty.');
+      if (
+        scene.nodes.length === 0 ||
+        scene.nodes.some((n) => !(typeof n === 'string' ? n : n.title).trim())
+      ) {
+        fail('nodes must contain at least one non-empty node.');
       } else if (scene.highlight !== undefined && !inRange(scene.highlight, scene.nodes.length)) {
         fail(`highlight ${scene.highlight} is outside nodes (0-${scene.nodes.length - 1}).`);
+      }
+      if (scene.subLayer && (!scene.subLayer.label.trim() || scene.subLayer.items.length === 0)) {
+        fail('diagram subLayer must have a non-empty label and at least one item.');
       }
     }
     if ((scene.kind === 'code' || scene.kind === 'codeDemo') && scene.code !== undefined) {
@@ -177,6 +183,21 @@ export const validateEpisode = (episode: Episode): string[] => {
           }
         }
       }
+      if (viz.type === 'memory') {
+        if (viz.stack.length === 0 || viz.stack.some((s) => !s.name.trim())) {
+          fail('viz.stack must contain at least one variable with a non-empty name.');
+        }
+        const heapIds = new Set(viz.heap.map((h) => h.id));
+        const badRefs = viz.stack.filter((s) => s.ref && !heapIds.has(s.ref)).map((s) => `${s.name} -> ${s.ref}`);
+        if (badRefs.length) {
+          fail(`viz.stack ref(s) ${badRefs.join(', ')} do not match any viz.heap id.`);
+        }
+      }
+      if (viz.type === 'complexity') {
+        if (viz.curves && viz.curves.length === 0) {
+          fail('viz.curves must not be empty when specified.');
+        }
+      }
     }
     if (scene.kind === 'steps') {
       if (
@@ -211,6 +232,11 @@ export const validateEpisode = (episode: Episode): string[] => {
         }
       } else if (scene.correctIndex !== undefined) {
         fail('qa correctIndex requires options to be specified.');
+      }
+    }
+    if (scene.kind === 'transition') {
+      if (!scene.fromTitle.trim() || !scene.toTitle.trim()) {
+        fail('transition fromTitle and toTitle must not be empty.');
       }
     }
   }

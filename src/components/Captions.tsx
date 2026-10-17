@@ -45,12 +45,11 @@ const SelectionBox = ({
         display: 'inline-block',
         padding: '2px 18px',
         background: tint,
-        border: `2px solid ${color}`,
         color: textColor,
         margin: '0 6px',
       }}
     >
-      <span
+      {/* <span
         style={{
           position: 'absolute',
           top: offset,
@@ -59,7 +58,7 @@ const SelectionBox = ({
           height: size,
           borderRadius: '50%',
           background: color,
-          border: `2px solid ${textColor}`,
+          // border: `2px solid ${textColor}`,
         }}
       />
       <span
@@ -71,9 +70,9 @@ const SelectionBox = ({
           height: size,
           borderRadius: '50%',
           background: color,
-          border: `2px solid ${textColor}`,
+          // border: `2px solid ${textColor}`,
         }}
-      />
+      /> */}
       {children}
     </span>
   );

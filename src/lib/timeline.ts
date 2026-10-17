@@ -3,9 +3,11 @@ import {
   CALL_STACK,
   CODE_DEMO,
   CODE_SNAP,
+  COMPLEXITY,
   EVENT_LOOP,
   EXECUTION,
   LOOKUP,
+  MEMORY,
   MOTION,
   SCAN,
   TIMELINE,
@@ -282,6 +284,10 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
       } else if (scene.viz.type === 'binarySearch') {
         const steps = computeBinarySearchSteps(scene.viz.cells, scene.viz.targetIndex).length;
         vizFrames = steps * (scene.viz.framesPerStep ?? BINARY_SEARCH.framesPerStep) + 15;
+      } else if (scene.viz.type === 'memory') {
+        vizFrames = Math.max(scene.viz.stack.length, scene.viz.heap.length + 1) * MEMORY.stepStaggerFrames + 20;
+      } else if (scene.viz.type === 'complexity') {
+        vizFrames = COMPLEXITY.drawFrames + 20;
       }
       return codeTyping + delay + vizFrames;
     }
@@ -292,12 +298,14 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
       return scene.sides.length * MOTION.stagger + maxItems * MOTION.stagger + 15;
     }
     case 'diagram':
-      return scene.nodes.length * MOTION.stagger * 2 + 15;
+      return Math.ceil((scene.nodes.length + (scene.subLayer ? 1 : 0)) * MOTION.stagger * 1.5) + 15;
     case 'qa': {
       const optionsStagger = scene.options?.length ? (scene.options.length + 1) * MOTION.stagger : 0;
       const revealAt = scene.revealDelayFrames ?? optionsStagger + MOTION.answerDelayFrames;
       return revealAt + 20;
     }
+    case 'transition':
+      return MOTION.stagger * 3 + 20;
   }
 };
 

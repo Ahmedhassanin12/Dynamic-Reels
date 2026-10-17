@@ -2,9 +2,11 @@ import type { FC } from 'react';
 import type { VizProps, VizType } from '../types';
 import { BinarySearchViz } from './BinarySearchViz';
 import { CallStackViz } from './CallStackViz';
+import { ComplexityViz } from './ComplexityViz';
 import { EventLoopViz } from './EventLoopViz';
 import { ExecutionViz } from './ExecutionViz';
 import { LookupViz } from './LookupViz';
+import { MemoryViz } from './MemoryViz';
 import { ScanViz } from './ScanViz';
 
 export const VIZ_REGISTRY = {
@@ -14,5 +16,8 @@ export const VIZ_REGISTRY = {
   eventLoop: EventLoopViz,
   callStack: CallStackViz,
   binarySearch: BinarySearchViz,
+  memory: MemoryViz,
+  complexity: ComplexityViz,
 } satisfies { [K in VizType]: FC<VizProps<K>> };
+
 

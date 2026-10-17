@@ -5,6 +5,7 @@ import { arrayVsHashMap } from '../src/episodes/array-vs-hash-map';
 import arrayWords from '../src/episodes/array-vs-hash-map/words.json';
 import { eventLoop } from '../src/episodes/event-loop';
 import eventLoopWords from '../src/episodes/event-loop/words.json';
+import { sceneShowcase } from '../src/episodes/scene-showcase';
 import { applyGlossary, defineEpisode, validateEpisode } from '../src/lib/episode';
 import { normalizeText, tokenizeNormalized } from '../src/lib/text';
 import { computeBinarySearchSteps, getMinSceneFrames, resolveTimeline } from '../src/lib/timeline';
@@ -502,7 +503,54 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       );
       assert.ok(errors.some((e) => e.includes('scene "qa-bad-idx": qa correctIndex 5 is outside options (0-1)')));
     });
+
+    it('validates Batch 4 scenes & visualizers (memory, complexity, diagram, transition) and resolves sceneShowcase', () => {
+      const showcaseTimeline = resolveTimeline(sceneShowcase, FPS);
+      assert.equal(showcaseTimeline.length, 10);
+
+      const badEp: Episode = {
+        id: 'batch4-bad',
+        title: 'Batch 4 Bad',
+        voice: null,
+        words: [
+          { text: 'أول', start: 0.0, end: 0.5 },
+          { text: 'ثاني', start: 1.0, end: 1.5 },
+          { text: 'ثالث', start: 2.0, end: 2.5 },
+        ],
+        scenes: [
+          {
+            id: 'mem-bad-ref',
+            kind: 'codeDemo',
+            at: 0,
+            viz: {
+              type: 'memory',
+              stack: [{ name: 'user', value: 'ref', ref: '0x9999' }],
+              heap: [{ id: '0x4F2A', label: 'Object', entries: { name: '"Sara"' } }],
+            },
+          },
+          {
+            id: 'diag-bad-sub',
+            kind: 'diagram',
+            at: 1,
+            nodes: [{ title: 'Client' }],
+            subLayer: { label: '   ', items: [] },
+          },
+          {
+            id: 'trans-bad',
+            kind: 'transition',
+            at: 2,
+            fromTitle: 'Array',
+            toTitle: '   ',
+          },
+        ],
+      };
+      const errors = validateEpisode(badEp);
+      assert.ok(errors.some((e) => e.includes('scene "mem-bad-ref": viz.stack ref(s) user -> 0x9999 do not match any viz.heap id')));
+      assert.ok(errors.some((e) => e.includes('scene "diag-bad-sub": diagram subLayer must have a non-empty label')));
+      assert.ok(errors.some((e) => e.includes('scene "trans-bad": transition fromTitle and toTitle must not be empty')));
+    });
   });
 });
+
 
 

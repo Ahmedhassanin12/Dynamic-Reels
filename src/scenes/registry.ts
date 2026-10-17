@@ -8,6 +8,7 @@ import { DiagramScene } from './DiagramScene';
 import { QaScene } from './QaScene';
 import { StatementScene } from './StatementScene';
 import { StepsScene } from './StepsScene';
+import { TransitionScene } from './TransitionScene';
 
 export const SCENE_REGISTRY = {
   statement: StatementScene,
@@ -18,4 +19,6 @@ export const SCENE_REGISTRY = {
   compare: CompareScene,
   diagram: DiagramScene,
   qa: QaScene,
+  transition: TransitionScene,
 } satisfies { [K in SceneKind]: FC<SceneOf<K>> };
+

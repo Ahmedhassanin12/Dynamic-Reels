@@ -14,6 +14,8 @@ const DEFAULT_PILLS: Record<VizType, { pill: string; tone: 'good' | 'bad' | 'neu
   eventLoop: { pill: 'JS RUNTIME · EVENT LOOP', tone: 'neutral' },
   callStack: { pill: 'RECURSION · CALL STACK', tone: 'neutral' },
   binarySearch: { pill: 'BINARY SEARCH · O(LOG N)', tone: 'good' },
+  memory: { pill: 'JS MEMORY · STACK VS HEAP', tone: 'neutral' },
+  complexity: { pill: 'BIG-O · TIME COMPLEXITY', tone: 'good' },
 };
 
 /** Code on top, and below it a live picture of what that code does, so it makes sense even without the voice. */
