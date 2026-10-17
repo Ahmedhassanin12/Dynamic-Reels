@@ -195,7 +195,7 @@ export const eventLoop = defineEpisode({
     {
       id: 'rule',
       kind: 'compare',
-      at: 'معناها',
+      at: { text: 'معناها', occurrence: 2 },
       label: 'THE RULE',
       title: 'افهم ترتيب التنفيذ',
       pill: 'EXECUTION PRIORITY',
@@ -225,4 +225,3 @@ export const eventLoop = defineEpisode({
     },
   ],
 });
-

@@ -11,8 +11,8 @@ import type { Episode, SceneConfig } from './types';
 
 const ReelStage = ({ episode }: { episode: Episode }) => {
   const theme = useTheme();
-  const { fps } = useVideoConfig();
-  const timeline = useMemo(() => resolveTimeline(episode, fps), [episode, fps]);
+  const { fps, durationInFrames: compositionFrames } = useVideoConfig();
+  const timeline = useMemo(() => resolveTimeline(episode, fps, compositionFrames), [episode, fps, compositionFrames]);
 
   return (
     <AbsoluteFill
