@@ -6,7 +6,8 @@
     "render": "remotion render src/index.ts",
     "transcribe": "python scripts/transcribe.py",
     "new-episode": "node scripts/new-episode.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --import ./scripts/test-loader.mjs --test tests/timeline.test.ts"
   },
   "dependencies": {
     "@remotion/cli": "^4",

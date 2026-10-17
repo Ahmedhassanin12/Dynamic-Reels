@@ -1,11 +1,30 @@
 import type { ThemeName } from './config';
 
-export type Word = { text: string; start: number; end: number };
+export type Word = {
+  text: string;
+  start: number;
+  end: number;
+  /** Start index in the raw transcript (0-based, populated by applyGlossary) */
+  rawStart?: number;
+  /** Inclusive end index in the raw transcript (0-based, populated by applyGlossary) */
+  rawEnd?: number;
+  /** Original raw transcript text before glossary normalization */
+  rawText?: string;
+};
+
+export type AnchorObject = {
+  /** Exact word or multi-word phrase to match (in either raw transcript or glossary terms) */
+  text: string;
+  /** 1-based occurrence to select starting from the previous scene's anchor (default: 1) */
+  occurrence?: number;
+};
+
+export type SceneAnchor = number | string | AnchorObject;
 
 type Base = {
   id: string;
-  /** Where the scene starts: a word index, or text of the first word to match (searched after the previous scene's start). */
-  at: number | string;
+  /** Where the scene starts: a raw word index, a word/phrase string, or `{ text, occurrence }` (searched after the previous scene's match). */
+  at: SceneAnchor;
   label?: string;
   title?: string;
 };
@@ -39,5 +58,7 @@ export type Episode = {
   /** imported audio asset (e.g. `import voice from './voice.mp3'`), or null for a silent preview */
   voice: string | null;
   words: Word[];
+  /** Preserved pre-glossary transcript words for anchor resolution and debugging */
+  rawWords?: Word[];
   scenes: SceneConfig[];
 };
