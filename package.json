@@ -4,14 +4,15 @@
   "type": "module",
   "scripts": {
     "dev": "remotion studio src/index.ts",
-    "render": "remotion render src/index.ts",
+    "render": "node --import ./scripts/test-loader.mjs scripts/render.mjs",
+    "render:remotion": "remotion render src/index.ts",
     "transcribe": "python scripts/transcribe.py",
     "corrections": "node --import ./scripts/test-loader.mjs scripts/manage-corrections.mjs",
     "choreograph": "node --import ./scripts/test-loader.mjs scripts/choreograph.mjs",
     "validate": "node --import ./scripts/test-loader.mjs scripts/validate.mjs",
     "new-episode": "node scripts/new-episode.mjs",
     "typecheck": "tsc --noEmit",
-    "test": "node --import ./scripts/test-loader.mjs --test tests/timeline.test.ts tests/organization.test.ts tests/corrections.test.ts tests/choreography.test.ts tests/authoring.test.ts tests/qa.test.ts"
+    "test": "node --import ./scripts/test-loader.mjs --test tests/timeline.test.ts tests/organization.test.ts tests/corrections.test.ts tests/choreography.test.ts tests/authoring.test.ts tests/qa.test.ts tests/export.test.ts"
   },
   "dependencies": {
     "@remotion/cli": "^4",
