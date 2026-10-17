@@ -7,9 +7,10 @@
     "render": "remotion render src/index.ts",
     "transcribe": "python scripts/transcribe.py",
     "corrections": "node --import ./scripts/test-loader.mjs scripts/manage-corrections.mjs",
+    "choreograph": "node --import ./scripts/test-loader.mjs scripts/choreograph.mjs",
     "new-episode": "node scripts/new-episode.mjs",
     "typecheck": "tsc --noEmit",
-    "test": "node --import ./scripts/test-loader.mjs --test tests/timeline.test.ts tests/organization.test.ts tests/corrections.test.ts"
+    "test": "node --import ./scripts/test-loader.mjs --test tests/timeline.test.ts tests/organization.test.ts tests/corrections.test.ts tests/choreography.test.ts"
   },
   "dependencies": {
     "@remotion/cli": "^4",
