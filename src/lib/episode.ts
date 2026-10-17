@@ -229,6 +229,26 @@ export const validateEpisode = (episode: Episode): string[] => {
           fail(`viz.framesPerStep (${viz.framesPerStep}) must be a positive number.`);
         }
       }
+      if (viz.type === 'asyncFlow') {
+        const hasPromise = Boolean(viz.promise);
+        const hasLanes = Boolean(viz.lanes && viz.lanes.length > 0);
+        const hasSteps = Boolean(viz.steps && viz.steps.length > 0);
+        if (!hasPromise && !hasLanes && !hasSteps) {
+          fail('viz of type asyncFlow must provide at least one of promise, lanes, or steps.');
+        }
+        if (viz.promise && !['pending', 'fulfilled', 'rejected'].includes(viz.promise.state)) {
+          fail(`viz.promise.state "${viz.promise.state}" must be one of 'pending', 'fulfilled', or 'rejected'.`);
+        }
+        if (viz.lanes && viz.lanes.length === 0) {
+          fail('viz.lanes must contain at least one lane when specified.');
+        }
+        if (viz.steps && viz.steps.length === 0) {
+          fail('viz.steps must contain at least one step when specified.');
+        }
+        if (viz.framesPerStep !== undefined && (!Number.isFinite(viz.framesPerStep) || viz.framesPerStep <= 0)) {
+          fail(`viz.framesPerStep (${viz.framesPerStep}) must be a positive number.`);
+        }
+      }
     }
     if (scene.kind === 'steps') {
       if (

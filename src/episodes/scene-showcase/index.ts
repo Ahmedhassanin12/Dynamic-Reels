@@ -22,7 +22,9 @@ export const sceneShowcase = defineEpisode({
     { text: 'تعقيد', start: 32.0, end: 35.9 },
     { text: 'انتقال', start: 36.0, end: 39.9 },
     { text: 'خرافة', start: 40.0, end: 43.9 },
-    { text: 'لينكد', start: 44.0, end: 48.0 },
+    { text: 'لينكد', start: 44.0, end: 47.9 },
+    { text: 'بروميس', start: 48.0, end: 51.9 },
+    { text: 'مسارات', start: 52.0, end: 56.0 },
   ],
   scenes: [
     // 1. Panel 4 — Recursion Call Stack (viz.type: 'callStack')
@@ -267,6 +269,54 @@ export const sceneShowcase = defineEpisode({
         note: 'كل Node فيها Data ومؤشر للعنوان اللي بعده',
       },
       result: 'O(1)',
+    },
+
+    // 13. Panel 19 — Promise Lifecycle State Machine (viz.type: 'asyncFlow', mode: 'promise')
+    {
+      id: 'async-promise-lifecycle',
+      kind: 'codeDemo',
+      at: 12,
+      label: 'PANEL 19 · ASYNC JAVASCRIPT',
+      title: 'دورة حياة الـ Promise',
+      filename: 'fetch-user.ts',
+      skipTyping: true,
+      code: `const promise = fetch('/api/user/42')\n  .then(res => res.json())\n  .catch(err => console.error(err));`,
+      viz: {
+        type: 'asyncFlow',
+        mode: 'promise',
+        promise: {
+          name: "fetch('/api/user/42')",
+          state: 'fulfilled',
+          settledValue: '{ id: 42, name: "Ali", role: "admin" }',
+          durationMs: 240,
+        },
+        note: 'بيبدأ Pending وبيتحول لـ Fulfilled أو Rejected أول ما الـ Response يوصل',
+      },
+      result: '200 OK',
+    },
+
+    // 14. Panel 20 — Concurrency Waterfall with Persistent Code (persistCode: true)
+    {
+      id: 'async-waterfall-concurrency',
+      kind: 'codeDemo',
+      at: 13,
+      label: 'PANEL 20 · EVENT LOOP & I/O',
+      title: 'الـ Main Thread مش بيعطل!',
+      filename: 'fetch-user.ts',
+      persistCode: true,
+      highlightLines: [2],
+      code: `const promise = fetch('/api/user/42')\n  .then(res => res.json())\n  .catch(err => console.error(err));`,
+      viz: {
+        type: 'asyncFlow',
+        mode: 'waterfall',
+        lanes: [
+          { name: 'Main Thread', operation: 'console.log("UI Responsive")', status: 'running', progress: 100 },
+          { name: 'Background Network I/O', operation: 'GET /api/user/42 (240ms)', status: 'running', progress: 85 },
+          { name: 'Microtask Queue', operation: '.then() callback waiting', status: 'idle' },
+        ],
+        note: 'الـ I/O شغال في الخلفية.. والـ Main Thread بيكمل عادي بدون Block',
+      },
+      result: 'Non-blocking',
     },
   ],
 });

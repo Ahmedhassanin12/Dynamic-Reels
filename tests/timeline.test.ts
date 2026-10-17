@@ -512,7 +512,7 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
 
     it('validates Batch 4 scenes & visualizers (memory, complexity, diagram, transition) and resolves sceneShowcase', () => {
       const showcaseTimeline = resolveTimeline(sceneShowcase, FPS);
-      assert.equal(showcaseTimeline.length, 12);
+      assert.equal(showcaseTimeline.length, 14);
 
       const badEp: Episode = {
         id: 'batch4-bad',
@@ -735,6 +735,95 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       assert.ok(errors.some((e) => e.includes('scene "bad-list": viz.nodes must contain at least one node')));
       assert.ok(errors.some((e) => e.includes('scene "bad-list": viz.activePointer 5 is outside viz.nodes')));
       assert.ok(errors.some((e) => e.includes('scene "bad-list": viz.framesPerStep (-2) must be a positive number')));
+    });
+
+    it('validates Phase 5B Batch 2 scenes and visualizers (asyncFlow and persistCode)', () => {
+      // 1. Valid episode with asyncFlow and persistCode
+      const validEp = defineEpisode({
+        id: 'phase5b-batch2-valid',
+        title: 'Phase 5B Batch 2 Valid',
+        voice: null,
+        words: [
+          { text: 'أول', start: 0.0, end: 1.0 },
+          { text: 'بروميس', start: 1.5, end: 3.0 },
+          { text: 'تتابع', start: 3.5, end: 5.0 },
+        ],
+        scenes: [
+          {
+            id: 'async-promise',
+            kind: 'codeDemo',
+            at: 0,
+            code: 'const res = await fetch("/api");',
+            viz: {
+              type: 'asyncFlow',
+              mode: 'promise',
+              promise: {
+                name: 'fetch("/api/users")',
+                state: 'fulfilled',
+                settledValue: '{ status: 200 }',
+                durationMs: 320,
+              },
+              note: 'Promise resolves from pending to fulfilled',
+            },
+            result: '200 OK',
+          },
+          {
+            id: 'async-persistent',
+            kind: 'codeDemo',
+            at: 1,
+            code: 'const res = await fetch("/api");\nconsole.log(res);',
+            persistCode: true,
+            highlightLines: [2],
+            viz: {
+              type: 'asyncFlow',
+              mode: 'waterfall',
+              lanes: [
+                { name: 'Main Thread', operation: 'console.log', status: 'running' },
+                { name: 'I/O', operation: 'HTTP 200', status: 'done', progress: 100 },
+              ],
+            },
+          },
+        ],
+      });
+
+      const timeline = resolveTimeline(validEp, FPS);
+      assert.equal(timeline.length, 2);
+      assert.equal(timeline[0].scene.kind, 'codeDemo');
+      assert.equal(timeline[1].scene.kind, 'codeDemo');
+
+      // Verify persistCode eliminates typing delay in getMinSceneFrames
+      const regularFrames = getMinSceneFrames(validEp.scenes[0]);
+      const persistentFrames = getMinSceneFrames(validEp.scenes[1]);
+      // The second scene has longer code, but persistCode skips typing + viz delay
+      assert.ok(persistentFrames < regularFrames);
+
+      // 2. Invalid asyncFlow configs
+      const invalidEp: Episode = {
+        id: 'phase5b-batch2-invalid',
+        title: 'Phase 5B Batch 2 Invalid',
+        voice: null,
+        words: [
+          { text: 'كلمة', start: 0.0, end: 0.5 },
+        ],
+        scenes: [
+          {
+            id: 'bad-async-empty',
+            kind: 'codeDemo',
+            at: 0,
+            viz: {
+              type: 'asyncFlow',
+              // missing promise, lanes, and steps
+            },
+          },
+        ],
+      };
+
+      const errors = validateEpisode(invalidEp);
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "bad-async-empty": viz of type asyncFlow must provide at least one of promise, lanes, or steps'),
+        ),
+      );
     });
   });
 });

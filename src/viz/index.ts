@@ -1,3 +1,4 @@
+export { AsyncFlowViz } from './AsyncFlowViz';
 export { BinarySearchViz } from './BinarySearchViz';
 export { CallStackViz } from './CallStackViz';
 export { ComplexityViz } from './ComplexityViz';

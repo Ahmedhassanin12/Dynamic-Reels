@@ -266,12 +266,12 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
         ? (scene.target + 1) * SCAN.framesPerCell + 15
         : SCAN.jumpDelayFrames + 15;
     case 'code': {
-      const codeTyping = scene.skipTyping ? 0 : typingFrames(scene.code);
+      const codeTyping = scene.skipTyping || scene.persistCode ? 0 : typingFrames(scene.code);
       return codeTyping + (scene.highlightLines?.length ? CODE_SNAP.focusFadeFrames : 0) + 15;
     }
     case 'codeDemo': {
-      const codeTyping = scene.code && !scene.skipTyping ? typingFrames(scene.code) : 0;
-      const delay = scene.code ? CODE_DEMO.vizDelayFrames : 0;
+      const codeTyping = scene.code && !(scene.skipTyping || scene.persistCode) ? typingFrames(scene.code) : 0;
+      const delay = scene.code && !scene.persistCode ? CODE_DEMO.vizDelayFrames : 0;
       let vizFrames = 30;
       if (scene.viz.type === 'scan') {
         vizFrames = (scene.viz.target + 1) * SCAN.framesPerCell + 20;
@@ -295,6 +295,10 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
         const count = scene.viz.nodes.length;
         const stepFrames = scene.viz.framesPerStep ?? 18;
         vizFrames = scene.viz.activePointer !== undefined || scene.viz.framesPerStep ? count * stepFrames + 15 : 35;
+      } else if (scene.viz.type === 'asyncFlow') {
+        const stepCount = scene.viz.steps?.length ?? 1;
+        const stepFrames = scene.viz.framesPerStep ?? 25;
+        vizFrames = scene.viz.steps?.length ? stepCount * stepFrames + 15 : 35;
       }
       return codeTyping + delay + vizFrames;
     }

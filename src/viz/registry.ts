@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import type { VizProps, VizType } from '../types';
+import { AsyncFlowViz } from './AsyncFlowViz';
 import { BinarySearchViz } from './BinarySearchViz';
 import { CallStackViz } from './CallStackViz';
 import { ComplexityViz } from './ComplexityViz';
@@ -20,6 +21,7 @@ export const VIZ_REGISTRY = {
   memory: MemoryViz,
   complexity: ComplexityViz,
   linkedList: LinkedListViz,
+  asyncFlow: AsyncFlowViz,
 } satisfies { [K in VizType]: FC<VizProps<K>> };
 
 

@@ -17,6 +17,7 @@ const DEFAULT_PILLS: Record<VizType, { pill: string; tone: 'good' | 'bad' | 'neu
   memory: { pill: 'JS MEMORY · STACK VS HEAP', tone: 'neutral' },
   complexity: { pill: 'BIG-O · TIME COMPLEXITY', tone: 'good' },
   linkedList: { pill: 'DATA STRUCTURE · LINKED LIST', tone: 'neutral' },
+  asyncFlow: { pill: 'ASYNC JS · PROMISE & EVENT FLOW', tone: 'neutral' },
 };
 
 /** Code on top, and below it a live picture of what that code does, so it makes sense even without the voice. */
@@ -28,6 +29,7 @@ export const CodeDemoScene = ({
   filename,
   highlightLines,
   skipTyping,
+  persistCode,
   pill,
   pillTone,
   tagText,
@@ -44,16 +46,19 @@ export const CodeDemoScene = ({
   const resolvedTagTone = tagTone ?? resolvedTone;
   const resolvedTagText =
     tagText ??
-    (result
-      ? viz.type === 'scan'
-        ? `${result} · slow`
-        : viz.type === 'lookup' || viz.type === 'binarySearch'
-          ? `${result} · fast`
-          : result
-      : undefined);
+    (persistCode
+      ? 'PERSISTENT CONTEXT'
+      : result
+        ? viz.type === 'scan'
+          ? `${result} · slow`
+          : viz.type === 'lookup' || viz.type === 'binarySearch'
+            ? `${result} · fast`
+            : result
+        : undefined);
 
-  const codeDelay = code && !skipTyping ? typingFrames(code) : 0;
-  const vizStart = code ? codeDelay + CODE_DEMO.vizDelayFrames : 0;
+  const effectiveSkipTyping = Boolean(skipTyping || persistCode);
+  const codeDelay = code && !effectiveSkipTyping ? typingFrames(code) : 0;
+  const vizStart = code && !persistCode ? codeDelay + CODE_DEMO.vizDelayFrames : 0;
   const vizFrame = Math.max(0, frame - vizStart);
 
   // Dynamically sync active code line when execution, eventLoop, or callStack steps specify a line number
@@ -84,7 +89,7 @@ export const CodeDemoScene = ({
             language={language}
             filename={filename}
             highlightLines={activeHighlightLines}
-            skipTyping={skipTyping}
+            skipTyping={effectiveSkipTyping}
             tagText={resolvedTagText}
             tagTone={resolvedTagTone}
           />

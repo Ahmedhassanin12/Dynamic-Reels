@@ -130,7 +130,38 @@ export type VizConfig =
       pointerLabel?: string;
       note?: string;
       framesPerStep?: number;
+    }
+  | {
+      type: 'asyncFlow';
+      mode?: 'promise' | 'waterfall';
+      promise?: {
+        name?: string;
+        state: 'pending' | 'fulfilled' | 'rejected';
+        settledValue?: string;
+        durationMs?: number;
+      };
+      lanes?: AsyncLane[];
+      steps?: AsyncStep[];
+      framesPerStep?: number;
+      note?: string;
     };
+
+export type AsyncState = 'pending' | 'fulfilled' | 'rejected' | 'running' | 'idle';
+
+export type AsyncStep = {
+  label: string;
+  status: AsyncState;
+  value?: string;
+  mainThread?: string;
+  note?: string;
+};
+
+export type AsyncLane = {
+  name: string;
+  operation: string;
+  status: 'idle' | 'running' | 'done' | 'blocked' | 'error';
+  progress?: number;
+};
 
 export type LinkedListNode = {
   value: string | number;
@@ -205,6 +236,8 @@ export type SceneConfig =
       filename?: string;
       highlightLines?: number[];
       skipTyping?: boolean;
+      /** When true, preserves code context across scenes without re-typing */
+      persistCode?: boolean;
     })
   | (Base & {
       kind: 'codeDemo';
@@ -213,6 +246,8 @@ export type SceneConfig =
       filename?: string;
       highlightLines?: number[];
       skipTyping?: boolean;
+      /** When true, preserves code context across scenes without re-typing or delay */
+      persistCode?: boolean;
       pill?: string;
       pillTone?: 'good' | 'bad' | 'neutral';
       tagText?: string;
