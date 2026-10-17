@@ -6,7 +6,7 @@ import { SceneTransition } from './components/SceneTransition';
 import { TRANSITION } from './config';
 import { ThemeProvider, useTheme } from './lib/theme';
 import { resolveTimeline } from './lib/timeline';
-import { SCENE_REGISTRY } from './scenes/registry';
+import { SCENE_REGISTRY } from './scenes';
 import type { Episode, SceneConfig } from './types';
 
 const ReelStage = ({ episode }: { episode: Episode }) => {

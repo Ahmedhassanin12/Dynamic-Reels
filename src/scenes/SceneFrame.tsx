@@ -17,6 +17,7 @@ export const SceneFrame = ({ label, title, pill, pillTone = 'neutral', children 
   const pillColor = pillTone === 'good' ? theme.good : pillTone === 'bad' ? theme.bad : theme.ink;
   const pillBg = pillTone === 'good' ? theme.goodTint : pillTone === 'bad' ? theme.badTint : theme.tint;
   const pillBorder = pillTone === 'good' ? theme.goodBorder : pillTone === 'bad' ? theme.badBorder : theme.borderStrong;
+  const hasHeader = Boolean(label || title || pill);
 
   return (
     <div
@@ -31,7 +32,8 @@ export const SceneFrame = ({ label, title, pill, pillTone = 'neutral', children 
         fontWeight: 700,
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14, marginBottom: 32 }}>
+      {hasHeader && (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14, marginBottom: 32 }}>
         {label && (
           <div
             style={{
@@ -83,6 +85,7 @@ export const SceneFrame = ({ label, title, pill, pillTone = 'neutral', children 
           </div>
         )}
       </div>
+      )}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>{children}</div>
     </div>
   );

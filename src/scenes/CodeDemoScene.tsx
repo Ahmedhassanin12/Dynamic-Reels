@@ -4,7 +4,7 @@ import { CodeSnap } from '../components/CodeSnap';
 import { CALL_STACK, CODE_DEMO, EVENT_LOOP, EXECUTION } from '../config';
 import { typingFrames } from '../lib/code';
 import type { SceneOf, VizProps, VizType } from '../types';
-import { VIZ_REGISTRY } from '../viz/registry';
+import { VIZ_REGISTRY } from '../viz';
 import { SceneFrame } from './SceneFrame';
 
 const DEFAULT_PILLS: Record<VizType, { pill: string; tone: 'good' | 'bad' | 'neutral' }> = {

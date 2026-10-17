@@ -1,9 +1,10 @@
 // Usage: npm run new-episode -- my-episode-id
-import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { idToVariableName, isValidEpisodeId, registerEpisodeInSource } from '../src/lib/scaffold.ts';
 
 const id = process.argv[2];
-if (!id || !/^[a-z0-9-]+$/.test(id)) {
-  console.error('Usage: npm run new-episode -- <kebab-case-id>');
+if (!isValidEpisodeId(id)) {
+  console.error('Usage: npm run new-episode -- <kebab-case-id> (must start with a letter and contain only lowercase letters, digits, and hyphens)');
   process.exit(1);
 }
 
@@ -13,35 +14,21 @@ if (existsSync(dir)) {
   process.exit(1);
 }
 
-const name = id.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
+const name = idToVariableName(id);
 
 // Plan the src/episodes/index.ts edit first, so nothing is created if it can't be registered.
 const indexFile = 'src/episodes/index.ts';
-const fail = (msg) => {
-  console.error(`${msg}\nNothing was created. Fix ${indexFile} or register the episode by hand.`);
+let indexContent;
+try {
+  const original = readFileSync(indexFile, 'utf-8');
+  indexContent = registerEpisodeInSource(original, id, name);
+} catch (err) {
+  console.error(`${err.message}\nNothing was created. Fix ${indexFile} or register the episode by hand.`);
   process.exit(1);
-};
-
-const original = readFileSync(indexFile, 'utf-8');
-const eol = original.includes('\r\n') ? '\r\n' : '\n';
-const lines = original.split(/\r?\n/);
-
-if (lines.some((line) => line.includes(`from './${id}'`))) fail(`'${id}' is already imported in ${indexFile}.`);
-
-const lastImport = lines.findLastIndex((line) => line.startsWith('import '));
-if (lastImport === -1) fail(`Could not find any import lines in ${indexFile}.`);
-lines.splice(lastImport + 1, 0, `import { ${name} } from './${id}';`);
-
-const EPISODES_RE = /(export const EPISODES = \[)([\s\S]*?)(\])/;
-let indexContent = lines.join(eol);
-if (!EPISODES_RE.test(indexContent)) fail(`Could not find "export const EPISODES = [...]" in ${indexFile}.`);
-indexContent = indexContent.replace(EPISODES_RE, (_, open, items, close) => {
-  const kept = items.replace(/[\s,]*$/, '');
-  return `${open}${kept ? `${kept}, ` : ''}${name}${close}`;
-});
+}
 
 mkdirSync(dir, { recursive: true });
-writeFileSync(`${dir}/words.json`, JSON.stringify([{ text: 'مرحبا', start: 0.2, end: 0.8 }], null, 1));
+writeFileSync(`${dir}/words.json`, JSON.stringify([{ text: 'مرحبا', start: 0.2, end: 0.8 }], null, 2));
 writeFileSync(
   `${dir}/index.ts`,
   `import { defineEpisode } from '../../lib/episode';

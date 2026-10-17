@@ -3,7 +3,7 @@ import { registerHooks } from 'node:module';
 import { dirname, extname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const EXTENSIONS = ['.ts', '.tsx', '.js', '.mjs', '.json'];
+const RESOLVABLE_EXTENSIONS = ['.ts', '.js', '.mjs', '.json'];
 
 registerHooks({
   resolve(specifier, context, nextResolve) {
@@ -12,6 +12,14 @@ registerHooks({
         url: `data:text/javascript,export default ${JSON.stringify(specifier)};`,
         shortCircuit: true,
       };
+    }
+
+    if (specifier.endsWith('.tsx')) {
+      throw new Error(
+        `[test-loader] Attempted to import "${specifier}" in Node test runner. ` +
+          `Node native type-stripping only executes TypeScript (.ts) files without JSX. ` +
+          `Keep pure business logic, calculations, and schemas in .ts files under src/lib/ to test them without UI bundling.`,
+      );
     }
 
     if (specifier.startsWith('.') && context.parentURL && context.parentURL.startsWith('file:')) {
@@ -27,7 +35,7 @@ registerHooks({
       }
 
       if (!extname(specifier)) {
-        for (const ext of EXTENSIONS) {
+        for (const ext of RESOLVABLE_EXTENSIONS) {
           const candidate = `${basePath}${ext}`;
           if (existsSync(candidate)) {
             return {
@@ -37,7 +45,7 @@ registerHooks({
             };
           }
         }
-        for (const ext of EXTENSIONS) {
+        for (const ext of RESOLVABLE_EXTENSIONS) {
           const indexCandidate = resolve(basePath, `index${ext}`);
           if (existsSync(indexCandidate)) {
             return {
@@ -45,6 +53,15 @@ registerHooks({
               shortCircuit: true,
             };
           }
+        }
+
+        // If a .tsx file is matched when no extension was provided
+        if (existsSync(`${basePath}.tsx`) || existsSync(resolve(basePath, 'index.tsx'))) {
+          throw new Error(
+            `[test-loader] Specifier "${specifier}" resolved to a .tsx file. ` +
+              `Node native type-stripping cannot parse JSX (.tsx). ` +
+              `Keep pure functions, schemas, and validators in .ts files under src/lib/.`,
+          );
         }
       }
     }

@@ -23,7 +23,10 @@ export const Root = () => (
           try {
             const audioSeconds = await getAudioDurationInSeconds(episode.voice);
             return {
-              durationInFrames: Math.ceil((audioSeconds + TIMELINE.tailSeconds) * FPS),
+              durationInFrames: Math.max(
+                Math.ceil((audioSeconds + TIMELINE.tailSeconds) * FPS),
+                getDurationInFrames(episode, FPS),
+              ),
             };
           } catch {
             return { durationInFrames: getDurationInFrames(episode, FPS) };
