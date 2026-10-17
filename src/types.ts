@@ -10,22 +10,86 @@ type Base = {
   title?: string;
 };
 
+export type ExecutionStep = {
+  /** 1-based line number in the code snippet */
+  line: number;
+  /** Console output emitted at this step */
+  output?: string;
+  /** Variable state snapshot at this step */
+  vars?: Record<string, string>;
+  /** Short educational note for this step */
+  note?: string;
+};
+
+export type EventLoopStep = {
+  /** Optional 1-based active line number in the code snippet */
+  line?: number;
+  /** Frames currently on the Call Stack (bottom-to-top or top-to-bottom) */
+  stack: string[];
+  /** Active Web API timers/requests */
+  webApis?: string[];
+  /** Callbacks waiting in the Microtask Queue (Promises) */
+  microtasks: string[];
+  /** Callbacks waiting in the Task / Macrotask Queue (setTimeout, I/O) */
+  tasks: string[];
+  /** Console outputs emitted up to this step */
+  output?: string[];
+  /** Which runtime zone is currently active */
+  activeZone?: 'stack' | 'webApi' | 'microtask' | 'task' | 'loop';
+  /** Short explanation of what happens in this tick */
+  note?: string;
+};
+
 export type VizConfig =
   | { type: 'scan'; cells: string[]; target: number }
-  | { type: 'lookup'; key: string; buckets: number; hit: number };
+  | { type: 'lookup'; key: string; buckets: number; hit: number }
+  | { type: 'execution'; steps: ExecutionStep[]; framesPerStep?: number }
+  | { type: 'eventLoop'; steps: EventLoopStep[]; framesPerStep?: number };
 
 export type VizType = VizConfig['type'];
 export type VizProps<K extends VizType> = { viz: Extract<VizConfig, { type: K }>; result?: string };
 
-export type CompareSide = { title: string; items: string[] };
+export type CompareSide = {
+  title: string;
+  items: string[];
+  badge?: string;
+  tone?: 'good' | 'bad' | 'ink' | 'paper';
+  /** Optional 0..100 progress bar value */
+  progress?: number;
+};
 
 export type SceneConfig =
-  | (Base & { kind: 'statement'; text: string })
+  | (Base & {
+      kind: 'statement';
+      text: string;
+      variant?: 'hook' | 'takeaway' | 'prediction';
+      codePreview?: { code: string; badge?: string; filename?: string; language?: string };
+    })
   | (Base & { kind: 'array'; cells: string[]; target: number; mode: 'scan' | 'jump' })
-  | (Base & { kind: 'code'; code: string; language?: string; filename?: string; highlightLines?: number[] })
-  | (Base & { kind: 'codeDemo'; code: string; language?: string; filename?: string; highlightLines?: number[]; viz: VizConfig; result?: string })
+  | (Base & {
+      kind: 'code';
+      code: string;
+      language?: string;
+      filename?: string;
+      highlightLines?: number[];
+      skipTyping?: boolean;
+    })
+  | (Base & {
+      kind: 'codeDemo';
+      code?: string;
+      language?: string;
+      filename?: string;
+      highlightLines?: number[];
+      skipTyping?: boolean;
+      pill?: string;
+      pillTone?: 'good' | 'bad' | 'neutral';
+      tagText?: string;
+      tagTone?: 'good' | 'bad' | 'neutral';
+      viz: VizConfig;
+      result?: string;
+    })
   | (Base & { kind: 'steps'; steps: string[] })
-  | (Base & { kind: 'compare'; sides: [CompareSide, CompareSide] })
+  | (Base & { kind: 'compare'; pill?: string; sides: [CompareSide, CompareSide] })
   | (Base & { kind: 'diagram'; nodes: string[]; highlight?: number })
   | (Base & { kind: 'qa'; question: string; answer: string });
 
@@ -41,3 +105,4 @@ export type Episode = {
   words: Word[];
   scenes: SceneConfig[];
 };
+

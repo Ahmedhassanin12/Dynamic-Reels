@@ -7,22 +7,50 @@ import { useTheme } from '../lib/theme';
 import type { SceneOf } from '../types';
 import { SceneFrame } from './SceneFrame';
 
-export const CompareScene = ({ label, title, sides }: SceneOf<'compare'>) => {
+export const CompareScene = ({ label, title, pill = 'COMPARISON', sides }: SceneOf<'compare'>) => {
   const theme = useTheme();
 
   return (
-    <SceneFrame label={label} title={title} pill="PERFORMANCE BENCHMARK" pillTone="neutral">
+    <SceneFrame label={label} title={title} pill={pill} pillTone="neutral">
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24, direction: 'rtl' }}>
         {sides.map((side, sideIndex) => {
-          const isWinner = sideIndex === 1;
-          const accent = isWinner ? theme.good : theme.bad;
-          const tint = isWinner ? theme.goodTint : theme.badTint;
-          const border = isWinner ? theme.goodBorder : theme.badBorder;
+          const inferredTone =
+            side.tone ??
+            (side.title.toLowerCase().includes('map')
+              ? 'good'
+              : side.title.toLowerCase().includes('array')
+                ? 'bad'
+                : sideIndex === 0
+                  ? 'good'
+                  : 'ink');
+
+          const isGood = inferredTone === 'good';
+          const isBad = inferredTone === 'bad';
+          const accent = isGood ? theme.good : isBad ? theme.bad : theme.ink;
+          const tint = isGood ? theme.goodTint : isBad ? theme.badTint : theme.tint;
+          const border = isGood ? theme.goodBorder : isBad ? theme.badBorder : theme.borderStrong;
+
+          const badgeText =
+            side.badge ??
+            (side.title.toLowerCase().includes('map')
+              ? 'O(1) · instant lookup'
+              : side.title.toLowerCase().includes('array')
+                ? 'O(n) · full scan'
+                : undefined);
+
+          const progressWidth =
+            side.progress !== undefined
+              ? `${side.progress}%`
+              : side.title.toLowerCase().includes('map')
+                ? '16%'
+                : side.title.toLowerCase().includes('array')
+                  ? '92%'
+                  : undefined;
 
           return (
             <Enter key={sideIndex} delay={sideIndex * MOTION.stagger}>
               <Box
-                tone={isWinner ? 'good' : 'bad'}
+                tone={isGood ? 'good' : isBad ? 'bad' : 'paper'}
                 style={{
                   padding: '26px 32px',
                   display: 'flex',
@@ -54,40 +82,43 @@ export const CompareScene = ({ label, title, sides }: SceneOf<'compare'>) => {
                         fontSize: 20,
                       }}
                     >
-                      {isWinner ? '✓' : '✗'}
+                      {isBad ? '✗' : isGood ? '✓' : String(sideIndex + 1)}
                     </span>
                     <span style={{ fontSize: 38, fontWeight: 700, color: theme.text }}>
                       <BidiText>{side.title}</BidiText>
                     </span>
                   </div>
-                  <span
-                    style={{
-                      padding: '6px 16px',
-                      borderRadius: 999,
-                      background: tint,
-                      border: `1px solid ${border}`,
-                      color: accent,
-                      fontFamily: CODE_FONT,
-                      fontSize: 20,
-                      fontWeight: 600,
-                      direction: 'ltr',
-                    }}
-                  >
-                    {isWinner ? 'O(1) · instant lookup' : 'O(n) · full scan'}
-                  </span>
+                  {badgeText && (
+                    <span
+                      style={{
+                        padding: '6px 16px',
+                        borderRadius: 999,
+                        background: tint,
+                        border: `1px solid ${border}`,
+                        color: accent,
+                        fontFamily: CODE_FONT,
+                        fontSize: 20,
+                        fontWeight: 600,
+                        direction: 'ltr',
+                      }}
+                    >
+                      {badgeText}
+                    </span>
+                  )}
                 </div>
 
-                {/* Speed bar comparison */}
-                <div style={{ height: 8, borderRadius: 999, background: theme.border, overflow: 'hidden', direction: 'ltr' }}>
-                  <div
-                    style={{
-                      width: isWinner ? '16%' : '92%',
-                      height: '100%',
-                      background: accent,
-                      borderRadius: 999,
-                    }}
-                  />
-                </div>
+                {progressWidth && (
+                  <div style={{ height: 8, borderRadius: 999, background: theme.border, overflow: 'hidden', direction: 'ltr' }}>
+                    <div
+                      style={{
+                        width: progressWidth,
+                        height: '100%',
+                        background: accent,
+                        borderRadius: 999,
+                      }}
+                    />
+                  </div>
+                )}
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12, fontSize: 32, lineHeight: 1.45, color: theme.text }}>
                   {side.items.map((item, i) => (
@@ -107,4 +138,5 @@ export const CompareScene = ({ label, title, sides }: SceneOf<'compare'>) => {
     </SceneFrame>
   );
 };
+
 

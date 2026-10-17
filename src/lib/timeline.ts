@@ -1,4 +1,4 @@
-import { CODE_DEMO, CODE_SNAP, LOOKUP, MOTION, SCAN, TIMELINE } from '../config';
+import { CODE_DEMO, CODE_SNAP, EVENT_LOOP, EXECUTION, LOOKUP, MOTION, SCAN, TIMELINE } from '../config';
 import type { Episode, SceneConfig, Word } from '../types';
 import { typingFrames } from './code';
 import { normalizeText as normalize } from './text';
@@ -34,20 +34,29 @@ const resolveAnchor = (scene: SceneConfig, words: Word[], searchFrom: number): n
 export const getMinSceneFrames = (scene: SceneConfig): number => {
   switch (scene.kind) {
     case 'statement':
-      return 15;
+      return scene.codePreview ? 28 : 15;
     case 'array':
       return scene.mode === 'scan'
         ? (scene.target + 1) * SCAN.framesPerCell + 15
         : SCAN.jumpDelayFrames + 15;
-    case 'code':
-      return typingFrames(scene.code) + (scene.highlightLines?.length ? CODE_SNAP.focusFadeFrames : 0) + 15;
+    case 'code': {
+      const codeTyping = scene.skipTyping ? 0 : typingFrames(scene.code);
+      return codeTyping + (scene.highlightLines?.length ? CODE_SNAP.focusFadeFrames : 0) + 15;
+    }
     case 'codeDemo': {
-      const codeTyping = typingFrames(scene.code);
-      const vizFrames =
-        scene.viz.type === 'scan'
-          ? (scene.viz.target + 1) * SCAN.framesPerCell + 20
-          : LOOKUP.resultDelayFrames + 20;
-      return codeTyping + CODE_DEMO.vizDelayFrames + vizFrames;
+      const codeTyping = scene.code && !scene.skipTyping ? typingFrames(scene.code) : 0;
+      const delay = scene.code ? CODE_DEMO.vizDelayFrames : 0;
+      let vizFrames = 30;
+      if (scene.viz.type === 'scan') {
+        vizFrames = (scene.viz.target + 1) * SCAN.framesPerCell + 20;
+      } else if (scene.viz.type === 'lookup') {
+        vizFrames = LOOKUP.resultDelayFrames + 20;
+      } else if (scene.viz.type === 'execution') {
+        vizFrames = scene.viz.steps.length * (scene.viz.framesPerStep ?? EXECUTION.framesPerStep) + 15;
+      } else if (scene.viz.type === 'eventLoop') {
+        vizFrames = scene.viz.steps.length * (scene.viz.framesPerStep ?? EVENT_LOOP.framesPerStep) + 15;
+      }
+      return codeTyping + delay + vizFrames;
     }
     case 'steps':
       return scene.steps.length * MOTION.stagger + 15;

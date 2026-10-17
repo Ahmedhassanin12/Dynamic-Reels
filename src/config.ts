@@ -47,6 +47,11 @@ export type Theme = {
   badTint: string;
   badBorder: string;
   badShadow: string;
+  warn: string;
+  onWarn: string;
+  warnTint: string;
+  warnBorder: string;
+  warnShadow: string;
   grid: string;
   shadow: string;
   shadowSm: string;
@@ -93,6 +98,11 @@ const SHARED_UI = {
   badTint: 'rgba(239, 68, 68, 0.11)',
   badBorder: 'rgba(239, 68, 68, 0.35)',
   badShadow: '0 0 50px rgba(239, 68, 68, 0.07)',
+  warn: '#fb923c',
+  onWarn: '#1a0a03',
+  warnTint: 'rgba(251, 146, 60, 0.11)',
+  warnBorder: 'rgba(251, 146, 60, 0.35)',
+  warnShadow: '0 0 50px rgba(251, 146, 60, 0.07)',
   grid: 'transparent',
   shadow: '0 32px 80px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.07)',
   shadowSm: '0 20px 50px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
@@ -154,6 +164,8 @@ export const MOTION = {
 
 export const SCAN = { framesPerCell: 8, jumpDelayFrames: 12 } as const;
 export const LOOKUP = { hitDelayFrames: 44, resultDelayFrames: 56 } as const;
+export const EXECUTION = { framesPerStep: 18 } as const;
+export const EVENT_LOOP = { framesPerStep: 20 } as const;
 
 export const CAPTION = {
   wordsPerChunk: 3,

@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { useTheme } from '../lib/theme';
 
-export type BoxTone = 'paper' | 'ink' | 'good' | 'bad';
+export type BoxTone = 'paper' | 'ink' | 'good' | 'bad' | 'warn';
 
 type Props = { tone?: BoxTone; children: ReactNode; style?: CSSProperties };
 
@@ -31,6 +31,12 @@ export const Box = ({ tone = 'paper', children, style }: Props) => {
       color: theme.text,
       border: `1px solid ${theme.badBorder}`,
       boxShadow: `${theme.badShadow}, ${theme.shadowSm}`,
+    },
+    warn: {
+      background: theme.paper,
+      color: theme.text,
+      border: `1px solid ${theme.warnBorder}`,
+      boxShadow: `${theme.warnShadow}, ${theme.shadowSm}`,
     },
   };
 

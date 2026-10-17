@@ -44,18 +44,35 @@ export const validateEpisode = (episode: Episode): string[] => {
     if (scene.kind === 'diagram' && scene.highlight !== undefined && !inRange(scene.highlight, scene.nodes.length)) {
       fail(`highlight ${scene.highlight} is outside nodes (0-${scene.nodes.length - 1}).`);
     }
-    if (scene.kind === 'code' || scene.kind === 'codeDemo') {
+    if ((scene.kind === 'code' || scene.kind === 'codeDemo') && scene.code) {
       const lineCount = scene.code.split('\n').length;
       const bad = (scene.highlightLines ?? []).filter((line) => !inRange(line - 1, lineCount));
       if (bad.length) fail(`highlightLines ${bad.join(', ')} are outside the code (1-${lineCount}, 1-based).`);
     }
     if (scene.kind === 'codeDemo') {
       const { viz } = scene;
+      const lineCount = scene.code ? scene.code.split('\n').length : 0;
       if (viz.type === 'scan' && !inRange(viz.target, viz.cells.length)) {
         fail(`viz.target ${viz.target} is outside viz.cells (0-${viz.cells.length - 1}).`);
       }
       if (viz.type === 'lookup' && !inRange(viz.hit, viz.buckets)) {
         fail(`viz.hit ${viz.hit} is outside the buckets (0-${viz.buckets - 1}).`);
+      }
+      if (viz.type === 'execution') {
+        if (viz.steps.length === 0) fail('viz.steps is empty.');
+        if (lineCount > 0) {
+          const badLines = viz.steps.map((s) => s.line).filter((l) => !inRange(l - 1, lineCount));
+          if (badLines.length) fail(`viz.steps line(s) ${badLines.join(', ')} are outside the code (1-${lineCount}).`);
+        }
+      }
+      if (viz.type === 'eventLoop') {
+        if (viz.steps.length === 0) fail('viz.steps is empty.');
+        if (lineCount > 0) {
+          const badLines = viz.steps
+            .map((s) => s.line)
+            .filter((l): l is number => l !== undefined && !inRange(l - 1, lineCount));
+          if (badLines.length) fail(`viz.steps line(s) ${badLines.join(', ')} are outside the code (1-${lineCount}).`);
+        }
       }
     }
   }

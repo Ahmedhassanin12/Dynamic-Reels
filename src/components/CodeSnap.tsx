@@ -11,6 +11,8 @@ type Props = {
   filename?: string;
   /** 1-based line numbers to focus on once typing finishes */
   highlightLines?: number[];
+  /** Keep code immediately visible without typing animation (PersistentCodeContext) */
+  skipTyping?: boolean;
   /** Optional floating corner badge (e.g. "O(n) · slow") */
   tagText?: string;
   tagTone?: 'good' | 'bad' | 'neutral';
@@ -21,6 +23,7 @@ export const CodeSnap = ({
   language = 'tsx',
   filename = 'snippet.ts',
   highlightLines = [],
+  skipTyping = false,
   tagText,
   tagTone = 'neutral',
 }: Props) => {
@@ -32,18 +35,20 @@ export const CodeSnap = ({
   const maxLineLength = Math.max(...lines.map((l) => l.length), 0);
   const fontSize = maxLineLength > 42 || lines.length > 7 ? CODE_SNAP.compactFontSize : CODE_SNAP.fontSize;
 
-  const typingEnd = typingFrames(code);
-  const shown = code.slice(0, Math.floor(frame * CODE_SNAP.charsPerFrame));
-  const cursorOn = Math.floor(frame / 15) % 2 === 0 && frame < typingEnd + 45;
+  const typingEnd = skipTyping ? 0 : typingFrames(code);
+  const shown = skipTyping ? code : code.slice(0, Math.floor(frame * CODE_SNAP.charsPerFrame));
+  const cursorOn = !skipTyping && Math.floor(frame / 15) % 2 === 0 && frame < typingEnd + 45;
   const focus = highlightLines.length
-    ? interpolate(frame, [typingEnd, typingEnd + CODE_SNAP.focusFadeFrames], [0, 1], {
-        extrapolateLeft: 'clamp',
-        extrapolateRight: 'clamp',
-      })
+    ? skipTyping
+      ? 1
+      : interpolate(frame, [typingEnd, typingEnd + CODE_SNAP.focusFadeFrames], [0, 1], {
+          extrapolateLeft: 'clamp',
+          extrapolateRight: 'clamp',
+        })
     : 0;
 
   const tagColor = tagTone === 'good' ? theme.good : tagTone === 'bad' ? theme.bad : theme.ink;
-  const tagBorder = tagTone === 'good' ? theme.goodBorder : tagTone === 'bad' ? theme.badBorder : theme.border;
+  const tagBorder = tagTone === 'good' ? theme.goodBorder : tagTone === 'bad' ? theme.badBorder : theme.borderStrong;
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
