@@ -205,7 +205,7 @@ export const CAPTION = {
   holdSeconds: 0.5,
   fontSize: 52,
   maxWidth: 640,
-  right: 105,
+  right: 115,
   bottom: 220,
   handleSize: 11,
   spring: { damping: 14, stiffness: 180 },

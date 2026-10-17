@@ -19,6 +19,7 @@ export const eventLoop = defineEpisode({
   title: 'event-loop',
   voice,
   words,
+  theme:"mint",
   scenes: [
     {
       id: 'hook',
