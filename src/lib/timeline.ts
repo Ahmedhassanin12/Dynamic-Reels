@@ -1,8 +1,49 @@
-import { CODE_DEMO, CODE_SNAP, EVENT_LOOP, EXECUTION, LOOKUP, MOTION, SCAN, TIMELINE } from '../config';
+import {
+  BINARY_SEARCH,
+  CALL_STACK,
+  CODE_DEMO,
+  CODE_SNAP,
+  EVENT_LOOP,
+  EXECUTION,
+  LOOKUP,
+  MOTION,
+  SCAN,
+  TIMELINE,
+} from '../config';
 import type { Episode, SceneConfig, Word } from '../types';
 import { typingFrames } from './code';
 import { applyGlossary } from './episode';
 import { normalizeText as normalize, tokenizeNormalized } from './text';
+
+export type BinarySearchStep = {
+  low: number;
+  mid: number;
+  high: number;
+  found: boolean;
+};
+
+/** Deterministically computes exact [low, mid, high] steps for binary search on a sorted array. */
+export const computeBinarySearchSteps = (
+  cells: (string | number)[],
+  targetIndex: number,
+): BinarySearchStep[] => {
+  const steps: BinarySearchStep[] = [];
+  let low = 0;
+  let high = cells.length - 1;
+
+  while (low <= high && steps.length <= cells.length) {
+    const mid = Math.floor((low + high) / 2);
+    const found = mid === targetIndex;
+    steps.push({ low, mid, high, found });
+    if (found) break;
+    if (targetIndex < mid) {
+      high = mid - 1;
+    } else {
+      low = mid + 1;
+    }
+  }
+  return steps.length > 0 ? steps : [{ low: 0, mid: 0, high: Math.max(0, cells.length - 1), found: true }];
+};
 
 export type AnchorMatch = {
   /** Start index in the raw transcript (0-based) */
@@ -235,6 +276,12 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
         vizFrames = scene.viz.steps.length * (scene.viz.framesPerStep ?? EXECUTION.framesPerStep) + 15;
       } else if (scene.viz.type === 'eventLoop') {
         vizFrames = scene.viz.steps.length * (scene.viz.framesPerStep ?? EVENT_LOOP.framesPerStep) + 15;
+      } else if (scene.viz.type === 'callStack') {
+        const totalSteps = scene.viz.frames.length + (scene.viz.returns?.length ?? 0);
+        vizFrames = totalSteps * (scene.viz.framesPerStep ?? CALL_STACK.framesPerStep) + 15;
+      } else if (scene.viz.type === 'binarySearch') {
+        const steps = computeBinarySearchSteps(scene.viz.cells, scene.viz.targetIndex).length;
+        vizFrames = steps * (scene.viz.framesPerStep ?? BINARY_SEARCH.framesPerStep) + 15;
       }
       return codeTyping + delay + vizFrames;
     }

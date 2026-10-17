@@ -7,7 +7,7 @@ import { eventLoop } from '../src/episodes/event-loop';
 import eventLoopWords from '../src/episodes/event-loop/words.json';
 import { applyGlossary, defineEpisode, validateEpisode } from '../src/lib/episode';
 import { normalizeText, tokenizeNormalized } from '../src/lib/text';
-import { resolveTimeline } from '../src/lib/timeline';
+import { computeBinarySearchSteps, getMinSceneFrames, resolveTimeline } from '../src/lib/timeline';
 import type { Episode, SceneConfig, Word } from '../src/types';
 
 const makeStatement = (id: string, at: SceneConfig['at'], text = 'مشهد تجريبي'): SceneConfig => ({
@@ -338,5 +338,74 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       assert.ok(errors.some((e) => e.includes('target 3 is outside cells')));
       assert.ok(errors.some((e) => e.includes('highlightLines 5 are outside the code')));
     });
+
+    it('validates Batch 1 & Batch 2 visualizers (execution, eventLoop, callStack, binarySearch)', () => {
+      const ep: Episode = {
+        id: 'bad-viz',
+        title: 'Bad Viz',
+        voice: null,
+        words: [
+          { text: 'أول', start: 0.0, end: 0.5 },
+          { text: 'ثاني', start: 1.0, end: 1.5 },
+          { text: 'ثالث', start: 2.0, end: 2.5 },
+          { text: 'رابع', start: 3.0, end: 3.5 },
+        ],
+        scenes: [
+          {
+            id: 'exec-bad',
+            kind: 'codeDemo',
+            at: 0,
+            code: 'const a = 1;\nconst b = 2;',
+            viz: { type: 'execution', steps: [{ line: 5, vars: { a: '1' } }] },
+          },
+          {
+            id: 'stack-bad',
+            kind: 'codeDemo',
+            at: 1,
+            viz: { type: 'callStack', frames: ['fact(1)'], returns: ['1', '2'] },
+          },
+          {
+            id: 'bsearch-unsorted',
+            kind: 'codeDemo',
+            at: 2,
+            viz: { type: 'binarySearch', cells: ['10', '5', '20'], targetIndex: 1 },
+          },
+          {
+            id: 'bsearch-range',
+            kind: 'codeDemo',
+            at: 3,
+            viz: { type: 'binarySearch', cells: ['2', '5', '8'], targetIndex: 9 },
+          },
+        ],
+      };
+      const errors = validateEpisode(ep);
+      assert.ok(errors.some((e) => e.includes('scene "exec-bad": viz.steps line(s) 5 are outside the code')));
+      assert.ok(errors.some((e) => e.includes('scene "stack-bad": viz.returns length (2) cannot exceed viz.frames length (1)')));
+      assert.ok(errors.some((e) => e.includes('scene "bsearch-unsorted": viz.cells for binarySearch must be sorted')));
+      assert.ok(errors.some((e) => e.includes('scene "bsearch-range": viz.targetIndex 9 is outside viz.cells')));
+    });
+
+    it('computes deterministic binary search steps and minimum scene frames for callStack and binarySearch', () => {
+      const cells = ['2', '5', '8', '12', '16', '23', '38', '56', '72'];
+      const steps = computeBinarySearchSteps(cells, 5); // target = '23' at index 5
+      assert.equal(steps.length, 3);
+      assert.deepEqual(steps.map((s) => s.mid), [4, 6, 5]);
+      assert.equal(steps.at(-1)?.found, true);
+
+      const stackFrames = getMinSceneFrames({
+        id: 'stack-demo',
+        kind: 'codeDemo',
+        at: 0,
+        skipTyping: true,
+        code: 'function fact(n) { return n <= 1 ? 1 : n * fact(n - 1); }',
+        viz: {
+          type: 'callStack',
+          frames: ['fact(3)', 'fact(2)', 'fact(1)'],
+          returns: ['1', '2', '6'],
+        },
+      });
+      assert.ok(stackFrames > 90);
+    });
   });
 });
+

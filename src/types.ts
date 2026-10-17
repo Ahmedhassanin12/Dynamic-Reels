@@ -61,9 +61,23 @@ export type EventLoopStep = {
 
 export type VizConfig =
   | { type: 'scan'; cells: string[]; target: number }
-  | { type: 'lookup'; key: string; buckets: number; hit: number }
+  | { type: 'lookup'; key: string; buckets: number; hit: number; valuePreview?: string; subtitle?: string }
   | { type: 'execution'; steps: ExecutionStep[]; framesPerStep?: number }
-  | { type: 'eventLoop'; steps: EventLoopStep[]; framesPerStep?: number };
+  | { type: 'eventLoop'; steps: EventLoopStep[]; framesPerStep?: number }
+  | {
+      type: 'callStack';
+      frames: string[];
+      returns?: string[];
+      lines?: number[];
+      mode?: 'stack' | 'queue';
+      framesPerStep?: number;
+    }
+  | {
+      type: 'binarySearch';
+      cells: (string | number)[];
+      targetIndex: number;
+      framesPerStep?: number;
+    };
 
 export type VizType = VizConfig['type'];
 export type VizProps<K extends VizType> = { viz: Extract<VizConfig, { type: K }>; result?: string };
@@ -84,7 +98,14 @@ export type SceneConfig =
       variant?: 'hook' | 'takeaway' | 'prediction';
       codePreview?: { code: string; badge?: string; filename?: string; language?: string };
     })
-  | (Base & { kind: 'array'; cells: string[]; target: number; mode: 'scan' | 'jump' })
+  | (Base & {
+      kind: 'array';
+      cells: string[];
+      target: number;
+      mode: 'scan' | 'jump';
+      pointerLabel?: string;
+      result?: string;
+    })
   | (Base & {
       kind: 'code';
       code: string;

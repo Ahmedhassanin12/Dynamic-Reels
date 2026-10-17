@@ -148,6 +148,35 @@ export const validateEpisode = (episode: Episode): string[] => {
           if (badLines.length) fail(`viz.steps line(s) ${badLines.join(', ')} are outside the code (1-${lineCount}).`);
         }
       }
+      if (viz.type === 'callStack') {
+        if (viz.frames.length === 0 || viz.frames.some((f) => !f.trim())) {
+          fail('viz.frames must contain at least one non-empty frame label.');
+        }
+        if (viz.returns && viz.returns.length > viz.frames.length) {
+          fail(`viz.returns length (${viz.returns.length}) cannot exceed viz.frames length (${viz.frames.length}).`);
+        }
+        if (viz.lines && lineCount > 0) {
+          const badLines = viz.lines.filter((l) => !inRange(l - 1, lineCount));
+          if (badLines.length) fail(`viz.lines ${badLines.join(', ')} are outside the code (1-${lineCount}).`);
+        }
+      }
+      if (viz.type === 'binarySearch') {
+        if (viz.cells.length === 0) {
+          fail('viz.cells must not be empty.');
+        } else if (!inRange(viz.targetIndex, viz.cells.length)) {
+          fail(`viz.targetIndex ${viz.targetIndex} is outside viz.cells (0-${viz.cells.length - 1}).`);
+        } else {
+          const nums = viz.cells.map((c) => Number(c));
+          if (nums.every((n) => Number.isFinite(n))) {
+            for (let i = 1; i < nums.length; i++) {
+              if (nums[i] < nums[i - 1]) {
+                fail('viz.cells for binarySearch must be sorted in ascending order.');
+                break;
+              }
+            }
+          }
+        }
+      }
     }
     if (scene.kind === 'steps') {
       if (scene.steps.length === 0 || scene.steps.some((s) => !s.trim())) {

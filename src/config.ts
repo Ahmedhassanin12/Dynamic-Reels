@@ -166,6 +166,8 @@ export const SCAN = { framesPerCell: 8, jumpDelayFrames: 12 } as const;
 export const LOOKUP = { hitDelayFrames: 44, resultDelayFrames: 56 } as const;
 export const EXECUTION = { framesPerStep: 18 } as const;
 export const EVENT_LOOP = { framesPerStep: 20 } as const;
+export const CALL_STACK = { framesPerStep: 16 } as const;
+export const BINARY_SEARCH = { framesPerStep: 22 } as const;
 
 export const CAPTION = {
   wordsPerChunk: 3,

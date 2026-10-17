@@ -38,7 +38,13 @@ export const arrayVsHashMap = defineEpisode({
       filename: 'users.ts',
       code: `const users = new Map<string, User>();\nusers.set('42', user);\nusers.get('42');`,
       highlightLines: [3],
-      viz: { type: 'lookup', key: '42', buckets: 12, hit: 7 },
+      viz: {
+        type: 'lookup',
+        key: '42',
+        buckets: 12,
+        hit: 7,
+        valuePreview: '{ id: "42", name: "Sara" }',
+      },
       result: 'O(1)',
     },
     {
