@@ -16,6 +16,7 @@ export type SegmentRole =
   | 'demo'
   | 'comparison'
   | 'quiz'
+  | 'explanation'
   | 'takeaway';
 
 export type ScriptSegment = {
