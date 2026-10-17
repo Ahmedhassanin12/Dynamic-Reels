@@ -3,6 +3,7 @@ export { CodeDemoScene } from './CodeDemoScene';
 export { CodeScene } from './CodeScene';
 export { CompareScene } from './CompareScene';
 export { DiagramScene } from './DiagramScene';
+export { MythRealityScene } from './MythRealityScene';
 export { QaScene } from './QaScene';
 export { SCENE_REGISTRY } from './registry';
 export { SceneFrame } from './SceneFrame';

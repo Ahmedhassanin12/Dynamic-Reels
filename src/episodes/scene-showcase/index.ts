@@ -20,7 +20,9 @@ export const sceneShowcase = defineEpisode({
     { text: 'ميموري', start: 24.0, end: 27.9 },
     { text: 'ريأكت', start: 28.0, end: 31.9 },
     { text: 'تعقيد', start: 32.0, end: 35.9 },
-    { text: 'انتقال', start: 36.0, end: 40.0 },
+    { text: 'انتقال', start: 36.0, end: 39.9 },
+    { text: 'خرافة', start: 40.0, end: 43.9 },
+    { text: 'لينكد', start: 44.0, end: 48.0 },
   ],
   scenes: [
     // 1. Panel 4 — Recursion Call Stack (viz.type: 'callStack')
@@ -218,6 +220,53 @@ export const sceneShowcase = defineEpisode({
       toTitle: 'Binary Search · بحث ثنائي',
       toBadge: 'O(log n) · fast',
       toSub: 'بيقسم مساحة البحث للنص في كل خطوة',
+    },
+
+    // 11. Panel 17 — Myth vs Reality (kind: 'mythReality')
+    {
+      id: 'react-dom-myth',
+      kind: 'mythReality',
+      at: 10,
+      label: 'PANEL 17 · MYTH BUSTER',
+      title: 'خرافات شائعة في البرمجة',
+      pill: 'MYTH VS REALITY',
+      myth: {
+        label: 'الخرافة الشائعة',
+        text: 'React بيمسح الـ DOM الحقيقي كله مع كل setState',
+        code: `setState(prev => prev + 1); // Full DOM wipeout?!`,
+        badge: '✗ شائعة خاطئة',
+      },
+      reality: {
+        label: 'الحقيقة والواقع',
+        text: 'الـ Virtual DOM بيعمل Diffing ويحدّث العنصر ده بس',
+        code: `// Minimal Patch: only <span>42</span> is updated`,
+        badge: '✓ الصح والمثبت',
+      },
+      revealDelayFrames: 30,
+    },
+
+    // 12. Panel 18 — Singly Linked List (viz.type: 'linkedList')
+    {
+      id: 'linked-list-chain',
+      kind: 'codeDemo',
+      at: 11,
+      label: 'PANEL 18 · DATA STRUCTURES',
+      title: 'إزاي الـ Linked List شغالة؟',
+      filename: 'linked-list.ts',
+      skipTyping: true,
+      code: `const head = new ListNode(10);\nhead.next = new ListNode(20);\nhead.next.next = new ListNode(30);`,
+      viz: {
+        type: 'linkedList',
+        nodes: [
+          { value: '10', address: '0x10', badge: 'HEAD' },
+          { value: '20', address: '0x2C' },
+          { value: '30', address: '0x48', badge: 'TAIL' },
+        ],
+        activePointer: 1,
+        pointerLabel: 'curr',
+        note: 'كل Node فيها Data ومؤشر للعنوان اللي بعده',
+      },
+      result: 'O(1)',
     },
   ],
 });

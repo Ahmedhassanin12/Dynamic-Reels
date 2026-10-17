@@ -512,7 +512,7 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
 
     it('validates Batch 4 scenes & visualizers (memory, complexity, diagram, transition) and resolves sceneShowcase', () => {
       const showcaseTimeline = resolveTimeline(sceneShowcase, FPS);
-      assert.equal(showcaseTimeline.length, 10);
+      assert.equal(showcaseTimeline.length, 12);
 
       const badEp: Episode = {
         id: 'batch4-bad',
@@ -637,6 +637,104 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       assert.equal(item.match.startSeconds, 2.0);
       assert.equal(item.match.text, 'Synchronous Code');
       assert.equal(item.match.rawText, 'سينكرونس كود');
+    });
+
+    it('validates Phase 5B Batch 1 scenes and visualizers (mythReality and linkedList)', () => {
+      // 1. Valid episode with mythReality and linkedList
+      const validEp = defineEpisode({
+        id: 'phase5b-valid',
+        title: 'Phase 5B Valid',
+        voice: null,
+        words: [
+          { text: 'أول', start: 0.0, end: 0.5 },
+          { text: 'خرافة', start: 1.0, end: 1.5 },
+          { text: 'قائمة', start: 2.0, end: 2.5 },
+        ],
+        scenes: [
+          {
+            id: 'hook-myth',
+            kind: 'mythReality',
+            at: 0,
+            myth: 'React بيمسح الـ DOM الحقيقي بالكامل',
+            reality: {
+              label: 'الحقيقة العلمية',
+              text: 'React بتعمل Virtual DOM diffing',
+              code: 'const patch = diff(vdomOld, vdomNew);',
+              badge: '✓ 100% FACT',
+            },
+            revealDelayFrames: 45,
+          },
+          {
+            id: 'list-demo',
+            kind: 'codeDemo',
+            at: 2,
+            code: 'class Node { val: number; next: Node | null; }',
+            viz: {
+              type: 'linkedList',
+              nodes: [
+                { value: '10', badge: 'HEAD' },
+                '20',
+                { value: '30', address: '0x3F', badge: 'TAIL' },
+              ],
+              activePointer: 1,
+              pointerLabel: 'curr',
+              note: 'O(1) insert at head',
+            },
+            result: 'O(1)',
+          },
+        ],
+      });
+
+      const timeline = resolveTimeline(validEp, FPS);
+      assert.equal(timeline.length, 2);
+      assert.equal(timeline[0].scene.kind, 'mythReality');
+      assert.equal(timeline[1].scene.kind, 'codeDemo');
+
+      // Verify getMinSceneFrames
+      const mythFrames = getMinSceneFrames(validEp.scenes[0]);
+      assert.equal(mythFrames, 45 + 25); // 70 frames
+      const listFrames = getMinSceneFrames(validEp.scenes[1]);
+      assert.ok(listFrames > 30);
+
+      // 2. Invalid mythReality and linkedList configs
+      const invalidEp: Episode = {
+        id: 'phase5b-invalid',
+        title: 'Phase 5B Invalid',
+        voice: null,
+        words: [
+          { text: 'كلمة', start: 0.0, end: 0.5 },
+          { text: 'تانية', start: 1.0, end: 1.5 },
+        ],
+        scenes: [
+          {
+            id: 'bad-myth',
+            kind: 'mythReality',
+            at: 0,
+            myth: '   ',
+            reality: { text: '' },
+            revealDelayFrames: -10,
+          },
+          {
+            id: 'bad-list',
+            kind: 'codeDemo',
+            at: 1,
+            viz: {
+              type: 'linkedList',
+              nodes: [],
+              activePointer: 5,
+              framesPerStep: -2,
+            },
+          },
+        ],
+      };
+
+      const errors = validateEpisode(invalidEp);
+      assert.ok(errors.some((e) => e.includes('scene "bad-myth": myth must contain non-empty text')));
+      assert.ok(errors.some((e) => e.includes('scene "bad-myth": reality must contain non-empty text')));
+      assert.ok(errors.some((e) => e.includes('scene "bad-myth": mythReality revealDelayFrames (-10) must be a non-negative number')));
+      assert.ok(errors.some((e) => e.includes('scene "bad-list": viz.nodes must contain at least one node')));
+      assert.ok(errors.some((e) => e.includes('scene "bad-list": viz.activePointer 5 is outside viz.nodes')));
+      assert.ok(errors.some((e) => e.includes('scene "bad-list": viz.framesPerStep (-2) must be a positive number')));
     });
   });
 });

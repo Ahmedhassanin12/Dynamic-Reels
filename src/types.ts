@@ -10,6 +10,21 @@ export type Word = {
   rawEnd?: number;
   /** Original raw transcript text before glossary normalization */
   rawText?: string;
+  /** Corrected transcript text (after applying approved corrections, before glossary) */
+  correctedText?: string;
+};
+
+export type TranscriptCorrection = {
+  /** 0-based word index in raw transcript (words.json) */
+  index: number;
+  /** Expected raw text at this index for safety validation against drift */
+  original: string;
+  /** Corrected text replacing the raw word */
+  corrected: string;
+  /** Approval status: only 'approved' corrections are applied to the episode */
+  status?: 'approved' | 'suggested';
+  /** Rationale or source of the correction */
+  reason?: string;
 };
 
 export type AnchorObject = {
@@ -107,7 +122,30 @@ export type VizConfig =
       curves?: ComplexityCurve[];
       highlight?: ComplexityCurve;
       note?: string;
+    }
+  | {
+      type: 'linkedList';
+      nodes: LinkedListNodeInput[];
+      activePointer?: number | string;
+      pointerLabel?: string;
+      note?: string;
+      framesPerStep?: number;
     };
+
+export type LinkedListNode = {
+  value: string | number;
+  /** Address or identifier for this node (e.g. "0x1A", "0x4F") */
+  address?: string;
+  /** Target pointer: next node address or null/undefined for tail */
+  next?: string | null;
+  /** Highlight state */
+  highlight?: boolean;
+  /** Optional badge on the node (e.g. "HEAD", "TAIL", "NEW") */
+  badge?: string;
+  tone?: 'good' | 'bad' | 'warn' | 'ink';
+};
+
+export type LinkedListNodeInput = string | number | LinkedListNode;
 
 export type VizType = VizConfig['type'];
 export type VizProps<K extends VizType> = { viz: Extract<VizConfig, { type: K }>; result?: string };
@@ -229,7 +267,33 @@ export type SceneConfig =
       toSub?: string;
       bridgeText?: string;
       pill?: string;
+    })
+  | (Base & {
+      kind: 'mythReality';
+      pill?: string;
+      myth: MythRealitySideInput;
+      reality: MythRealitySideInput;
+      /** Custom frame delay before revealing the reality card (defaults to MOTION.stagger * 2) */
+      revealDelayFrames?: number;
     });
+
+export type MythRealitySide = {
+  /** Optional header label (e.g. "الخرافة الشائعة" or "الحقيقة") */
+  label?: string;
+  /** Main statement text */
+  text: string;
+  /** Optional bullet points */
+  bullets?: string[];
+  /** Optional code snippet */
+  code?: string;
+  language?: string;
+  filename?: string;
+  /** Optional badge on top-right (e.g. "✗ FALSE", "✓ FACT") */
+  badge?: string;
+  tone?: 'bad' | 'good' | 'warn' | 'ink';
+};
+
+export type MythRealitySideInput = string | MythRealitySide;
 
 export type SceneKind = SceneConfig['kind'];
 export type SceneOf<K extends SceneKind> = Extract<SceneConfig, { kind: K }>;
@@ -243,6 +307,8 @@ export type Episode = {
   words: Word[];
   /** Preserved pre-glossary transcript words for anchor resolution and debugging */
   rawWords?: Word[];
+  /** Optional explicit transcript corrections applied before glossary normalization */
+  corrections?: TranscriptCorrection[];
   scenes: SceneConfig[];
 };
 

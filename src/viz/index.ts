@@ -4,6 +4,7 @@ export { ComplexityViz } from './ComplexityViz';
 export { EventLoopViz } from './EventLoopViz';
 export { ExecutionViz } from './ExecutionViz';
 export { Labeled } from './Labeled';
+export { LinkedListViz } from './LinkedListViz';
 export { LookupViz } from './LookupViz';
 export { MemoryViz } from './MemoryViz';
 export { VIZ_REGISTRY } from './registry';

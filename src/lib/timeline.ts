@@ -14,6 +14,7 @@ import {
 } from '../config';
 import type { Episode, SceneConfig, Word } from '../types';
 import { typingFrames } from './code';
+import { applyCorrections } from './corrections';
 import { applyGlossary } from './episode';
 import { normalizeText as normalize, tokenizeNormalized } from './text';
 
@@ -151,7 +152,9 @@ export const resolveAnchor = (
 
     if (wIdx !== undefined) {
       const dw = displayWords[wIdx];
-      if (normalize(dw.text) === fullNeedle) {
+      const matchText = normalize(dw.text) === fullNeedle;
+      const matchCorr = dw.correctedText ? normalize(dw.correctedText) === fullNeedle : false;
+      if (matchText || matchCorr) {
         displayMatchEndRaw = dw.rawEnd ?? rIdx;
         displayMatchText = dw.text;
       } else {
@@ -288,6 +291,10 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
         vizFrames = Math.max(scene.viz.stack.length, scene.viz.heap.length + 1) * MEMORY.stepStaggerFrames + 20;
       } else if (scene.viz.type === 'complexity') {
         vizFrames = COMPLEXITY.drawFrames + 20;
+      } else if (scene.viz.type === 'linkedList') {
+        const count = scene.viz.nodes.length;
+        const stepFrames = scene.viz.framesPerStep ?? 18;
+        vizFrames = scene.viz.activePointer !== undefined || scene.viz.framesPerStep ? count * stepFrames + 15 : 35;
       }
       return codeTyping + delay + vizFrames;
     }
@@ -306,6 +313,12 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
     }
     case 'transition':
       return MOTION.stagger * 3 + 20;
+    case 'mythReality': {
+      const revealAt = scene.revealDelayFrames ?? MOTION.stagger * 2;
+      return revealAt + 25;
+    }
+    default:
+      return 30;
   }
 };
 
@@ -320,7 +333,8 @@ const getEpisodeWordViews = (episode: Episode): { rawWords: Word[]; displayWords
     return { rawWords: episode.rawWords ?? episode.words, displayWords: episode.words };
   }
   const rawWords = episode.rawWords ?? episode.words;
-  return { rawWords, displayWords: applyGlossary(rawWords) };
+  const correctedWords = applyCorrections(rawWords, episode.corrections);
+  return { rawWords, displayWords: applyGlossary(correctedWords) };
 };
 
 export const resolveTimeline = (

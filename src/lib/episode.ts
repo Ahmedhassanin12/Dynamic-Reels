@@ -1,12 +1,13 @@
 import { DEFAULT_THEME, FPS } from '../config';
 import { GLOSSARY, type GlossaryEntry } from '../glossary';
 import type { Episode, Word } from '../types';
+import { applyCorrections, validateCorrections } from './corrections';
 import { normalizeText } from './text';
 import { resolveTimeline } from './timeline';
 
 export function applyGlossary(words: Word[], entries: GlossaryEntry[] = GLOSSARY): Word[] {
   // Prevent accidental double-application on already-normalized words when using default glossary
-  if (entries === GLOSSARY && words.length > 0 && words.every((w) => w.rawStart !== undefined)) {
+  if (entries === GLOSSARY && words.length > 0 && Boolean((words as unknown as { _glossaryApplied?: boolean })._glossaryApplied)) {
     return words;
   }
 
@@ -31,6 +32,10 @@ export function applyGlossary(words: Word[], entries: GlossaryEntry[] = GLOSSARY
           .slice(i, endIdx + 1)
           .map((w) => w.rawText ?? w.text)
           .join(' '),
+        correctedText: words
+          .slice(i, endIdx + 1)
+          .map((w) => w.correctedText ?? w.text)
+          .join(' '),
       });
       i += hit.say.length;
     } else {
@@ -39,9 +44,14 @@ export function applyGlossary(words: Word[], entries: GlossaryEntry[] = GLOSSARY
         rawStart: words[i].rawStart ?? i,
         rawEnd: words[i].rawEnd ?? i,
         rawText: words[i].rawText ?? words[i].text,
+        correctedText: words[i].correctedText ?? words[i].text,
       });
       i += 1;
     }
+  }
+
+  if (entries === GLOSSARY) {
+    (out as unknown as { _glossaryApplied?: boolean })._glossaryApplied = true;
   }
   return out;
 }
@@ -208,6 +218,17 @@ export const validateEpisode = (episode: Episode): string[] => {
           fail('viz.curves must not be empty when specified.');
         }
       }
+      if (viz.type === 'linkedList') {
+        if (viz.nodes.length === 0) {
+          fail('viz.nodes must contain at least one node.');
+        }
+        if (typeof viz.activePointer === 'number' && !inRange(viz.activePointer, viz.nodes.length)) {
+          fail(`viz.activePointer ${viz.activePointer} is outside viz.nodes (0-${viz.nodes.length - 1}).`);
+        }
+        if (viz.framesPerStep !== undefined && (!Number.isFinite(viz.framesPerStep) || viz.framesPerStep <= 0)) {
+          fail(`viz.framesPerStep (${viz.framesPerStep}) must be a positive number.`);
+        }
+      }
     }
     if (scene.kind === 'steps') {
       if (
@@ -257,15 +278,35 @@ export const validateEpisode = (episode: Episode): string[] => {
         fail('transition fromTitle and toTitle must not be empty.');
       }
     }
+    if (scene.kind === 'mythReality') {
+      const mythText = typeof scene.myth === 'string' ? scene.myth : scene.myth.text;
+      const realityText = typeof scene.reality === 'string' ? scene.reality : scene.reality.text;
+      if (!mythText || !mythText.trim()) {
+        fail('myth must contain non-empty text.');
+      }
+      if (!realityText || !realityText.trim()) {
+        fail('reality must contain non-empty text.');
+      }
+      if (scene.revealDelayFrames !== undefined && (!Number.isFinite(scene.revealDelayFrames) || scene.revealDelayFrames < 0)) {
+        fail(`mythReality revealDelayFrames (${scene.revealDelayFrames}) must be a non-negative number.`);
+      }
+    }
+  }
+
+  // Validate corrections if specified
+  if (episode.corrections && episode.corrections.length > 0) {
+    const correctionErrors = validateCorrections(sourceWords, episode.corrections);
+    errors.push(...correctionErrors);
   }
 
   // Validate timeline and scene anchors if words and scenes are present and timestamps are valid
   if (errors.length === 0) {
     try {
+      const correctedWords = applyCorrections(sourceWords, episode.corrections);
       const prepared: Episode = {
         ...episode,
         rawWords: sourceWords,
-        words: applyGlossary(sourceWords),
+        words: applyGlossary(correctedWords),
       };
       resolveTimeline(prepared, FPS);
     } catch (err) {
@@ -276,10 +317,11 @@ export const validateEpisode = (episode: Episode): string[] => {
   return errors;
 };
 
-/** Every episode goes through this so the glossary is applied to its words while preserving rawWords. */
+/** Every episode goes through this so corrections and glossary are applied while preserving rawWords. */
 export const defineEpisode = (episode: Episode): Episode => {
   const rawWords = episode.rawWords ?? episode.words;
-  const words = applyGlossary(rawWords);
+  const correctedWords = applyCorrections(rawWords, episode.corrections);
+  const words = applyGlossary(correctedWords);
   const prepared: Episode = {
     ...episode,
     theme: episode.theme ?? DEFAULT_THEME,
