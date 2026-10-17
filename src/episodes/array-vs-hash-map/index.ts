@@ -54,8 +54,16 @@ export const arrayVsHashMap = defineEpisode({
       label: 'THE RULE',
       title: 'تختار إيه؟',
       sides: [
-        { title: 'Map', items: ['بتدوّر بالـ key كتير', 'محتاج سرعة'] },
-        { title: 'Array', items: ['بتعمل loop على الكل', 'محتاج الترتيب'] },
+        {
+          title: 'Map',
+          code: `const user = users.get('42');`,
+          items: ['بتدوّر بالـ key كتير', 'محتاج سرعة'],
+        },
+        {
+          title: 'Array',
+          code: `const user = users.find((u) => u.id === '42');`,
+          items: ['بتعمل loop على الكل', 'محتاج الترتيب'],
+        },
       ],
     },
     {

@@ -69,10 +69,15 @@ export const eventLoop = defineEpisode({
     },
     {
       id: 'output',
-      kind: 'statement',
-      variant: 'takeaway',
+      kind: 'qa',
       at: 'النتيجة',
-      text: 'النتيجة: [1] ثم [4] ثم [3] ثم [2]',
+      label: 'PREDICTION REVEAL',
+      title: 'إيه الترتيب الصح؟',
+      question: 'تفتكر الـ Console هيطبع إيه؟',
+      options: ['1 → 2 → 3 → 4', '1 → 4 → 3 → 2', '2 → 3 → 1 → 4'],
+      correctIndex: 1,
+      revealDelayFrames: 32,
+      answer: 'النتيجة الصح: 1 ثم 4 ثم 3 ثم 2',
     },
     {
       id: 'sync-explanation',

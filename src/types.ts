@@ -82,9 +82,24 @@ export type VizConfig =
 export type VizType = VizConfig['type'];
 export type VizProps<K extends VizType> = { viz: Extract<VizConfig, { type: K }>; result?: string };
 
+export type StepItem = {
+  text: string;
+  /** Optional monospace pill on the left (e.g. "push(10)", "O(1)") */
+  badge?: string;
+  /** Optional inline code snippet for the step */
+  code?: string;
+  tone?: 'good' | 'bad' | 'warn' | 'ink';
+};
+
 export type CompareSide = {
   title: string;
-  items: string[];
+  /** Bullet items explaining the side (optional when `code` is provided) */
+  items?: string[];
+  /** Optional code snippet for Before/After or Error/Fix comparisons (Panel 12) */
+  code?: string;
+  language?: string;
+  /** Optional runtime/compiler error callout shown below `code` (e.g. "TypeError: Cannot read properties of undefined") */
+  errorLine?: string;
   badge?: string;
   tone?: 'good' | 'bad' | 'ink' | 'paper';
   /** Optional 0..100 progress bar value */
@@ -128,10 +143,31 @@ export type SceneConfig =
       viz: VizConfig;
       result?: string;
     })
-  | (Base & { kind: 'steps'; steps: string[] })
+  | (Base & {
+      kind: 'steps';
+      steps: Array<string | StepItem>;
+      pill?: string;
+      /** Show an accumulated visual stack/pipeline bar at the bottom */
+      showStack?: boolean;
+    })
   | (Base & { kind: 'compare'; pill?: string; sides: [CompareSide, CompareSide] })
   | (Base & { kind: 'diagram'; nodes: string[]; highlight?: number })
-  | (Base & { kind: 'qa'; question: string; answer: string });
+  | (Base & {
+      kind: 'qa';
+      question: string;
+      answer: string;
+      pill?: string;
+      /** Optional code snippet for "What will this print?" prediction quizzes (Panel 11) */
+      code?: string;
+      language?: string;
+      filename?: string;
+      /** Optional A/B/C multiple-choice options */
+      options?: string[];
+      /** 0-based index of the correct option in `options` */
+      correctIndex?: number;
+      /** Custom frame delay before revealing the answer and highlighting `correctIndex` */
+      revealDelayFrames?: number;
+    });
 
 export type SceneKind = SceneConfig['kind'];
 export type SceneOf<K extends SceneKind> = Extract<SceneConfig, { kind: K }>;

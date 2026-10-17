@@ -286,15 +286,18 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
       return codeTyping + delay + vizFrames;
     }
     case 'steps':
-      return scene.steps.length * MOTION.stagger + 15;
+      return (scene.steps.length + (scene.showStack ? 1 : 0)) * MOTION.stagger + 15;
     case 'compare': {
-      const maxItems = Math.max(...scene.sides.map((s) => s.items.length), 0);
+      const maxItems = Math.max(...scene.sides.map((s) => s.items?.length ?? 1), 0);
       return scene.sides.length * MOTION.stagger + maxItems * MOTION.stagger + 15;
     }
     case 'diagram':
       return scene.nodes.length * MOTION.stagger * 2 + 15;
-    case 'qa':
-      return MOTION.answerDelayFrames + 20;
+    case 'qa': {
+      const optionsStagger = scene.options?.length ? (scene.options.length + 1) * MOTION.stagger : 0;
+      const revealAt = scene.revealDelayFrames ?? optionsStagger + MOTION.answerDelayFrames;
+      return revealAt + 20;
+    }
   }
 };
 

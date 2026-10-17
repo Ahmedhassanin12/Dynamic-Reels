@@ -179,18 +179,38 @@ export const validateEpisode = (episode: Episode): string[] => {
       }
     }
     if (scene.kind === 'steps') {
-      if (scene.steps.length === 0 || scene.steps.some((s) => !s.trim())) {
-        fail('steps must contain at least one non-empty string.');
+      if (
+        scene.steps.length === 0 ||
+        scene.steps.some((s) => !(typeof s === 'string' ? s : s.text).trim())
+      ) {
+        fail('steps must contain at least one non-empty step.');
       }
     }
     if (scene.kind === 'compare') {
-      if (scene.sides.some((s) => !s.title.trim() || s.items.length === 0 || s.items.some((item) => !item.trim()))) {
-        fail('each compare side must have a non-empty title and at least one non-empty item.');
+      const badSide = scene.sides.some((s) => {
+        if (!s.title.trim()) return true;
+        const hasCode = Boolean(s.code && s.code.trim());
+        const hasItems = Boolean(s.items && s.items.length > 0);
+        if (!hasCode && !hasItems) return true;
+        if (s.items && s.items.some((item) => !item.trim())) return true;
+        return false;
+      });
+      if (badSide) {
+        fail('each compare side must have a non-empty title and at least one non-empty item or code snippet.');
       }
     }
     if (scene.kind === 'qa') {
       if (!scene.question.trim() || !scene.answer.trim()) {
         fail('question and answer must not be empty.');
+      }
+      if (scene.options !== undefined) {
+        if (scene.options.length < 2 || scene.options.some((opt) => !opt.trim())) {
+          fail('qa options must contain at least 2 non-empty strings.');
+        } else if (scene.correctIndex !== undefined && !inRange(scene.correctIndex, scene.options.length)) {
+          fail(`qa correctIndex ${scene.correctIndex} is outside options (0-${scene.options.length - 1}).`);
+        }
+      } else if (scene.correctIndex !== undefined) {
+        fail('qa correctIndex requires options to be specified.');
       }
     }
   }

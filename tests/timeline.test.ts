@@ -406,6 +406,103 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       });
       assert.ok(stackFrames > 90);
     });
+
+    it('validates Batch 3 enhanced scenes (steps with StepItem, compare with code/errorLine, qa with options/correctIndex)', () => {
+      const validEp = defineEpisode({
+        id: 'batch3-valid',
+        title: 'Batch 3 Valid',
+        voice: null,
+        words: [
+          { text: 'أول', start: 0.0, end: 1.0 },
+          { text: 'ثاني', start: 2.0, end: 3.0 },
+          { text: 'ثالث', start: 4.0, end: 8.0 },
+        ],
+        scenes: [
+          {
+            id: 'steps-rich',
+            kind: 'steps',
+            at: 0,
+            showStack: true,
+            steps: [
+              { text: 'ضف العنصر الأول', badge: 'push(10)', code: 'stack.push(10);', tone: 'ink' },
+              { text: 'ضف العنصر التاني', badge: 'push(20)', tone: 'good' },
+            ],
+          },
+          {
+            id: 'compare-code',
+            kind: 'compare',
+            at: 1,
+            sides: [
+              {
+                title: 'Before',
+                code: 'const name = user.profile.name;',
+                errorLine: 'TypeError: Cannot read properties of undefined',
+              },
+              {
+                title: 'After',
+                code: 'const name = user?.profile?.name;',
+              },
+            ],
+          },
+          {
+            id: 'qa-quiz',
+            kind: 'qa',
+            at: 2,
+            question: 'إيه الناتج؟',
+            options: ['1 → 2', '2 → 1'],
+            correctIndex: 1,
+            answer: 'لأن الـ Stack بيشتغل LIFO',
+          },
+        ],
+      });
+      assert.equal(validEp.scenes.length, 3);
+
+      const badEp: Episode = {
+        id: 'batch3-bad',
+        title: 'Batch 3 Bad',
+        voice: null,
+        words: [
+          { text: 'أول', start: 0.0, end: 0.5 },
+          { text: 'ثاني', start: 1.0, end: 1.5 },
+          { text: 'ثالث', start: 2.0, end: 2.5 },
+        ],
+        scenes: [
+          {
+            id: 'steps-empty-obj',
+            kind: 'steps',
+            at: 0,
+            steps: [{ text: '   ', badge: 'push(1)' }],
+          },
+          {
+            id: 'compare-empty-side',
+            kind: 'compare',
+            at: 1,
+            sides: [
+              { title: 'Before' }, // Neither items nor code!
+              { title: 'After', code: 'const ok = true;' },
+            ],
+          },
+          {
+            id: 'qa-bad-idx',
+            kind: 'qa',
+            at: 2,
+            question: 'سؤال؟',
+            options: ['A', 'B'],
+            correctIndex: 5,
+            answer: 'إجابة',
+          },
+        ],
+      };
+      const errors = validateEpisode(badEp);
+      assert.ok(errors.some((e) => e.includes('scene "steps-empty-obj": steps must contain at least one non-empty step')));
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "compare-empty-side": each compare side must have a non-empty title and at least one non-empty item or code snippet'),
+        ),
+      );
+      assert.ok(errors.some((e) => e.includes('scene "qa-bad-idx": qa correctIndex 5 is outside options (0-1)')));
+    });
   });
 });
+
 
