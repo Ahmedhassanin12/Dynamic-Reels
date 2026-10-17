@@ -8,14 +8,32 @@ import json
 import os
 import sys
 
+# Compatibility shim: PyAV 19+ dropped `metadata_errors`, which faster-whisper 1.2.1 still passes to av.open
+import av
+_orig_av_open = av.open
+def _compat_av_open(*args, **kwargs):
+    kwargs.pop("metadata_errors", None)
+    return _orig_av_open(*args, **kwargs)
+av.open = _compat_av_open
+
 from faster_whisper import WhisperModel
 
-if len(sys.argv) < 2:
-    print("Usage: python scripts/transcribe.py <episode-id> [audio-file-name]")
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
+args = [a for a in sys.argv[1:] if not a.startswith("--")]
+flags = [a for a in sys.argv[1:] if a.startswith("--")]
+
+if len(args) < 1:
+    print("Usage: python scripts/transcribe.py <episode-id> [audio-file-name] [--cuda]")
     sys.exit(1)
 
-episode = sys.argv[1]
-audio = sys.argv[2] if len(sys.argv) > 2 else "voice.mp3"
+episode = args[0]
+audio = args[1] if len(args) > 1 else "voice.mp3"
 audio_path = f"src/episodes/{episode}/{audio}"
 
 if not os.path.exists(audio_path):
@@ -38,7 +56,9 @@ if os.path.exists(glossary_file):
 PROMPT = ", ".join(prompt_terms)
 print(f"Using Whisper prompt terms: {PROMPT}")
 
-model = WhisperModel("large-v3", compute_type="int8")
+device = "cuda" if "--cuda" in flags else "cpu"
+print(f"Running WhisperModel (large-v3) on {device.upper()}...")
+model = WhisperModel("large-v3", device=device, compute_type="int8")
 segments, _ = model.transcribe(
     audio_path, language="ar", word_timestamps=True, initial_prompt=PROMPT
 )

@@ -7,6 +7,7 @@ export const arrayVsHashMap = defineEpisode({
   title: 'Array vs Hash Map',
   voice,
   words,
+  theme: "mint",
   scenes: [
     {
       id: 'hook',

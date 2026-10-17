@@ -11,5 +11,17 @@
   { "say": ["كيو"], "show": "Queue" },
   { "say": ["لوب"], "show": "loop" },
   { "say": ["فانكشن"], "show": "function" },
-  { "say": ["يوزر"], "show": "user" }
+  { "say": ["يوزر"], "show": "user" },
+  { "say": ["6", "ايام", "او", "اطباعة"], "show": "setTimeout" },
+  { "say": ["برمز"], "show": "Promise" },
+  { "say": ["البروموس"], "show": "Promise" },
+  { "say": ["جافا", "سكريبت"], "show": "JavaScript" },
+  { "say": ["سينكرونس", "كود"], "show": "Synchronous Code" },
+  { "say": ["الماكرو", "تاسكس"], "show": "Microtasks" },
+  { "say": ["الكول", "باك"], "show": "Callback" },
+  { "say": ["التايمر", "كول", "باك"], "show": "Timer Callback" },
+  { "say": ["الست", "تايم", "اوت"], "show": "setTimeout" },
+  { "say": ["صفر", "ميلي", "ساكنز"], "show": "0 milliseconds" },
+  { "say": ["الاف", "انت", "لو"], "show": "Event Loop" },
+  { "say": ["الاوت", "بوت"], "show": "output" }
 ]
