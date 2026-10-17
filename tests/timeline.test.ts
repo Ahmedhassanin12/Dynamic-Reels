@@ -169,16 +169,21 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       assert.equal(normalizeText('الأَرْقَامُ'), normalizeText('الارقام'));
       assert.equal(normalizeText('عَلَى'), normalizeText('علي'));
       assert.equal(normalizeText('ثَلَاثَة'), normalizeText('ثلاثه'));
+      assert.equal(normalizeText('مسؤولية'), normalizeText('مسوولية'));
+      assert.equal(normalizeText('فئة'), normalizeText('فيه'));
+      assert.equal(normalizeText('الخطوة ١'), normalizeText('الخطوة 1'));
+      assert.equal(normalizeText('رقم ۰۱۲۳۴۵۶۷۸۹'), normalizeText('رقم 0123456789'));
       assert.equal(normalizeText('O(1)'), 'o1');
       assert.deepEqual(tokenizeNormalized('  سينكرونس   كود! '), ['سينكرونس', 'كود']);
     });
 
-    it('matches anchors with different Arabic spelling variants (e.g., أ/ا, ة/ه, ى/ي, harakat)', () => {
+    it('matches anchors with different Arabic spelling variants (e.g., أ/ا, ة/ه, ى/ي, harakat, Eastern digits)', () => {
       const words: Word[] = [
         { text: 'بداية', start: 0.0, end: 0.5 },
         { text: 'الأرقام', start: 1.0, end: 1.5 },
         { text: 'النتيجة', start: 2.0, end: 2.5 },
         { text: 'على', start: 3.0, end: 3.5 },
+        { text: 'الخطوة ١', start: 4.0, end: 4.5 },
       ];
       const ep = defineEpisode({
         id: 'norm-test',
@@ -190,12 +195,13 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
           makeStatement('s2', 'الارقام'),
           makeStatement('s3', 'النَّتِيجَه'),
           makeStatement('s4', 'علي'),
+          makeStatement('s5', 'الخطوة 1'),
         ],
       });
       const timeline = resolveTimeline(ep, FPS);
       assert.deepEqual(
         timeline.map((t) => t.match.rawIndex),
-        [0, 1, 2, 3],
+        [0, 1, 2, 3, 4],
       );
     });
   });
@@ -548,6 +554,89 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       assert.ok(errors.some((e) => e.includes('scene "mem-bad-ref": viz.stack ref(s) user -> 0x9999 do not match any viz.heap id')));
       assert.ok(errors.some((e) => e.includes('scene "diag-bad-sub": diagram subLayer must have a non-empty label')));
       assert.ok(errors.some((e) => e.includes('scene "trans-bad": transition fromTitle and toTitle must not be empty')));
+    });
+
+    it('validates statement codePreview, diagram edgeLabels, compare progress, and qa revealDelayFrames', () => {
+      const badEp: Episode = {
+        id: 'advanced-validation-bad',
+        title: 'Advanced Validation Bad',
+        voice: null,
+        words: [
+          { text: 'أول', start: 0.0, end: 0.5 },
+          { text: 'ثاني', start: 1.0, end: 1.5 },
+          { text: 'ثالث', start: 2.0, end: 2.5 },
+          { text: 'رابع', start: 3.0, end: 3.5 },
+        ],
+        scenes: [
+          {
+            id: 'stmt-bad-preview',
+            kind: 'statement',
+            at: 0,
+            text: 'هوك تجريبي',
+            codePreview: { code: '   ' },
+          },
+          {
+            id: 'diag-bad-edges',
+            kind: 'diagram',
+            at: 1,
+            nodes: ['Node 1', 'Node 2'],
+            edgeLabels: ['Edge 1', 'Edge 2', 'Edge 3'], // 3 edges for 2 nodes is invalid
+          },
+          {
+            id: 'compare-bad-progress',
+            kind: 'compare',
+            at: 2,
+            sides: [
+              { title: 'Side A', items: ['Item A'], progress: 150 }, // > 100
+              { title: 'Side B', items: ['Item B'], progress: -10 }, // < 0
+            ],
+          },
+          {
+            id: 'qa-bad-reveal',
+            kind: 'qa',
+            at: 3,
+            question: 'سؤال؟',
+            answer: 'جواب',
+            revealDelayFrames: -5,
+          },
+        ],
+      };
+
+      const errors = validateEpisode(badEp);
+      assert.ok(errors.some((e) => e.includes('scene "stmt-bad-preview": codePreview.code must not be empty when specified')));
+      assert.ok(errors.some((e) => e.includes('scene "diag-bad-edges": edgeLabels length (3) cannot exceed node transitions (1)')));
+      assert.ok(errors.some((e) => e.includes('scene "compare-bad-progress": compare side progress (150) must be a number between 0 and 100')));
+      assert.ok(errors.some((e) => e.includes('scene "compare-bad-progress": compare side progress (-10) must be a number between 0 and 100')));
+      assert.ok(errors.some((e) => e.includes('scene "qa-bad-reveal": qa revealDelayFrames (-5) must be a non-negative number')));
+    });
+
+    it('provides inspectable match details (rawIndex, rawEndIndex, wordIndex, text, rawText, startSeconds) for every resolved scene', () => {
+      const ep = defineEpisode({
+        id: 'inspect-test',
+        title: 'Inspect Test',
+        voice: null,
+        words: [
+          { text: 'أول', start: 0.0, end: 0.5 },
+          { text: 'كود', start: 1.0, end: 1.5 },
+          { text: 'سينكرونس', start: 2.0, end: 2.4 },
+          { text: 'كود', start: 2.5, end: 2.9 },
+        ],
+        scenes: [
+          makeStatement('s0', 0),
+          makeStatement('s1', 'سينكرونس كود'),
+        ],
+      });
+
+      const timeline = resolveTimeline(ep, FPS);
+      assert.equal(timeline.length, 2);
+
+      const item = timeline[1];
+      assert.equal(item.match.rawIndex, 2);
+      assert.equal(item.match.rawEndIndex, 3);
+      assert.equal(item.match.wordIndex, 2);
+      assert.equal(item.match.startSeconds, 2.0);
+      assert.equal(item.match.text, 'Synchronous Code');
+      assert.equal(item.match.rawText, 'سينكرونس كود');
     });
   });
 });

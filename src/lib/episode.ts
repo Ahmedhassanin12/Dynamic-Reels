@@ -89,8 +89,13 @@ export const validateEpisode = (episode: Episode): string[] => {
     if (seen.has(scene.id)) fail('duplicate scene id (ids must be unique).');
     seen.add(scene.id);
 
-    if (scene.kind === 'statement' && !scene.text.trim()) {
-      fail('text must not be empty.');
+    if (scene.kind === 'statement') {
+      if (!scene.text.trim()) {
+        fail('text must not be empty.');
+      }
+      if (scene.codePreview && !scene.codePreview.code.trim()) {
+        fail('codePreview.code must not be empty when specified.');
+      }
     }
     if (scene.kind === 'array') {
       if (scene.cells.length === 0) {
@@ -110,6 +115,11 @@ export const validateEpisode = (episode: Episode): string[] => {
       }
       if (scene.subLayer && (!scene.subLayer.label.trim() || scene.subLayer.items.length === 0)) {
         fail('diagram subLayer must have a non-empty label and at least one item.');
+      }
+      if (scene.edgeLabels && scene.edgeLabels.length > Math.max(0, scene.nodes.length - 1)) {
+        fail(
+          `edgeLabels length (${scene.edgeLabels.length}) cannot exceed node transitions (${Math.max(0, scene.nodes.length - 1)}).`,
+        );
       }
     }
     if ((scene.kind === 'code' || scene.kind === 'codeDemo') && scene.code !== undefined) {
@@ -219,10 +229,18 @@ export const validateEpisode = (episode: Episode): string[] => {
       if (badSide) {
         fail('each compare side must have a non-empty title and at least one non-empty item or code snippet.');
       }
+      for (const side of scene.sides) {
+        if (side.progress !== undefined && (!Number.isFinite(side.progress) || side.progress < 0 || side.progress > 100)) {
+          fail(`compare side progress (${side.progress}) must be a number between 0 and 100.`);
+        }
+      }
     }
     if (scene.kind === 'qa') {
       if (!scene.question.trim() || !scene.answer.trim()) {
         fail('question and answer must not be empty.');
+      }
+      if (scene.revealDelayFrames !== undefined && (!Number.isFinite(scene.revealDelayFrames) || scene.revealDelayFrames < 0)) {
+        fail(`qa revealDelayFrames (${scene.revealDelayFrames}) must be a non-negative number.`);
       }
       if (scene.options !== undefined) {
         if (scene.options.length < 2 || scene.options.some((opt) => !opt.trim())) {
