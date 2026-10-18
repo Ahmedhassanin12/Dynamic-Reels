@@ -121,9 +121,11 @@ export const CodeSnap = ({
         </div>
 
         <Highlight theme={prism} code={shown} language={language}>
-          {({ tokens, getTokenProps }) => (
+          {({ tokens, getTokenProps, style: highlightStyle }) => (
             <pre
               style={{
+                ...highlightStyle,
+                color: chrome.text,
                 margin: 0,
                 padding: '22px 0 26px',
                 fontFamily: CODE_FONT,
@@ -158,11 +160,18 @@ export const CodeSnap = ({
                     >
                       {i + 1}
                     </span>
-                    <span style={{ whiteSpace: 'pre' }}>
+                    <span style={{ whiteSpace: 'pre', color: chrome.text }}>
                       {line.map((token, k) => {
                         const props = getTokenProps({ token });
                         return (
-                          <span key={k} className={props.className} style={props.style}>
+                          <span
+                            key={k}
+                            className={props.className}
+                            style={{
+                              color: chrome.text,
+                              ...props.style,
+                            }}
+                          >
                             {token.content.replace(/\n/g, '')}
                           </span>
                         );

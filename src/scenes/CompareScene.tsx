@@ -165,9 +165,11 @@ export const CompareScene = ({ label, title, pill, sides }: SceneOf<'compare'>) 
                     }}
                   >
                     <Highlight theme={theme.code.prism} code={side.code.trim()} language={side.language ?? 'tsx'}>
-                      {({ tokens, getTokenProps }) => (
+                      {({ tokens, getTokenProps, style: highlightStyle }) => (
                         <pre
                           style={{
+                            ...highlightStyle,
+                            color: theme.code.chrome.text,
                             margin: 0,
                             padding: '16px 18px',
                             fontFamily: CODE_FONT,
@@ -191,11 +193,18 @@ export const CompareScene = ({ label, title, pill, sides }: SceneOf<'compare'>) 
                               >
                                 {lineIdx + 1}
                               </span>
-                              <span style={{ whiteSpace: 'pre-wrap' }}>
+                              <span style={{ whiteSpace: 'pre-wrap', color: theme.code.chrome.text }}>
                                 {line.map((token, k) => {
                                   const props = getTokenProps({ token });
                                   return (
-                                    <span key={k} className={props.className} style={props.style}>
+                                    <span
+                                      key={k}
+                                      className={props.className}
+                                      style={{
+                                        color: theme.code.chrome.text,
+                                        ...props.style,
+                                      }}
+                                    >
                                       {token.content.replace(/\n/g, '')}
                                     </span>
                                   );

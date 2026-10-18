@@ -111,6 +111,7 @@ export const StatementScene = ({ label, text, variant, codePreview }: SceneOf<'s
         justifyContent: 'center',
         alignItems: 'center',
         padding: `${STAGE.top}px ${STAGE.paddingX}px ${STAGE.reservedBottom}px`,
+        color: theme.text,
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: hasPreview ? 36 : 28, width: '100%' }}>
