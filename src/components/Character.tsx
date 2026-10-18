@@ -8,7 +8,7 @@ export const Character = () => {
   const bob = Math.sin(frame / 6) * 6;
   const style = { position: 'absolute', left: 1, bottom: 20 , width: CHARACTER.width, height: CHARACTER.height } as const;
 
-  if (CHARACTER.src) return <div style={{width:"320px",height:"320px", borderRadius:"50%"}}><Img src={staticFile(CHARACTER.src)} style={{ ...style, objectFit:"fill" , backgroundColor:"transparent" }} /></div>;
+  if (CHARACTER.src) return <div style={{width:"320px",height:"460px", borderRadius:"50%"}}><Img src={staticFile(CHARACTER.src)} style={{ ...style, objectFit:"fill" , backgroundColor:"transparent" }} /></div>;
 
   return (
     <div

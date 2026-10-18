@@ -230,4 +230,4 @@ export const CODE_SNAP = {
 export const CODE_DEMO = { vizDelayFrames: 10, vizHeight: 340 } as const;
 
 /** Put your PNG in /public and set the file name. null => placeholder. (Keep your own values here.) */
-export const CHARACTER = { src: 'main.png' as string | null, width: 370, height: 570 } as const;
+export const CHARACTER = { src: 'main.png' as string | null, width: 370, height: 770 } as const;

@@ -63,9 +63,36 @@ const RichStatement = ({ text }: { text: string }) => {
   );
 };
 
+const isMainlyLatin = (str: string) => {
+  const letters = str.replace(/[^a-zA-Z\u0600-\u06FF]/g, '');
+  const latinCount = (letters.match(/[a-zA-Z]/g) || []).length;
+  return letters.length > 0 && latinCount / letters.length > 0.65;
+};
+
 export const StatementScene = ({ label, text, variant, codePreview }: SceneOf<'statement'>) => {
   const theme = useTheme();
-  const cleanLength = text.replace(/[\[\]*]/g, '').length;
+
+  // Split into distinct blocks if separated by double newline or mixed scripts
+  const rawParagraphs = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  let arabicText = text;
+  let englishCallout: string | undefined;
+
+  if (rawParagraphs.length >= 2) {
+    const latinIdx = rawParagraphs.findIndex((p) => isMainlyLatin(p));
+    if (latinIdx !== -1) {
+      englishCallout = rawParagraphs[latinIdx];
+      arabicText = rawParagraphs.filter((_, idx) => idx !== latinIdx).join('\n\n');
+    }
+  } else if (text.includes('\n')) {
+    const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+    const latinLine = lines.find((l) => isMainlyLatin(l));
+    if (latinLine) {
+      englishCallout = latinLine;
+      arabicText = lines.filter((l) => l !== latinLine).join('\n');
+    }
+  }
+
+  const cleanLength = arabicText.replace(/[\[\]*]/g, '').length;
   const hasPreview = Boolean(codePreview);
   const fontSize = hasPreview
     ? cleanLength > 55
@@ -113,15 +140,43 @@ export const StatementScene = ({ label, text, variant, codePreview }: SceneOf<'s
                 fontFamily: ARABIC_FONT,
                 fontWeight: 700,
                 fontSize,
-                lineHeight: 1.42,
+                lineHeight: 1.45,
                 direction: 'rtl',
                 textAlign: 'center',
                 color: theme.text,
+                whiteSpace: 'pre-line',
               }}
             >
-              <RichStatement text={text} />
+              <RichStatement text={arabicText} />
             </div>
-            {!hasPreview && (
+
+            {englishCallout && (
+              <div
+                dir="ltr"
+                style={{
+                  fontFamily: CODE_FONT,
+                  fontSize: Math.max(24, Math.round(fontSize * 0.52)),
+                  fontWeight: 600,
+                  color: theme.ink,
+                  letterSpacing: 0.5,
+                  padding: '12px 28px',
+                  borderRadius: 16,
+                  background: theme.tint,
+                  border: `1px solid ${theme.borderStrong}`,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  boxShadow: theme.shadowSm,
+                  marginTop: 6,
+                  textAlign: 'center',
+                }}
+              >
+                <span style={{ fontSize: '1.15em' }}>💡</span>
+                <span>{englishCallout}</span>
+              </div>
+            )}
+
+            {!hasPreview && !englishCallout && (
               <div
                 style={{
                   width: 72,
