@@ -9,6 +9,7 @@ import {
   LOOKUP,
   MEMORY,
   MOTION,
+  RELATION,
   SCAN,
   TIMELINE,
 } from '../config';
@@ -299,6 +300,10 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
         const stepCount = scene.viz.steps?.length ?? 1;
         const stepFrames = scene.viz.framesPerStep ?? 25;
         vizFrames = scene.viz.steps?.length ? stepCount * stepFrames + 15 : 35;
+      } else if (scene.viz.type === 'relation') {
+        const stepFrames = scene.viz.framesPerStep ?? RELATION.stepStaggerFrames;
+        const totalItems = scene.viz.tables.length + (scene.viz.link ? 1 : 0);
+        vizFrames = totalItems * stepFrames + 20;
       }
       return codeTyping + delay + vizFrames;
     }

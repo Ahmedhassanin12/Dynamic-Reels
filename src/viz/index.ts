@@ -8,6 +8,7 @@ export { Labeled } from './Labeled';
 export { LinkedListViz } from './LinkedListViz';
 export { LookupViz } from './LookupViz';
 export { MemoryViz } from './MemoryViz';
+export { RelationViz } from './RelationViz';
 export { VIZ_REGISTRY } from './registry';
 export { ResultBadge } from './ResultBadge';
 export { ScanViz } from './ScanViz';

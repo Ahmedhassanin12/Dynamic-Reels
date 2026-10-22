@@ -18,6 +18,7 @@ const DEFAULT_PILLS: Record<VizType, { pill: string; tone: 'good' | 'bad' | 'neu
   complexity: { pill: 'BIG-O · TIME COMPLEXITY', tone: 'good' },
   linkedList: { pill: 'DATA STRUCTURE · LINKED LIST', tone: 'neutral' },
   asyncFlow: { pill: 'ASYNC JS · PROMISE & EVENT FLOW', tone: 'neutral' },
+  relation: { pill: 'RELATIONAL DB · FOREIGN KEY', tone: 'neutral' },
 };
 
 /** Code on top, and below it a live picture of what that code does, so it makes sense even without the voice. */

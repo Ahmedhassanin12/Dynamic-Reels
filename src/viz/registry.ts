@@ -9,6 +9,7 @@ import { ExecutionViz } from './ExecutionViz';
 import { LinkedListViz } from './LinkedListViz';
 import { LookupViz } from './LookupViz';
 import { MemoryViz } from './MemoryViz';
+import { RelationViz } from './RelationViz';
 import { ScanViz } from './ScanViz';
 
 export const VIZ_REGISTRY = {
@@ -22,6 +23,7 @@ export const VIZ_REGISTRY = {
   complexity: ComplexityViz,
   linkedList: LinkedListViz,
   asyncFlow: AsyncFlowViz,
+  relation: RelationViz,
 } satisfies { [K in VizType]: FC<VizProps<K>> };
 
 

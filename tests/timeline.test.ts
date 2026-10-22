@@ -825,6 +825,146 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
         ),
       );
     });
+
+    it('validates relation visualizer (single/dual database tables, PK/FK columns, and orders.user_id -> users.id link)', () => {
+      const validEp = defineEpisode({
+        id: 'relation-valid',
+        title: 'Relational DB Foreign Key',
+        voice: null,
+        words: [
+          { text: 'مستخدمين', start: 0.0, end: 1.5 },
+          { text: 'علاقة', start: 2.0, end: 4.5 },
+        ],
+        scenes: [
+          {
+            id: 'users-table-only',
+            kind: 'codeDemo',
+            at: 0,
+            skipTyping: true,
+            code: 'CREATE TABLE users (\n  id INT PRIMARY KEY,\n  name TEXT\n);',
+            viz: {
+              type: 'relation',
+              tables: [
+                {
+                  name: 'users',
+                  columns: [{ name: 'id', pk: true }, 'name'],
+                  rows: [{ id: 42, name: 'Sara' }],
+                  highlightRow: 0,
+                },
+              ],
+              note: 'كل مستخدم ليه Primary Key مميز',
+            },
+          },
+          {
+            id: 'orders-users-fk',
+            kind: 'codeDemo',
+            at: 1,
+            skipTyping: true,
+            code: 'SELECT * FROM orders\nJOIN users ON orders.user_id = users.id;',
+            viz: {
+              type: 'relation',
+              tables: [
+                {
+                  name: 'users',
+                  columns: [
+                    { name: 'id', role: 'pk' },
+                    { name: 'name' },
+                  ],
+                  rows: [[42, 'Sara']],
+                },
+                {
+                  name: 'orders',
+                  columns: [
+                    { name: 'id', pk: true },
+                    { name: 'user_id', fk: true, highlight: true },
+                    { name: 'total' },
+                  ],
+                  rows: [[101, 42, 250]],
+                },
+              ],
+              link: {
+                fromTable: 'orders',
+                fromColumn: 'user_id',
+                toTable: 'users',
+                toColumn: 'id',
+                value: 42,
+                label: 'REFERENCES',
+              },
+              note: 'orders.user_id بيشاور على users.id',
+            },
+            result: '1:N Relation',
+          },
+        ],
+      });
+
+      const timeline = resolveTimeline(validEp, FPS);
+      assert.equal(timeline.length, 2);
+      const singleTableFrames = getMinSceneFrames(validEp.scenes[0]);
+      const linkedTablesFrames = getMinSceneFrames(validEp.scenes[1]);
+      // skipTyping: true -> codeTyping = 0, delay = CODE_DEMO.vizDelayFrames (10), vizFrames = items * 12 + 20
+      assert.equal(singleTableFrames, 10 + 1 * 12 + 20);
+      assert.equal(linkedTablesFrames, 10 + 3 * 12 + 20);
+      assert.ok(linkedTablesFrames > singleTableFrames);
+
+      const invalidEp: Episode = {
+        id: 'relation-invalid',
+        title: 'Relation Invalid',
+        voice: null,
+        words: [
+          { text: 'أول', start: 0.0, end: 0.5 },
+          { text: 'ثاني', start: 1.0, end: 1.5 },
+        ],
+        scenes: [
+          {
+            id: 'rel-empty',
+            kind: 'codeDemo',
+            at: 0,
+            viz: {
+              type: 'relation',
+              tables: [],
+            },
+          },
+          {
+            id: 'rel-bad-link',
+            kind: 'codeDemo',
+            at: 1,
+            viz: {
+              type: 'relation',
+              tables: [
+                {
+                  name: 'users',
+                  columns: [{ name: 'id', pk: true }],
+                  rows: [[42]],
+                  highlightRow: 4,
+                  highlightColumns: ['missing_col'],
+                },
+                {
+                  name: 'orders',
+                  columns: ['id', 'user_id'],
+                  rows: [],
+                },
+              ],
+              link: {
+                fromTable: 'orders',
+                fromColumn: 'bad_fk',
+                toTable: 'unknown_table',
+                toColumn: 'id',
+              },
+              framesPerStep: 0,
+            },
+          },
+        ],
+      };
+
+      const errors = validateEpisode(invalidEp);
+      assert.ok(errors.some((e) => e.includes('scene "rel-empty": viz.tables must contain 1 or 2 tables')));
+      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": table "users" highlightRow 4 is outside rows (0-0)')));
+      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": table "users" highlightColumns (missing_col) do not exist in columns')));
+      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": table "orders" must contain at least one sample row')));
+      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": viz.link.fromColumn "bad_fk" does not exist in table "orders"')));
+      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": viz.link.toTable "unknown_table" does not match any table in viz.tables')));
+      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": viz.framesPerStep (0) must be a positive number')));
+    });
   });
 });
 

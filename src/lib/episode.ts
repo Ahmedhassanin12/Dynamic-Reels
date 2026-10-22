@@ -249,6 +249,54 @@ export const validateEpisode = (episode: Episode): string[] => {
           fail(`viz.framesPerStep (${viz.framesPerStep}) must be a positive number.`);
         }
       }
+      if (viz.type === 'relation') {
+        if (!viz.tables || viz.tables.length < 1 || viz.tables.length > 2) {
+          fail('viz.tables must contain 1 or 2 tables.');
+        } else {
+          const tableColMap = new Map<string, Set<string>>();
+          for (const table of viz.tables) {
+            const tName = table.name?.trim() ?? '';
+            if (!tName) {
+              fail('each table in viz.tables must have a non-empty name.');
+            }
+            const colNames = (table.columns ?? []).map((c) => (typeof c === 'string' ? c.trim() : c.name?.trim() ?? ''));
+            if (colNames.length === 0 || colNames.some((n) => !n)) {
+              fail(`table "${tName || 'unnamed'}" must contain at least one non-empty column.`);
+            }
+            if (!table.rows || table.rows.length === 0) {
+              fail(`table "${tName || 'unnamed'}" must contain at least one sample row.`);
+            } else if (table.highlightRow !== undefined && !inRange(table.highlightRow, table.rows.length)) {
+              fail(`table "${tName}" highlightRow ${table.highlightRow} is outside rows (0-${table.rows.length - 1}).`);
+            }
+            const colSet = new Set(colNames.filter(Boolean));
+            if (tName) tableColMap.set(tName, colSet);
+            if (table.highlightColumns) {
+              const badCols = table.highlightColumns.filter((hc) => !colSet.has(hc));
+              if (badCols.length) {
+                fail(`table "${tName}" highlightColumns (${badCols.join(', ')}) do not exist in columns.`);
+              }
+            }
+          }
+          if (viz.link) {
+            const { fromTable, fromColumn, toTable, toColumn } = viz.link;
+            const fromCols = tableColMap.get(fromTable);
+            const toCols = tableColMap.get(toTable);
+            if (!fromCols) {
+              fail(`viz.link.fromTable "${fromTable}" does not match any table in viz.tables.`);
+            } else if (!fromCols.has(fromColumn)) {
+              fail(`viz.link.fromColumn "${fromColumn}" does not exist in table "${fromTable}".`);
+            }
+            if (!toCols) {
+              fail(`viz.link.toTable "${toTable}" does not match any table in viz.tables.`);
+            } else if (!toCols.has(toColumn)) {
+              fail(`viz.link.toColumn "${toColumn}" does not exist in table "${toTable}".`);
+            }
+          }
+        }
+        if (viz.framesPerStep !== undefined && (!Number.isFinite(viz.framesPerStep) || viz.framesPerStep <= 0)) {
+          fail(`viz.framesPerStep (${viz.framesPerStep}) must be a positive number.`);
+        }
+      }
     }
     if (scene.kind === 'steps') {
       if (

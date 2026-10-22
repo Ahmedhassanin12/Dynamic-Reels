@@ -197,6 +197,7 @@ export const CALL_STACK = { framesPerStep: 16 } as const;
 export const BINARY_SEARCH = { framesPerStep: 22 } as const;
 export const MEMORY = { stepStaggerFrames: 12 } as const;
 export const COMPLEXITY = { drawFrames: 36 } as const;
+export const RELATION = { stepStaggerFrames: 12 } as const;
 
 export const CAPTION = {
   wordsPerChunk: 3,

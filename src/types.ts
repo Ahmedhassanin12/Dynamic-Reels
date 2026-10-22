@@ -144,7 +144,67 @@ export type VizConfig =
       steps?: AsyncStep[];
       framesPerStep?: number;
       note?: string;
+    }
+  | {
+      type: 'relation';
+      tables: RelationTable[];
+      link?: RelationLink;
+      note?: string;
+      framesPerStep?: number;
     };
+
+export type RelationKeyRole = 'pk' | 'fk';
+
+export type RelationColumn = {
+  /** Column identifier used in row records (e.g. "id", "user_id", "name") */
+  name: string;
+  /** Optional display label (defaults to `name`) */
+  label?: string;
+  /** Key role badge: 'pk' (Primary Key) or 'fk' (Foreign Key) */
+  role?: RelationKeyRole;
+  /** Shorthand boolean for Primary Key */
+  pk?: boolean;
+  /** Shorthand boolean for Foreign Key */
+  fk?: boolean;
+  /** Visually highlight this column */
+  highlight?: boolean;
+};
+
+export type RelationColumnInput = string | RelationColumn;
+
+export type RelationRowInput = (string | number)[] | Record<string, string | number>;
+
+export type RelationTable = {
+  /** Table name (e.g. "users", "orders") */
+  name: string;
+  /** Optional subtitle or badge on the table header (e.g. "PARENT TABLE", "CHILD TABLE") */
+  badge?: string;
+  /** Columns in display order */
+  columns: RelationColumnInput[];
+  /** Sample rows (each row can be a tuple in column order or a column-keyed record) */
+  rows: RelationRowInput[];
+  /** Optional 0-based row index to highlight */
+  highlightRow?: number;
+  /** Optional column names to highlight */
+  highlightColumns?: string[];
+  /** Optional visual tone for the table card */
+  tone?: 'good' | 'ink' | 'warn' | 'paper';
+};
+
+export type RelationLink = {
+  /** Source (Foreign Key) table name, e.g. "orders" */
+  fromTable: string;
+  /** Source (Foreign Key) column name, e.g. "user_id" */
+  fromColumn: string;
+  /** Target (Primary Key) table name, e.g. "users" */
+  toTable: string;
+  /** Target (Primary Key) column name, e.g. "id" */
+  toColumn: string;
+  /** Optional matched key value to highlight across both tables (e.g. 42) */
+  value?: string | number;
+  /** Optional relationship label (e.g. "REFERENCES", "1:N") */
+  label?: string;
+};
 
 export type AsyncState = 'pending' | 'fulfilled' | 'rejected' | 'running' | 'idle';
 
