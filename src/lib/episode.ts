@@ -1,60 +1,10 @@
 import { DEFAULT_THEME, FPS } from '../config';
-import { GLOSSARY, type GlossaryEntry } from '../glossary';
+import { GLOSSARY, applyGlossary, type GlossaryEntry } from '../glossary';
 import type { Episode, Word } from '../types';
 import { applyCorrections, validateCorrections } from './corrections';
-import { normalizeText } from './text';
 import { resolveTimeline } from './timeline';
 
-export function applyGlossary(words: Word[], entries: GlossaryEntry[] = GLOSSARY): Word[] {
-  // Prevent accidental double-application on already-normalized words when using default glossary
-  if (entries === GLOSSARY && words.length > 0 && Boolean((words as unknown as { _glossaryApplied?: boolean })._glossaryApplied)) {
-    return words;
-  }
-
-  const byLength = [...entries].sort((a, b) => b.say.length - a.say.length);
-  const out: Word[] = [];
-
-  for (let i = 0; i < words.length; ) {
-    const hit = byLength.find(
-      (entry) =>
-        entry.say.length > 0 &&
-        entry.say.every((token, k) => words[i + k] && normalizeText(words[i + k].text) === normalizeText(token)),
-    );
-    if (hit) {
-      const endIdx = i + hit.say.length - 1;
-      out.push({
-        text: hit.show,
-        start: words[i].start,
-        end: words[endIdx].end,
-        rawStart: words[i].rawStart ?? i,
-        rawEnd: words[endIdx].rawEnd ?? endIdx,
-        rawText: words
-          .slice(i, endIdx + 1)
-          .map((w) => w.rawText ?? w.text)
-          .join(' '),
-        correctedText: words
-          .slice(i, endIdx + 1)
-          .map((w) => w.correctedText ?? w.text)
-          .join(' '),
-      });
-      i += hit.say.length;
-    } else {
-      out.push({
-        ...words[i],
-        rawStart: words[i].rawStart ?? i,
-        rawEnd: words[i].rawEnd ?? i,
-        rawText: words[i].rawText ?? words[i].text,
-        correctedText: words[i].correctedText ?? words[i].text,
-      });
-      i += 1;
-    }
-  }
-
-  if (entries === GLOSSARY) {
-    (out as unknown as { _glossaryApplied?: boolean })._glossaryApplied = true;
-  }
-  return out;
-}
+export { applyGlossary };
 
 const inRange = (value: number, length: number) => Number.isInteger(value) && value >= 0 && value < length;
 

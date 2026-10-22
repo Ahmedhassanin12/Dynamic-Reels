@@ -1,65 +1,200 @@
-# Arabic Reel Project Architecture
+# Arabic Reel — Programmatic Video Generation Engine
 
-**Arabic Reel** is a programmatic video generation tool built using [Remotion](https://www.remotion.dev/). It allows developers to create high-quality, animated Arabic educational reels/videos directly from code. 
+**Arabic Reel** is a production-grade programmatic video generation system built with [Remotion](https://www.remotion.dev/), [React 19](https://react.dev/), and [TypeScript](https://www.typescriptlang.org/). It enables software engineers and content creators to generate high-retention, educational Arabic tech reels (9:16 vertical video) directly from code and voiceovers.
 
-By combining React-based scene composition with automated word-level speech-to-text synchronization, it transforms an audio file and a declarative script into a fully animated `.mp4` video.
+The platform couples word-level speech-to-text alignment with a declarative scene graph and domain-specific data structure / runtime visualizers.
 
-##  Tech Stack
+---
 
-*   **Core Engine**: [Remotion](https://www.remotion.dev/) (React 19, TypeScript) for programmatic video rendering.
-*   **Speech-to-Text**: Python with `faster-whisper` for offline, word-level Arabic transcription.
-*   **UI/Rendering**: Built-in Remotion primitives, custom React components, `prism-react-renderer` syntax highlighting, CSS-in-JS styling.
+## 🛠 Tech Stack
 
-## 📂 Project Structure
+* **Video Synthesis Engine**: Remotion 4.x with React 19 & TypeScript (GPU-accelerated programmatic video rendering).
+* **Speech-to-Text & Alignment**: Offline transcription via `faster-whisper` (`large-v3`) with prompt glossary seeding.
+* **Syntax Highlighting**: `prism-react-renderer` with custom dark-mode token palettes.
+* **Testing & Quality Assurance**: Node.js native test runner (`node --test`), native type-stripping (`test-loader.mjs`), and an automated pre-render QA audit suite (`scripts/validate.mjs`).
+
+---
+
+## 📂 Project Architecture
 
 ```text
 arabic-reel/
-├── package.json              # Project dependencies and script definitions
-├── requirements.txt          # Python dependencies (faster-whisper)
-├── tsconfig.json             # TypeScript configuration
-├── scripts/                  # Workflow utility scripts
-│   ├── new-episode.mjs       # Scaffolds boilerplate for new episodes
-│   └── transcribe.py         # Uses Whisper to transcribe audio -> words.json
-├── public/                   # Global static assets (e.g. character image)
+├── package.json              # Scripts, Remotion dependencies, React 19
+├── requirements.txt          # Python dependencies (faster-whisper, torch)
+├── tsconfig.json             # Strict TypeScript configuration
+├── scripts/                  # Developer CLI tooling & pipelines
+│   ├── new-episode.mjs       # Scaffolds new episode boilerplate and registers composition
+│   ├── transcribe.py         # Word-level speech alignment (faster-whisper -> words.json)
+│   ├── choreograph.mjs       # Interactive speech-to-scene alignment generator
+│   ├── corrections.mjs       # Transcript spelling & glossary correction manager
+│   ├── validate.mjs          # Pre-render QA audit suite (schema, timing, mobile bounds)
+│   └── test-loader.mjs       # Node native type-stripping ESM loader
+├── public/                   # Static media (character avatar: main.png, audio)
 └── src/                      # Source code
-    ├── Root.tsx / Reel.tsx   # Core Remotion compositions & video player setup
-    ├── config.ts             # Global layout, motion constants, and color themes (amber, mint, rose)
-    ├── glossary.json         # Maps spoken/transliterated Arabic phrases to Latin technical terms
-    ├── types.ts              # Type definitions (Scene configs, Words, etc.)
-    ├── components/           # Core UI elements (Captions, BidiText, CodeSnap, Character, Box)
-    ├── episodes/             # One self-contained folder per episode (index.ts + words.json + voice.mp3)
-    ├── lib/                  # Utilities (Captions parsing, timeline resolving, theming, fonts)
-    ├── scenes/               # Scene templates (statement, array, code, codeDemo, steps, compare, diagram, qa)
-    └── viz/                  # Data/Algorithmic visualizers (ScanViz, LookupViz, Labeled, ResultBadge)
+    ├── Root.tsx              # Remotion Root (registers all episode compositions)
+    ├── Reel.tsx              # Main Reel composition (Stage, Character, Captions, Transitions)
+    ├── config.ts             # Geometry, timeline defaults, and design tokens
+    ├── glossary.ts           # Technical vocabulary dictionary, validation, and normalization
+    ├── glossary.json         # Spoken-to-display technical mappings (Arabic transliteration -> English)
+    ├── types.ts              # Domain types re-export barrel (backward-compatible)
+    ├── types/                # Modular domain definitions
+    │   ├── transcript.ts     # Word, TranscriptCorrection, AnchorObject, SceneAnchor
+    │   ├── viz.ts            # VizConfig, ExecutionStep, EventLoopStep, StackSlot, HeapObject, etc.
+    │   ├── scene.ts          # SceneConfig, SceneKind, SceneOf, StepItem, CompareSide, DiagramNode
+    │   ├── episode.ts        # Episode definition schema
+    │   └── index.ts          # Consolidated types barrel
+    ├── theme/                # Design token & palette subsystem
+    │   ├── types.ts          # Theme, ThemeName, CodeChrome, CodeSyntax
+    │   ├── tokens.ts         # SHARED_UI, SHARED_CODE, THEMES ('amber' | 'mint' | 'rose')
+    │   ├── context.ts        # React ThemeContext, ThemeProvider, useTheme hook
+    │   └── index.ts          # Theme barrel
+    ├── components/           # Reusable UI primitives
+    │   ├── AuthoringHUD.tsx  # In-studio debug overlay for timing budgets & anchors
+    │   ├── BidiText.tsx      # Arabic RTL / English LTR text isolation (<bdi>)
+    │   ├── Box.tsx           # Elevated glass/card container with tone styling
+    │   ├── Captions.tsx      # Word-level animated kinetic typography with auto-chunking
+    │   ├── Character.tsx     # Animated host avatar with spring bounce
+    │   ├── CodeSnap.tsx      # Syntax-highlighted code editor with line highlights & typing
+    │   ├── Enter.tsx         # Staggered slide/fade entrance motion wrapper
+    │   ├── SceneTransition.tsx # Cross-fade & slide scene transition wrapper
+    │   ├── SingleScenePreview.tsx # Standalone scene preview component
+    │   └── index.ts          # Component barrel
+    ├── scenes/               # High-level declarative scene implementations
+    │   ├── StatementScene.tsx  # Hero hook, takeaway, and codePreview scenes
+    │   ├── CodeScene.tsx       # Dedicated syntax-highlighted code breakdown
+    │   ├── CodeDemoScene.tsx   # Code snippet paired with synchronized runtime visualizer
+    │   ├── CompareScene.tsx    # Split-screen comparison (Before/After, Code/Error, Good/Bad)
+    │   ├── DiagramScene.tsx    # Architecture & dataflow graph with directional arrows
+    │   ├── StepsScene.tsx      # Staggered sequence cards with optional stacked layout
+    │   ├── QaScene.tsx         # Interactive prediction quiz / Q&A with answer reveal
+    │   ├── TransitionScene.tsx # Chapter & concept pivot banner
+    │   ├── MythRealityScene.tsx # Common myth debunking with side-by-side verification
+    │   ├── ArrayScene.tsx      # Interactive linear scan & jump array visualization
+    │   ├── registry.ts         # SceneKind -> React component registry
+    │   └── index.ts            # Scenes barrel
+    ├── viz/                  # Algorithmic & Computer Science Visualizers
+    │   ├── ScanViz.tsx         # Linear array scan pointer
+    │   ├── LookupViz.tsx       # Hash table lookup with bucket hashing animation
+    │   ├── ExecutionViz.tsx    # Step-by-step code tracer with variable inspector & console
+    │   ├── EventLoopViz.tsx    # JS Event Loop (Call Stack, Web APIs, Microtasks, Tasks)
+    │   ├── CallStackViz.tsx    # Execution call stack / recursion frame tracer
+    │   ├── BinarySearchViz.tsx # Binary search pointer convergence [L, M, R]
+    │   ├── MemoryViz.tsx       # Stack variables referencing Heap objects with mutation cues
+    │   ├── ComplexityViz.tsx   # Big-O asymptotic curve graphs (O(1), O(log n), O(n), O(n²))
+    │   ├── LinkedListViz.tsx   # Singly-linked list nodes with pointers and address tags
+    │   ├── AsyncFlowViz.tsx    # Async/await & Promise lifecycle waterfall
+    │   ├── RelationViz.tsx     # Relational DB tables with PK/FK links and row highlighting
+    │   ├── registry.ts         # VizConfig['type'] -> React visualizer registry
+    │   └── index.ts            # Visualizer barrel
+    ├── lib/                  # Pure utility modules (zero circular dependencies)
+    │   ├── episode.ts        # defineEpisode API and schema validation
+    │   ├── timeline.ts       # Textual anchor search, occurrence matching, frame allocation
+    │   ├── text.ts           # Arabic diacritics & letter normalization (alef, yaa, taa marbuta)
+    │   ├── code.ts           # Typing duration and line count calculations
+    │   ├── corrections.ts    # Transcript corrections application and safety assertions
+    │   ├── export.ts         # Subtitle track generation (.srt and .vtt)
+    │   ├── fonts.ts          # Typography loaders (Cairo Arabic font)
+    │   └── scaffold.ts       # Episode ID validation and source registry update logic
+    └── episodes/             # Production & showcase episodes (one folder per episode)
+        ├── array-vs-hash-map/
+        ├── event-loop/
+        ├── clean-code-function/
+        ├── naming-1/
+        ├── use-pronounceable-names/
+        ├── foreign-key/
+        ├── scene-showcase/
+        └── index.ts          # EPISODES registry consumed by Root.tsx
 ```
 
-## 🏗 Architecture & Core Concepts
+---
 
-The architecture relies on a **Declarative Timeline** driven by the transcribed audio. 
+## 🎬 Scene Catalog
 
-1.  **Episodes & Scenes**: An episode is defined in `src/episodes/<id>/index.ts` using the `defineEpisode` function (with an optional per-episode `theme`: `'amber' | 'mint' | 'rose'`). It contains a list of **Scenes** (`statement`, `array`, `code`, `codeDemo`, `steps`, `compare`, `diagram`, `qa`).
-2.  **Audio Syncing (`at` anchors)**: Scenes are synchronized to the audio using the `at` property. A scene can start precisely when a specific word is spoken (by supplying a string match, occurrence count, or word index). The `lib/timeline.ts` module calculates precise frame durations based on these anchors.
-3.  **Captions & Glossary Normalization**: The `Captions.tsx` component parses `words.json` and renders spring-animated Arabic captions in real-time. Multi-word transliterated technical terms (e.g., `["ست", "تايم", "اوت"]` -> `"setTimeout"`, `["او", "اوف", "وان"]` -> `"O(1)"`) are automatically replaced using `src/glossary.json`.
-4.  **Bidirectional Text (`BidiText`)**: The `BidiText.tsx` component automatically isolates embedded Latin/alphanumeric expressions (`<bdi dir="ltr">`) inside RTL Arabic text so code snippets, numbers, and English terms render without punctuation or word-order flipping.
-5.  **Scene Registry**: The `src/scenes/registry.ts` maps semantic scene declarations (like `kind: 'codeDemo'`) to their respective React components, making the engine highly extensible.
+Every scene is declared declaratively inside `src/episodes/<id>/index.ts` using the `defineEpisode` API:
 
-## 🚀 The Pipeline Workflow
+| Kind | Purpose | Key Props |
+| :--- | :--- | :--- |
+| `statement` | Opening hook, core rule, or closing takeaway | `text`, `variant: 'hook' \| 'takeaway'`, `codePreview` |
+| `code` | Code walkthrough with syntax highlighting | `code`, `language`, `filename`, `highlightLines`, `persistCode` |
+| `codeDemo` | Code side-by-side with animated visualizer | `code`, `viz: VizConfig`, `pill`, `tagText`, `result` |
+| `compare` | Split comparison (Before vs. After, Good vs. Bad) | `sides: [CompareSide, CompareSide]`, `code`, `errorLine` |
+| `diagram` | Architectural flow with arrows & badges | `nodes`, `edgeLabels`, `returnEdgeLabels`, `subLayer` |
+| `steps` | Sequential execution steps or pipeline stages | `steps: (string \| StepItem)[]`, `showStack` |
+| `qa` | Prediction quiz with delayed answer reveal | `question`, `answer`, `options`, `correctIndex`, `revealDelayFrames` |
+| `transition` | Topic change or chapter divider | `fromTitle`, `toTitle`, `bridgeText` |
+| `mythReality` | Debunking software myths with facts | `myth`, `reality`, `revealDelayFrames` |
+| `array` | Linear memory inspection | `cells`, `target`, `mode: 'scan' \| 'jump'` |
 
-### Prerequisites
-*   Install Node dependencies: `npm install`
-*   Install Python dependencies: `pip install -r requirements.txt`
+---
 
-### Creating an Episode
-Creating a new reel follows a 5-step pipeline:
+## 🔬 Computer Science Visualizers (`VizConfig`)
 
-1.  **Scaffold**: 
-    Run `npm run new-episode -- <topic-name>`. This creates `src/episodes/<topic-name>/` and registers the episode in `src/episodes/index.ts`.
-2.  **Voiceover**: 
-    Record the audio track and place it at `src/episodes/<topic-name>/voice.mp3`. In the episode's `index.ts`, uncomment `import voice from './voice.mp3'` and set `voice` (instead of `null`).
-3.  **Transcribe**: 
-    Run `npm run transcribe -- <topic-name>` (or `npm run transcribe -- <topic-name> --cuda` for GPU acceleration). The Python script uses `faster-whisper` (`large-v3`) along with terms from `src/glossary.json` as an initial prompt to generate `src/episodes/<topic-name>/words.json`.
-4.  **Authoring**: 
-    Edit the episode's `index.ts` file to declare visual scenes. Scenes are synced to the speech using textual anchors (e.g., `at: 'الحل'` triggers a scene when the word "الحل" is spoken). Add any new technical terms to `src/glossary.json` if needed.
-5.  **Render**: 
-    *   Preview in browser: `npm run dev` (opens Remotion Studio).
-    *   Export to video: `npm run render -- <topic-name> out/<topic-name>.mp4`.
+The `codeDemo` scene can embed any of the following hardware/runtime visualizers:
+
+1. **`scan`**: Linear search array with animated cursor and target hit.
+2. **`lookup`**: Hash map key hashing and bucket collision resolution.
+3. **`execution`**: Interactive line-by-line interpreter with variable state and stdout console.
+4. **`eventLoop`**: JavaScript concurrency model showing Call Stack, Web APIs, Microtask Queue (Promises), and Macrotask Queue (`setTimeout`).
+5. **`callStack`**: Function stack frame allocation and unwinding with return values.
+6. **`binarySearch`**: Divide-and-conquer search showing `L`, `M`, and `R` pointer convergence.
+7. **`memory`**: Stack variable references pointing to Heap memory objects with property mutation indicators.
+8. **`complexity`**: Animated Big-O complexity curves comparing algorithmic scalability.
+9. **`linkedList`**: Pointer node traversal with memory addresses (`0x1A -> 0x4F`).
+10. **`asyncFlow`**: Promise resolution states (`pending` -> `fulfilled`/`rejected`) and async waterfall.
+11. **`relation`**: Relational database tables highlighting Primary Key (`PK`), Foreign Key (`FK`), and relational links (`REFERENCES`).
+
+---
+
+## ⚡ Developer Workflow & CLI Commands
+
+### 1. Scaffolding a New Episode
+```bash
+npm run new-episode -- <episode-id>
+```
+*Creates `src/episodes/<episode-id>/` with an initial `index.ts` and registers the episode in `src/episodes/index.ts`.*
+
+### 2. Transcribing Voiceover Audio
+Place `voice.mp3` or `voice.wav` in `src/episodes/<episode-id>/`, then run:
+```bash
+npm run transcribe -- <episode-id>
+# Or with CUDA GPU acceleration:
+npm run transcribe -- <episode-id> --cuda
+```
+*Generates word-level timestamps in `words.json`, applying technical terms from `glossary.json` as initial Whisper prompts.*
+
+### 3. Choreographing Scenes Against Speech
+```bash
+npm run choreograph -- <episode-id>
+```
+*Inspects the transcript and interactively generates recommended `at:` textual anchors.*
+
+### 4. Interactive Preview in Remotion Studio
+```bash
+npm run dev
+```
+*Launches Remotion Studio at `http://localhost:3000` with live reloading, timeline scrubbing, and the Authoring HUD.*
+
+### 5. Automated Pre-Render QA Audit
+```bash
+# Audit a single episode:
+npm run validate -- <episode-id>
+
+# Audit all episodes in the project:
+npm run validate
+```
+*Verifies schema integrity, word timestamps, timeline anchor continuity, mobile safe-zone bounds, and code line length limits.*
+
+### 6. Subtitle Export & Final Video Render
+```bash
+npm run render -- <episode-id> out/<episode-id>.mp4
+```
+*Renders high-resolution 1080x1920 30fps MP4 and exports synchronized `.srt` and `.vtt` subtitles in `out/`.*
+
+### 7. Automated Testing & Verification
+```bash
+# Type check:
+npm run typecheck
+
+# Run test suite:
+npm test
+```

@@ -16,7 +16,7 @@ import {
 import type { Episode, SceneConfig, Word } from '../types';
 import { typingFrames } from './code';
 import { applyCorrections } from './corrections';
-import { applyGlossary } from './episode';
+import { applyGlossary } from '../glossary';
 import { normalizeText as normalize, tokenizeNormalized } from './text';
 
 export type BinarySearchStep = {
