@@ -1,0 +1,15 @@
+{
+  "title": "إيه اللي بيحصل ورا التطبيق؟",
+  "episodes": [
+    { "id": "behind-01-one-tap", "title": "ضغطة لايك واحدة" },
+    { "id": "behind-02-api", "title": "الـ API: الجرسون" },
+    { "id": "behind-03-database", "title": "الـ Database والجداول" },
+    { "id": "behind-04-index", "title": "الـ Index: الفهرس" },
+    { "id": "behind-05-hash-map", "title": "الـ Hash Map" },
+    { "id": "behind-06-cache", "title": "الـ Cache" },
+    { "id": "behind-07-memory", "title": "الـ Memory: Stack و Heap" },
+    { "id": "behind-08-async", "title": "الـ Event Loop" },
+    { "id": "behind-09-big-o", "title": "الـ Big-O" },
+    { "id": "behind-10-recap", "title": "الرحلة كاملة" }
+  ]
+}
