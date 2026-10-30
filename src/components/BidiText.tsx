@@ -7,11 +7,16 @@ type Props = {
   as?: keyof React.JSX.IntrinsicElements;
 };
 
+const ARABIC_CHAR_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
+
+// Match full Latin/alphanumeric runs (including parenthesized suffixes like "Primary Key (PK)", "users(id)", "O(log n)")
+const LATIN_RUN_RE =
+  /([a-zA-Z0-9][a-zA-Z0-9_#$@%<>()\[\]{}:.\/=+*^'"]*(?:(?:\s+[=+*\/<>&|!\u2192-]+\s+|\s+|,\s*)[(\['"]*[a-zA-Z0-9][a-zA-Z0-9_#$@%<>()\[\]{}:.\/=+*^'"]*)*)/g;
+
 /**
  * Renders bidirectional text with explicit isolation.
- * Automatically wraps embedded Latin/alphanumeric runs in <bdi dir="ltr">
- * so that numbers, English terms, and phrases (e.g. "100K user", "Hash Map", "O(1)")
- * flow seamlessly within RTL Arabic sentences without punctuation or word flipping.
+ * - Pure Latin/ASCII strings render in an isolated LTR container so parentheses like "Primary Key (PK)" never mirror.
+ * - Mixed Arabic + Latin strings isolate each Latin run in <bdi dir="ltr"> with explicit CSS direction and slight inline breathing room.
  */
 export const BidiText = ({ children, style, as: Tag = 'bdi' }: Props) => {
   if (typeof children !== 'string') {
@@ -22,19 +27,33 @@ export const BidiText = ({ children, style, as: Tag = 'bdi' }: Props) => {
     );
   }
 
-  // Match full Latin/alphanumeric runs starting with an alphanumeric character (e.g. "100K user", "Hash Map", "array.filter(x => x.id)", "Map<string, User>")
-  // Preceding punctuation (like ":" in "الحلقة الجاية: Stack") and trailing punctuation stay in the RTL stream with the Arabic text.
-  const parts = children.split(
-    /([a-zA-Z0-9][a-zA-Z0-9_#$@%<>()\[\]{}:.\/=+*^'"]*(?:(?:\s+[=+*\/<>&|!\u2192-]+\s+|\s+|,\s*)[a-zA-Z0-9][a-zA-Z0-9_#$@%<>()\[\]{}:.\/=+*^'"]*)*)/g,
-  );
+  // If the string contains no Arabic script characters at all, render it as a single LTR run
+  if (!ARABIC_CHAR_RE.test(children)) {
+    return (
+      <Tag dir="ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', ...style }}>
+        {children}
+      </Tag>
+    );
+  }
+
+  const parts = children.split(LATIN_RUN_RE);
 
   return (
-    <Tag dir="rtl" style={{ unicodeBidi: 'isolate', ...style }}>
+    <Tag dir="rtl" style={{ direction: 'rtl', unicodeBidi: 'isolate', ...style }}>
       {parts.map((part, i) => {
         if (!part) return null;
         if (/[a-zA-Z0-9]/.test(part)) {
           return (
-            <bdi key={i} dir="ltr">
+            <bdi
+              key={i}
+              dir="ltr"
+              style={{
+                direction: 'ltr',
+                unicodeBidi: 'isolate',
+                display: 'inline-block',
+                marginInline: '0.08em',
+              }}
+            >
               {part}
             </bdi>
           );

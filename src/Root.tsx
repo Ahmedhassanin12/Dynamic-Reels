@@ -1,6 +1,7 @@
 import { Composition, Folder } from 'remotion';
 import { getAudioDurationInSeconds } from '@remotion/media-utils';
 import { SingleScenePreview } from './components/SingleScenePreview';
+import { ContactSheet, getContactSheetSize } from './dev/ContactSheet';
 import { FPS, SIZE, TIMELINE } from './config';
 import { EPISODES } from './episodes';
 import { getDurationInFrames, getMinSceneFrames } from './lib/timeline';
@@ -63,6 +64,23 @@ export const Root = () => (
           })}
         </Folder>
       ))}
+    </Folder>
+
+    <Folder name="Dev">
+      <Composition
+        id="contact-sheet"
+        component={ContactSheet}
+        defaultProps={{
+          episodeId: 'foreign-key',
+          frames: [600, 647, 705, 727, 782, 822],
+          columns: 6,
+          scale: 0.3,
+        }}
+        durationInFrames={1}
+        fps={FPS}
+        {...SIZE}
+        calculateMetadata={({ props }) => getContactSheetSize(props)}
+      />
     </Folder>
   </>
 );

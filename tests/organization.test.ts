@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { SPACING, TYPOGRAPHY } from '../src/config';
+import { drawProgress, emphasisPulse, enterProgress, fadeSlide, scalePop } from '../src/lib/motion';
 import { idToVariableName, isValidEpisodeId, registerEpisodeInSource } from '../src/lib/scaffold';
 
 describe('Phase 2 — Codebase Organization & Architecture Refactoring', () => {
@@ -69,6 +70,38 @@ export const EPISODES = [eventLoop] satisfies Episode[];
       assert.equal(SPACING.cardRadius, 16);
       assert.equal(SPACING.pillRadius, 999);
       assert.equal(SPACING.cardPadding, '24px 28px');
+    });
+  });
+
+  describe('3. Motion Design System Primitives', () => {
+    it('computes deterministic frame-driven entrance, scale-pop, draw, and emphasis pulse states', () => {
+      assert.equal(enterProgress(0, 30, 10), 0, 'before delay progress is 0');
+      assert.ok(enterProgress(30, 30, 10) > 0.9, 'after delay spring converges toward 1');
+
+      const slideStart = fadeSlide(0, 30, { delay: 10, distance: 24 });
+      const slideEnd = fadeSlide(35, 30, { delay: 10, distance: 24 });
+      assert.equal(slideStart.opacity, 0);
+      assert.equal(slideEnd.opacity, 1);
+
+      const popStart = scalePop(0, 30, { delay: 12, from: 0.8 });
+      const popEnd = scalePop(40, 30, { delay: 12, from: 0.8 });
+      assert.equal(popStart.opacity, 0);
+      assert.equal(popEnd.opacity, 1);
+      assert.ok(popEnd.scale > 0.98);
+
+      assert.equal(drawProgress(5, { delay: 10, duration: 20 }), 0);
+      assert.ok(drawProgress(20, { delay: 10, duration: 20 }) > 0.5);
+      assert.equal(drawProgress(35, { delay: 10, duration: 20 }), 1);
+
+      const beforePulse = emphasisPulse(5, { atFrame: 20 });
+      const midPulse = emphasisPulse(28, { atFrame: 20 });
+      const settledPulse = emphasisPulse(60, { atFrame: 20 });
+      assert.equal(beforePulse.isActive, false);
+      assert.equal(beforePulse.active, 0);
+      assert.equal(midPulse.isActive, true);
+      assert.ok(midPulse.pulse > 0);
+      assert.equal(settledPulse.active, 1);
+      assert.equal(settledPulse.pulse, 0);
     });
   });
 });

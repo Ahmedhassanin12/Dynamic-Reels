@@ -1,17 +1,37 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { MOTION } from '../config';
+import { fadeSlide, type SpringPreset } from '../lib/motion';
 
-type Props = { delay?: number; children: ReactNode; style?: CSSProperties };
+type Props = {
+  delay?: number;
+  distance?: number;
+  axis?: 'x' | 'y';
+  preset?: SpringPreset;
+  children: ReactNode;
+  style?: CSSProperties;
+};
 
-/** Slide-up + fade-in wrapper. `delay` is in frames (use index * MOTION.stagger for lists). */
-export const Enter = ({ delay = 0, children, style }: Props) => {
+/** Slide + fade-in wrapper driven by standardized motion primitives. */
+export const Enter = ({
+  delay = 0,
+  distance = MOTION.distance,
+  axis = 'y',
+  preset = 'enter',
+  children,
+  style,
+}: Props) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const progress = spring({ frame: frame - delay, fps, config: MOTION.spring });
+  const { opacity, transform } = fadeSlide(frame, fps, {
+    delay,
+    distance,
+    axis,
+    preset,
+  });
 
   return (
-    <div style={{ opacity: Math.min(1, progress * 2), transform: `translateY(${(1 - progress) * MOTION.distance}px)`, unicodeBidi: 'plaintext', ...style }}>
+    <div style={{ opacity, transform, ...style }}>
       {children}
     </div>
   );

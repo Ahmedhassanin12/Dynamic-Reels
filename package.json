@@ -6,6 +6,7 @@
     "dev": "remotion studio src/index.ts",
     "render": "node --import ./scripts/test-loader.mjs scripts/render.mjs",
     "render:remotion": "remotion render src/index.ts",
+    "tts": "node scripts/tts.mjs",
     "transcribe": "python scripts/transcribe.py",
     "corrections": "node --import ./scripts/test-loader.mjs scripts/manage-corrections.mjs",
     "choreograph": "node --import ./scripts/test-loader.mjs scripts/choreograph.mjs",

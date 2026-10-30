@@ -3,6 +3,7 @@ import { interpolate, useCurrentFrame } from 'remotion';
 import { CODE_SNAP } from '../config';
 import { typingFrames } from '../lib/code';
 import { CODE_FONT } from '../lib/fonts';
+import { CLAMP, EASINGS } from '../lib/motion';
 import { useTheme } from '../lib/theme';
 
 type Props = {
@@ -42,8 +43,8 @@ export const CodeSnap = ({
     ? skipTyping
       ? 1
       : interpolate(frame, [typingEnd, typingEnd + CODE_SNAP.focusFadeFrames], [0, 1], {
-          extrapolateLeft: 'clamp',
-          extrapolateRight: 'clamp',
+          ...CLAMP,
+          easing: EASINGS.outExpo,
         })
     : 0;
 
@@ -106,7 +107,7 @@ export const CodeSnap = ({
           </div>
 
           <span style={{ color: theme.muted, fontSize: 18, fontWeight: 500 }}>
-            ts — ~/src/{filename}
+            {language} — ~/src/{filename}
           </span>
 
           <span

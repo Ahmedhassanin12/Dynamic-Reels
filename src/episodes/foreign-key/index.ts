@@ -34,10 +34,12 @@ export const foreignKey = defineEpisode({
       pillTone: 'good',
       filename: 'users.sql',
       language: 'sql',
+      skipTyping: true,
       code: `CREATE TABLE users (\n  id INT PRIMARY KEY,\n  name TEXT\n);`,
       highlightLines: [2],
       viz: {
         type: 'relation',
+        beatFrames: [0, 126, 182],
         tables: [
           {
             name: 'users',
@@ -70,10 +72,12 @@ export const foreignKey = defineEpisode({
       pillTone: 'neutral',
       filename: 'orders.sql',
       language: 'sql',
+      skipTyping: true,
       code: `CREATE TABLE orders (\n  id INT PRIMARY KEY,\n  user_id INT REFERENCES users(id),\n  total INT\n);`,
       highlightLines: [3],
       viz: {
         type: 'relation',
+        beatFrames: [0, 135, 175],
         tables: [
           {
             name: 'orders',
@@ -112,6 +116,7 @@ export const foreignKey = defineEpisode({
       highlightLines: [3],
       viz: {
         type: 'relation',
+        beatFrames: [0, 55, 100, 128, 154, 172],
         tables: [
           {
             name: 'users',

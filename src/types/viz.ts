@@ -188,9 +188,22 @@ export type VizConfig =
       type: 'relation';
       tables: RelationTable[];
       link?: RelationLink;
+      /** Optional valid vs invalid reference checks to demonstrate referential integrity */
+      integrityChecks?: RelationIntegrityCheck[];
+      /** Optional intra-scene frame beats (relative to visualizer start) for voice-synced progressive reveal */
+      beatFrames?: number[];
       note?: string;
       framesPerStep?: number;
     };
+
+export type RelationIntegrityCheck = {
+  /** Foreign key candidate value (e.g. 42 or 99) */
+  value: string | number;
+  /** Whether the reference resolves to an existing Primary Key */
+  valid: boolean;
+  /** Short resolution label (e.g. "Sara (users.id = 42)" or "Rejected · no user 99") */
+  detail: string;
+};
 
 export type VizType = VizConfig['type'];
 export type VizProps<K extends VizType> = { viz: Extract<VizConfig, { type: K }>; result?: string };

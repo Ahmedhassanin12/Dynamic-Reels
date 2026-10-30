@@ -1,9 +1,9 @@
-import { spring, useCurrentFrame, useVideoConfig } from 'remotion';
-import { MOTION } from '../config';
+import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { CODE_FONT } from '../lib/fonts';
+import { scalePop } from '../lib/motion';
 import { useTheme } from '../lib/theme';
 
-/** Pops in at `delay` (frames, relative to the surrounding Sequence). */
+/** Pops in at `delay` (frames, relative to the surrounding Sequence) with perceptual scale + opacity. */
 export const ResultBadge = ({
   text,
   delay,
@@ -16,7 +16,11 @@ export const ResultBadge = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
-  const pop = Math.max(0, spring({ frame: frame - delay, fps, config: MOTION.spring }));
+  const { opacity, transform } = scalePop(frame, fps, {
+    delay,
+    from: 0.84,
+    preset: 'emphasis',
+  });
 
   if (!text) return null;
 
@@ -27,19 +31,21 @@ export const ResultBadge = ({
   return (
     <div
       style={{
-        transform: `scale(${pop})`,
+        opacity,
+        transform,
         background: bg,
         color,
         border: `1px solid ${border}`,
-        padding: '8px 20px',
+        padding: '7px 18px',
         borderRadius: 999,
         fontFamily: CODE_FONT,
         fontWeight: 600,
-        fontSize: 20,
+        fontSize: 19,
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
       }}
     >
       • {text}
     </div>
   );
 };
-

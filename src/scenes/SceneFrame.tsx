@@ -33,7 +33,7 @@ export const SceneFrame = ({ label, title, pill, pillTone = 'neutral', children 
       }}
     >
       {hasHeader && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14, marginBottom: 32 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12, marginBottom: 24 }}>
         {label && (
           <div
             style={{
@@ -52,7 +52,7 @@ export const SceneFrame = ({ label, title, pill, pillTone = 'neutral', children 
           <div
             dir="rtl"
             style={{
-              fontSize: 58,
+              fontSize: 54,
               lineHeight: 1.2,
               textAlign: 'center',
               direction: 'rtl',
@@ -65,17 +65,17 @@ export const SceneFrame = ({ label, title, pill, pillTone = 'neutral', children 
         {pill && (
           <div
             style={{
-              marginTop: 4,
+              marginTop: 2,
               display: 'inline-flex',
               alignItems: 'center',
               gap: 10,
-              padding: '6px 18px',
+              padding: '5px 18px',
               borderRadius: 999,
               border: `1px solid ${pillBorder}`,
               background: pillBg,
               color: pillColor,
               fontFamily: CODE_FONT,
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: 500,
               letterSpacing: 2,
             }}
@@ -86,7 +86,7 @@ export const SceneFrame = ({ label, title, pill, pillTone = 'neutral', children 
         )}
       </div>
       )}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>{children}</div>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: hasHeader ? 'flex-start' : 'center', paddingTop: hasHeader ? 6 : 0 }}>{children}</div>
     </div>
   );
 };

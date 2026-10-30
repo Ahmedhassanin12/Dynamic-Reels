@@ -49,7 +49,7 @@ export const CodeDemoScene = ({
     tagText ??
     (persistCode
       ? 'PERSISTENT CONTEXT'
-      : result
+      : result && viz.type !== 'relation'
         ? viz.type === 'scan'
           ? `${result} · slow`
           : viz.type === 'lookup' || viz.type === 'binarySearch'
@@ -59,7 +59,7 @@ export const CodeDemoScene = ({
 
   const effectiveSkipTyping = Boolean(skipTyping || persistCode);
   const codeDelay = code && !effectiveSkipTyping ? typingFrames(code) : 0;
-  const vizStart = code && !persistCode ? codeDelay + CODE_DEMO.vizDelayFrames : 0;
+  const vizStart = code && !effectiveSkipTyping ? codeDelay + CODE_DEMO.vizDelayFrames : 0;
   const vizFrame = Math.max(0, frame - vizStart);
 
   // Dynamically sync active code line when execution, eventLoop, or callStack steps specify a line number
@@ -83,7 +83,7 @@ export const CodeDemoScene = ({
 
   return (
     <SceneFrame label={label} title={title} pill={resolvedPill} pillTone={resolvedTone}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {code && (
           <CodeSnap
             code={code}

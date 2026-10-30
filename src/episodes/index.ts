@@ -6,15 +6,14 @@ import { naming1 } from './naming-1';
 import { cleanCodeFunction } from './clean-code-function';
 import { foreignKey } from './foreign-key';
 import { usePronounceableNames } from './use-pronounceable-names';
+import { ttsTest } from './tts-test';
 
 /** Add new episodes here (one import + one entry). Each becomes a Composition in the Studio. */
-export const EPISODES = [
-  arrayVsHashMap,
+export const EPISODES = [arrayVsHashMap,
   eventLoop,
   sceneShowcase,
   naming1,
   cleanCodeFunction,
   usePronounceableNames,
-  foreignKey,
-] satisfies Episode[];
+  foreignKey, ttsTest] satisfies Episode[];
 
