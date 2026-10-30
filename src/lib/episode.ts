@@ -291,6 +291,33 @@ export const validateEpisode = (episode: Episode): string[] => {
         fail('qa correctIndex requires options to be specified.');
       }
     }
+    if (scene.kind === 'motion') {
+      const { anim } = scene;
+      if (anim.type === 'likeHeart') {
+        const tapAt = anim.tapAt ?? 12;
+        if (!Number.isFinite(tapAt) || tapAt < 0) fail(`motion tapAt (${tapAt}) must be a non-negative number.`);
+        if (anim.revertAt !== undefined && (!Number.isFinite(anim.revertAt) || anim.revertAt <= tapAt + 14)) {
+          fail(`motion revertAt (${anim.revertAt}) must be later than tapAt + 14 (${tapAt + 14}).`);
+        }
+        if (anim.likes !== undefined && (!Number.isInteger(anim.likes) || anim.likes < 0)) {
+          fail(`motion likes (${anim.likes}) must be a non-negative integer.`);
+        }
+      } else if (anim.type === 'packetFlow') {
+        if (anim.stops.length < 2 || anim.stops.length > 6) {
+          fail(`motion packetFlow needs 2-6 stops (got ${anim.stops.length}).`);
+        }
+        if (anim.stops.some((s) => !s.label.trim() || !s.icon.trim())) {
+          fail('motion packetFlow stops must each have a non-empty icon and label.');
+        }
+        if (anim.arriveAt) {
+          if (anim.arriveAt.length !== anim.stops.length) {
+            fail(`motion arriveAt length (${anim.arriveAt.length}) must match stops length (${anim.stops.length}).`);
+          } else if (anim.arriveAt.some((f, i) => !Number.isFinite(f) || f < 0 || (i > 0 && f <= anim.arriveAt![i - 1]))) {
+            fail('motion arriveAt must be non-negative and strictly increasing.');
+          }
+        }
+      }
+    }
     if (scene.kind === 'transition') {
       if (!scene.fromTitle.trim() || !scene.toTitle.trim()) {
         fail('transition fromTitle and toTitle must not be empty.');

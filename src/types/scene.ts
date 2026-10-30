@@ -60,6 +60,44 @@ export type MythRealitySide = {
 
 export type MythRealitySideInput = string | MythRealitySide;
 
+export type PacketStop = {
+  /** Emoji or short glyph shown on the stop card (e.g. "📱", "🗄️") */
+  icon: string;
+  label: string;
+  /** Detail line revealed when the packet arrives (e.g. "~30ms") */
+  sub?: string;
+  /** Monospace pill on the card (e.g. "DNS", "HTTPS") */
+  badge?: string;
+  tone?: 'good' | 'bad' | 'warn' | 'ink';
+};
+
+/** Animated illustrations for the `motion` scene. All frame numbers are relative to the scene start (30fps). */
+export type MotionAnim =
+  | {
+      type: 'likeHeart';
+      /** Like counter before the tap (default 1203) */
+      likes?: number;
+      /** Frame the finger taps the heart (default 12) */
+      tapAt?: number;
+      /** Status chip shown after the tap (default "السيرفر: لسه ماعرفش") */
+      statusText?: string;
+      /** If set, the request "fails" at this frame: heart turns back to empty and the counter rolls back */
+      revertAt?: number;
+      /** Status chip text after the failure (default "فشل الإرسال") */
+      failText?: string;
+    }
+  | {
+      type: 'packetFlow';
+      /** Stations the request travels through, top to bottom (2-6) */
+      stops: PacketStop[];
+      /** Frame at which the packet arrives at each stop (one per stop). Use it to sync with the voiceover. */
+      arriveAt?: number[];
+      /** Frames per hop when `arriveAt` is not given (default 26) */
+      hopFrames?: number;
+      /** After reaching the last stop, send a green response packet back to the first one */
+      returnTrip?: boolean;
+    };
+
 export type SceneConfig =
   | (Base & {
       kind: 'statement';
@@ -149,6 +187,7 @@ export type SceneConfig =
       bridgeText?: string;
       pill?: string;
     })
+  | (Base & { kind: 'motion'; pill?: string; anim: MotionAnim })
   | (Base & {
       kind: 'mythReality';
       pill?: string;

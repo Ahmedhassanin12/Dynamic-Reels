@@ -97,10 +97,12 @@ export const Captions = ({ words }: { words: Word[] }) => {
       dir="rtl"
       style={{
         position: 'absolute',
-        right: CAPTION.right,
+        left: 0,
+        right: 0,
+        margin: '0 auto',
         bottom: CAPTION.bottom,
         maxWidth: CAPTION.maxWidth,
-        padding: '8px 12px',
+        padding: '8px 24px',
         direction: 'rtl',
         unicodeBidi: 'isolate',
         display: 'flex',

@@ -12,8 +12,8 @@ export {
   makePrismTheme,
 } from './theme';
 
-/** Stage = the top area for scenes; the bottom is reserved for character + captions. */
-export const STAGE = { top: 170, paddingX: 84, reservedBottom: 580 } as const;
+/** Stage = the top area for scenes; the bottom is reserved for captions. */
+export const STAGE = { top: 190, paddingX: 84, reservedBottom: 240 } as const;
 
 /** Unified typography scale across scenes, captions, and visualizers. */
 export const TYPOGRAPHY = {
@@ -70,10 +70,10 @@ export const CAPTION = {
   /** Pause threshold between words to trigger a new caption chunk early */
   maxGapSeconds: 0.35,
   holdSeconds: 0.5,
-  fontSize: 52,
-  maxWidth: 640,
-  right: 115,
-  bottom: 220,
+  fontSize: 54,
+  maxWidth: 860,
+  right: 0,
+  bottom: 100,
   handleSize: 11,
   spring: { damping: 14, stiffness: 180 },
 } as const;
@@ -96,5 +96,12 @@ export const CODE_SNAP = {
 
 export const CODE_DEMO = { vizDelayFrames: 10, vizHeight: 340 } as const;
 
-/** Put your PNG in /public and set the file name. null => placeholder. (Keep your own values here.) */
-export const CHARACTER = { src: 'main.png' as string | null, width: 370, height: 770 } as const;
+/** Creator / Host branding configuration. You can put your photo or avatar in /public and point to it. */
+export const CHARACTER = {
+  src: 'main.png' as string | null,
+  name: 'مطور برمجيات',
+  handle: '@tech',
+  mode: 'header' as 'header' | 'bottom' | 'none',
+  width: 370,
+  height: 770,
+} as const;

@@ -5,6 +5,7 @@ import { CodeDemoScene } from './CodeDemoScene';
 import { CodeScene } from './CodeScene';
 import { CompareScene } from './CompareScene';
 import { DiagramScene } from './DiagramScene';
+import { MotionScene } from './MotionScene';
 import { MythRealityScene } from './MythRealityScene';
 import { QaScene } from './QaScene';
 import { StatementScene } from './StatementScene';
@@ -22,5 +23,6 @@ export const SCENE_REGISTRY = {
   qa: QaScene,
   transition: TransitionScene,
   mythReality: MythRealityScene,
+  motion: MotionScene,
 } satisfies { [K in SceneKind]: FC<SceneOf<K>> };
 

@@ -14,6 +14,7 @@ import {
   TIMELINE,
 } from '../config';
 import type { Episode, SceneConfig, Word } from '../types';
+import { packetArrivals } from './anim';
 import { typingFrames } from './code';
 import { applyCorrections } from './corrections';
 import { applyGlossary } from '../glossary';
@@ -322,6 +323,19 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
     }
     case 'transition':
       return MOTION.stagger * 3 + 20;
+    case 'motion': {
+      if (scene.anim.type === 'likeHeart') {
+        const tapAt = scene.anim.tapAt ?? 12;
+        return (scene.anim.revertAt ?? tapAt + 40) + 30;
+      }
+      const stops = scene.anim.stops.length;
+      const arrivals = packetArrivals(stops, scene.anim.arriveAt, scene.anim.hopFrames);
+      const last = arrivals[stops - 1];
+      const ret = scene.anim.returnTrip
+        ? 18 + Math.max(20, Math.round((stops - 1) * (scene.anim.hopFrames ?? 26) * 0.55))
+        : 0;
+      return last + ret + 15;
+    }
     case 'mythReality': {
       const revealAt = scene.revealDelayFrames ?? MOTION.stagger * 2;
       return revealAt + 25;
