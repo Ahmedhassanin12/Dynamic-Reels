@@ -12,12 +12,7 @@ type Props = {
   showSafeGuides?: boolean;
 };
 
-export const AuthoringHUD = ({
-  episode,
-  timeline,
-  showDevHUD = false,
-  showSafeGuides = false,
-}: Props) => {
+export const AuthoringHUD = ({ episode, timeline, showDevHUD = false, showSafeGuides = false }: Props) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -65,7 +60,15 @@ export const AuthoringHUD = ({
               padding: '2px 12px',
             }}
           >
-            <span style={{ fontSize: 11, color: '#f59e0b', background: 'rgba(0,0,0,0.6)', padding: '1px 6px', borderRadius: 4 }}>
+            <span
+              style={{
+                fontSize: 11,
+                color: '#f59e0b',
+                background: 'rgba(0,0,0,0.6)',
+                padding: '1px 6px',
+                borderRadius: 4,
+              }}
+            >
               TOP SAFE MARGIN: 170px
             </span>
           </div>
@@ -83,7 +86,15 @@ export const AuthoringHUD = ({
               padding: '2px 12px',
             }}
           >
-            <span style={{ fontSize: 11, color: '#f43f5e', background: 'rgba(0,0,0,0.6)', padding: '1px 6px', borderRadius: 4 }}>
+            <span
+              style={{
+                fontSize: 11,
+                color: '#f43f5e',
+                background: 'rgba(0,0,0,0.6)',
+                padding: '1px 6px',
+                borderRadius: 4,
+              }}
+            >
               RESERVED BOTTOM: 1340px (AVATAR & CAPTIONS)
             </span>
           </div>
@@ -164,7 +175,8 @@ export const AuthoringHUD = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
               <span style={{ color: '#a1a1aa' }}>Duration:</span>
               <span style={{ color: isRushed ? theme.bad : '#d4d4d8' }}>
-                {activeItem.durationInFrames}f ({(activeItem.durationInFrames / fps).toFixed(1)}s) · min {minFrames}f
+                {activeItem.durationInFrames}f ({(activeItem.durationInFrames / fps).toFixed(1)}s) · min{' '}
+                {minFrames}f
               </span>
             </div>
           </div>
@@ -173,8 +185,18 @@ export const AuthoringHUD = ({
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 6, fontSize: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: '#a1a1aa' }}>Anchor:</span>
-              <span style={{ color: theme.ink, maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {activeItem.match ? `"${activeItem.match.text}" @ ${activeItem.match.startSeconds.toFixed(2)}s` : String(activeItem.scene.at)}
+              <span
+                style={{
+                  color: theme.ink,
+                  maxWidth: 260,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {activeItem.match
+                  ? `"${activeItem.match.text}" @ ${activeItem.match.startSeconds.toFixed(2)}s`
+                  : String(activeItem.scene.at)}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>

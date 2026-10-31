@@ -38,7 +38,9 @@ export const AsyncFlowViz = ({ viz, result }: VizProps<'asyncFlow'>) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 18, color: theme.ink, fontWeight: 700 }}>
-            {mode === 'waterfall' ? 'async waterfall · concurrency lanes' : 'promise lifecycle · state machine'}
+            {mode === 'waterfall'
+              ? 'async waterfall · concurrency lanes'
+              : 'promise lifecycle · state machine'}
           </span>
           <span
             style={{
@@ -101,8 +103,12 @@ export const AsyncFlowViz = ({ viz, result }: VizProps<'asyncFlow'>) => {
                 borderRadius: 12,
                 padding: '14px 18px',
                 border: `1.5px solid ${promiseState === 'pending' || promiseState === 'running' ? theme.warnBorder : theme.border}`,
-                background: promiseState === 'pending' || promiseState === 'running' ? theme.warnTint : 'rgba(255,255,255,0.02)',
-                boxShadow: promiseState === 'pending' || promiseState === 'running' ? theme.warnShadow : undefined,
+                background:
+                  promiseState === 'pending' || promiseState === 'running'
+                    ? theme.warnTint
+                    : 'rgba(255,255,255,0.02)',
+                boxShadow:
+                  promiseState === 'pending' || promiseState === 'running' ? theme.warnShadow : undefined,
                 opacity: promiseState === 'pending' || promiseState === 'running' ? 1 : 0.45,
                 display: 'flex',
                 flexDirection: 'column',
@@ -113,13 +119,19 @@ export const AsyncFlowViz = ({ viz, result }: VizProps<'asyncFlow'>) => {
                 <span style={{ fontSize: 13, color: theme.warn, fontWeight: 700 }}>INITIAL STATE</span>
                 <span style={{ fontSize: 11, color: theme.muted }}>in flight</span>
               </div>
-              <span style={{ fontSize: 20, fontWeight: 800, color: theme.text }}>
-                ⏳ PENDING
-              </span>
+              <span style={{ fontSize: 20, fontWeight: 800, color: theme.text }}>⏳ PENDING</span>
             </div>
 
             {/* Transition Fork Arrow */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: theme.muted, gap: 4 }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                color: theme.muted,
+                gap: 4,
+              }}
+            >
               <svg width="42" height="52" viewBox="0 0 42 52" fill="none">
                 <path
                   d="M2 26 H 18 V 12 H 34"
@@ -160,9 +172,7 @@ export const AsyncFlowViz = ({ viz, result }: VizProps<'asyncFlow'>) => {
                   alignItems: 'center',
                 }}
               >
-                <span style={{ fontSize: 16, fontWeight: 700, color: theme.good }}>
-                  ✓ FULFILLED
-                </span>
+                <span style={{ fontSize: 16, fontWeight: 700, color: theme.good }}>✓ FULFILLED</span>
                 <span style={{ fontSize: 12, color: theme.muted, fontFamily: CODE_FONT }}>
                   .then(res =&gt;)
                 </span>
@@ -182,9 +192,7 @@ export const AsyncFlowViz = ({ viz, result }: VizProps<'asyncFlow'>) => {
                   alignItems: 'center',
                 }}
               >
-                <span style={{ fontSize: 16, fontWeight: 700, color: theme.bad }}>
-                  ✗ REJECTED
-                </span>
+                <span style={{ fontSize: 16, fontWeight: 700, color: theme.bad }}>✗ REJECTED</span>
                 <span style={{ fontSize: 12, color: theme.muted, fontFamily: CODE_FONT }}>
                   .catch(err =&gt;)
                 </span>
@@ -206,7 +214,13 @@ export const AsyncFlowViz = ({ viz, result }: VizProps<'asyncFlow'>) => {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <span style={{ fontSize: 13, color: theme.muted }}>payload:</span>
-              <span style={{ fontSize: 16, fontWeight: 600, color: promiseState === 'rejected' ? theme.bad : theme.good }}>
+              <span
+                style={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: promiseState === 'rejected' ? theme.bad : theme.good,
+                }}
+              >
                 {settledValue}
               </span>
             </div>
@@ -231,18 +245,38 @@ export const AsyncFlowViz = ({ viz, result }: VizProps<'asyncFlow'>) => {
       {/* MODE 2: Concurrency Waterfall Lanes */}
       {mode === 'waterfall' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {(viz.lanes ?? [
-            { name: 'Main Thread', operation: 'Executing sync code', status: 'running', progress: 100 },
-            { name: 'Background I/O', operation: 'fetch("/api/users")', status: 'running', progress: 65 },
-            { name: 'Microtask Queue', operation: 'await callback queued', status: 'idle' },
-          ]).map((lane: AsyncLane, idx: number) => {
+          {(
+            viz.lanes ?? [
+              { name: 'Main Thread', operation: 'Executing sync code', status: 'running', progress: 100 },
+              { name: 'Background I/O', operation: 'fetch("/api/users")', status: 'running', progress: 65 },
+              { name: 'Microtask Queue', operation: 'await callback queued', status: 'idle' },
+            ]
+          ).map((lane: AsyncLane, idx: number) => {
             const isRunning = lane.status === 'running';
             const isDone = lane.status === 'done';
             const isError = lane.status === 'error';
 
-            const statusColor = isDone ? theme.good : isRunning ? theme.ink : isError ? theme.bad : theme.muted;
-            const statusTint = isDone ? theme.goodTint : isRunning ? theme.tint : isError ? theme.badTint : theme.paperElevated;
-            const statusBorder = isDone ? theme.goodBorder : isRunning ? theme.borderStrong : isError ? theme.badBorder : theme.border;
+            const statusColor = isDone
+              ? theme.good
+              : isRunning
+                ? theme.ink
+                : isError
+                  ? theme.bad
+                  : theme.muted;
+            const statusTint = isDone
+              ? theme.goodTint
+              : isRunning
+                ? theme.tint
+                : isError
+                  ? theme.badTint
+                  : theme.paperElevated;
+            const statusBorder = isDone
+              ? theme.goodBorder
+              : isRunning
+                ? theme.borderStrong
+                : isError
+                  ? theme.badBorder
+                  : theme.border;
 
             return (
               <div
@@ -268,9 +302,7 @@ export const AsyncFlowViz = ({ viz, result }: VizProps<'asyncFlow'>) => {
                         boxShadow: isRunning ? `0 0 8px ${statusColor}` : undefined,
                       }}
                     />
-                    <span style={{ fontSize: 16, fontWeight: 700, color: theme.text }}>
-                      {lane.name}
-                    </span>
+                    <span style={{ fontSize: 16, fontWeight: 700, color: theme.text }}>{lane.name}</span>
                   </div>
                   <span
                     style={{
@@ -289,13 +321,9 @@ export const AsyncFlowViz = ({ viz, result }: VizProps<'asyncFlow'>) => {
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: 14, color: theme.muted }}>
-                    {lane.operation}
-                  </span>
+                  <span style={{ fontSize: 14, color: theme.muted }}>{lane.operation}</span>
                   {lane.progress !== undefined && (
-                    <span style={{ fontSize: 12, color: theme.muted }}>
-                      {lane.progress}%
-                    </span>
+                    <span style={{ fontSize: 12, color: theme.muted }}>{lane.progress}%</span>
                   )}
                 </div>
 
@@ -321,7 +349,9 @@ export const AsyncFlowViz = ({ viz, result }: VizProps<'asyncFlow'>) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 2 }}>
         <div style={{ direction: 'rtl', fontSize: 16, color: theme.muted }}>
           <BidiText>
-            {currentStep?.note ?? viz.note ?? 'Non-blocking I/O · Main thread continues while async tasks resolve'}
+            {currentStep?.note ??
+              viz.note ??
+              'Non-blocking I/O · Main thread continues while async tasks resolve'}
           </BidiText>
         </div>
         {result && <ResultBadge text={result} delay={0} tone="good" />}

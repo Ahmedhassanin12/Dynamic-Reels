@@ -14,18 +14,21 @@ type Props = {
   showSafeGuides?: boolean;
 };
 
-const SingleSceneStage = ({
-  episode,
-  sceneIndex,
-  showDevHUD = false,
-  showSafeGuides = false,
-}: Props) => {
+const SingleSceneStage = ({ episode, sceneIndex, showDevHUD = false, showSafeGuides = false }: Props) => {
   const theme = useTheme();
   const scene = episode.scenes[sceneIndex];
 
   if (!scene) {
     return (
-      <AbsoluteFill style={{ background: '#0a0a0c', color: '#ef4444', display: 'grid', placeItems: 'center', fontSize: 32 }}>
+      <AbsoluteFill
+        style={{
+          background: '#0a0a0c',
+          color: '#ef4444',
+          display: 'grid',
+          placeItems: 'center',
+          fontSize: 32,
+        }}
+      >
         Scene index {sceneIndex} not found in episode "{episode.id}".
       </AbsoluteFill>
     );

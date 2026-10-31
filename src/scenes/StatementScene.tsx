@@ -73,7 +73,10 @@ export const StatementScene = ({ label, text, variant, codePreview }: SceneOf<'s
   const theme = useTheme();
 
   // Split into distinct blocks if separated by double newline or mixed scripts
-  const rawParagraphs = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  const rawParagraphs = text
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
   let arabicText = text;
   let englishCallout: string | undefined;
 
@@ -84,7 +87,10 @@ export const StatementScene = ({ label, text, variant, codePreview }: SceneOf<'s
       arabicText = rawParagraphs.filter((_, idx) => idx !== latinIdx).join('\n\n');
     }
   } else if (text.includes('\n')) {
-    const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+    const lines = text
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean);
     const latinLine = lines.find((l) => isMainlyLatin(l));
     if (latinLine) {
       englishCallout = latinLine;
@@ -92,7 +98,7 @@ export const StatementScene = ({ label, text, variant, codePreview }: SceneOf<'s
     }
   }
 
-  const cleanLength = arabicText.replace(/[\[\]*]/g, '').length;
+  const cleanLength = arabicText.replace(/[[\]*]/g, '').length;
   const hasPreview = Boolean(codePreview);
   const fontSize = hasPreview
     ? cleanLength > 55
@@ -114,9 +120,19 @@ export const StatementScene = ({ label, text, variant, codePreview }: SceneOf<'s
         color: theme.text,
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: hasPreview ? 36 : 28, width: '100%' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: hasPreview ? 36 : 28,
+          width: '100%',
+        }}
+      >
         <Enter>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, maxWidth: 880 }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, maxWidth: 880 }}
+          >
             {badgeText && (
               <div
                 style={{
@@ -209,5 +225,3 @@ export const StatementScene = ({ label, text, variant, codePreview }: SceneOf<'s
     </AbsoluteFill>
   );
 };
-
-

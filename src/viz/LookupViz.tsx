@@ -24,7 +24,10 @@ export const LookupViz = ({ viz, result }: VizProps<'lookup'>) => {
   const subtitle = viz.subtitle ?? 'avg O(1) · direct bucket access';
 
   return (
-    <Box tone="good" style={{ direction: 'ltr', display: 'flex', flexDirection: 'column', gap: 18, fontFamily: CODE_FONT }}>
+    <Box
+      tone="good"
+      style={{ direction: 'ltr', display: 'flex', flexDirection: 'column', gap: 18, fontFamily: CODE_FONT }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: 18, color: theme.good, letterSpacing: 1 }}>
           direct hash lookup · get(&quot;{viz.key}&quot;)
@@ -143,5 +146,3 @@ export const LookupViz = ({ viz, result }: VizProps<'lookup'>) => {
     </Box>
   );
 };
-
-

@@ -52,7 +52,9 @@ export const CallStackViz = ({ viz, result }: VizProps<'callStack'>) => {
             {isQueue ? 'QUEUE · FIFO' : 'CALL STACK · LIFO'}
           </span>
           <span style={{ fontSize: 17, color: theme.muted }}>
-            {isUnwinding ? `unwinding (${unwindCount}/${unwindSteps})` : `pushing (${visibleCount}/${pushSteps})`}
+            {isUnwinding
+              ? `unwinding (${unwindCount}/${unwindSteps})`
+              : `pushing (${visibleCount}/${pushSteps})`}
           </span>
         </div>
         <span style={{ fontSize: 17, color: theme.muted }}>depth: {visibleCount}</span>
@@ -91,17 +93,9 @@ export const CallStackViz = ({ viz, result }: VizProps<'callStack'>) => {
           const returnVal = viz.returns?.[unwindOrder];
 
           const borderColor =
-            hasReturned || isCurrentUnwind
-              ? theme.goodBorder
-              : isCurrentTop
-                ? theme.ink
-                : theme.border;
+            hasReturned || isCurrentUnwind ? theme.goodBorder : isCurrentTop ? theme.ink : theme.border;
           const bgColor =
-            hasReturned || isCurrentUnwind
-              ? theme.goodTint
-              : isCurrentTop
-                ? theme.tint
-                : theme.paper;
+            hasReturned || isCurrentUnwind ? theme.goodTint : isCurrentTop ? theme.tint : theme.paper;
           const textColor =
             hasReturned || isCurrentUnwind ? theme.good : isCurrentTop ? theme.ink : theme.text;
 
@@ -155,9 +149,7 @@ export const CallStackViz = ({ viz, result }: VizProps<'callStack'>) => {
             borderTop: `1px solid ${theme.border}`,
           }}
         >
-          <span style={{ fontSize: 18, color: theme.muted }}>
-            {isQueue ? 'FIFO ORDER' : 'FINAL RETURN'}
-          </span>
+          <span style={{ fontSize: 18, color: theme.muted }}>{isQueue ? 'FIFO ORDER' : 'FINAL RETURN'}</span>
           <ResultBadge text={result} delay={(totalSteps - 1) * framesPerStep} tone="good" />
         </div>
       )}

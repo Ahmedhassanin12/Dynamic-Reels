@@ -35,7 +35,9 @@ export const LinkedListViz = ({ viz, result }: VizProps<'linkedList'>) => {
     if (typeof viz.activePointer === 'number') {
       activeIndex = viz.activePointer;
     } else {
-      const idx = nodes.findIndex((n) => n.address === viz.activePointer || String(n.value) === viz.activePointer);
+      const idx = nodes.findIndex(
+        (n) => n.address === viz.activePointer || String(n.value) === viz.activePointer,
+      );
       if (idx !== -1) activeIndex = idx;
     }
   }
@@ -92,7 +94,6 @@ export const LinkedListViz = ({ viz, result }: VizProps<'linkedList'>) => {
       >
         {nodes.map((node, i) => {
           const isActive = activeIndex === i;
-          const isHighlighted = node.highlight || isActive;
           const isHead = i === 0;
           const isTail = i === nodes.length - 1;
           const nextAddress = node.next !== undefined ? node.next : isTail ? null : nodes[i + 1]?.address;
@@ -271,10 +272,7 @@ export const LinkedListViz = ({ viz, result }: VizProps<'linkedList'>) => {
                       strokeWidth="2.5"
                       strokeDasharray={isActive ? 'none' : '4 2'}
                     />
-                    <polygon
-                      points="24,3 32,8 24,13"
-                      fill={isActive ? theme.good : theme.borderStrong}
-                    />
+                    <polygon points="24,3 32,8 24,13" fill={isActive ? theme.good : theme.borderStrong} />
                   </svg>
                 </div>
               )}

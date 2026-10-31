@@ -107,7 +107,10 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
 
       assert.equal(rule.match.rawIndex, 124);
       assert.equal(rule.match.startSeconds, 55.1);
-      assert.ok(zeroDelay.durationInFrames >= 90, `Expected zero-delay duration >= 90 frames, got ${zeroDelay.durationInFrames}`);
+      assert.ok(
+        zeroDelay.durationInFrames >= 90,
+        `Expected zero-delay duration >= 90 frames, got ${zeroDelay.durationInFrames}`,
+      );
     });
   });
 
@@ -282,10 +285,7 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
         title: 'Bad Num Order',
         voice: null,
         words: sampleWords,
-        scenes: [
-          makeStatement('first', 2),
-          makeStatement('second', 1),
-        ],
+        scenes: [makeStatement('first', 2), makeStatement('second', 1)],
       };
       const errors = validateEpisode(ep);
       assert.equal(errors.length, 1);
@@ -298,10 +298,7 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
         title: 'Bad Occurrence',
         voice: null,
         words: sampleWords,
-        scenes: [
-          makeStatement('first', 0),
-          makeStatement('second', { text: 'ثاني', occurrence: 2 }),
-        ],
+        scenes: [makeStatement('first', 0), makeStatement('second', { text: 'ثاني', occurrence: 2 })],
       };
       const errors = validateEpisode(ep);
       assert.equal(errors.length, 1);
@@ -386,16 +383,27 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       };
       const errors = validateEpisode(ep);
       assert.ok(errors.some((e) => e.includes('scene "exec-bad": viz.steps line(s) 5 are outside the code')));
-      assert.ok(errors.some((e) => e.includes('scene "stack-bad": viz.returns length (2) cannot exceed viz.frames length (1)')));
-      assert.ok(errors.some((e) => e.includes('scene "bsearch-unsorted": viz.cells for binarySearch must be sorted')));
-      assert.ok(errors.some((e) => e.includes('scene "bsearch-range": viz.targetIndex 9 is outside viz.cells')));
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "stack-bad": viz.returns length (2) cannot exceed viz.frames length (1)'),
+        ),
+      );
+      assert.ok(
+        errors.some((e) => e.includes('scene "bsearch-unsorted": viz.cells for binarySearch must be sorted')),
+      );
+      assert.ok(
+        errors.some((e) => e.includes('scene "bsearch-range": viz.targetIndex 9 is outside viz.cells')),
+      );
     });
 
     it('computes deterministic binary search steps and minimum scene frames for callStack and binarySearch', () => {
       const cells = ['2', '5', '8', '12', '16', '23', '38', '56', '72'];
       const steps = computeBinarySearchSteps(cells, 5); // target = '23' at index 5
       assert.equal(steps.length, 3);
-      assert.deepEqual(steps.map((s) => s.mid), [4, 6, 5]);
+      assert.deepEqual(
+        steps.map((s) => s.mid),
+        [4, 6, 5],
+      );
       assert.equal(steps.at(-1)?.found, true);
 
       const stackFrames = getMinSceneFrames({
@@ -500,18 +508,24 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
         ],
       };
       const errors = validateEpisode(badEp);
-      assert.ok(errors.some((e) => e.includes('scene "steps-empty-obj": steps must contain at least one non-empty step')));
       assert.ok(
         errors.some((e) =>
-          e.includes('scene "compare-empty-side": each compare side must have a non-empty title and at least one non-empty item or code snippet'),
+          e.includes('scene "steps-empty-obj": steps must contain at least one non-empty step'),
         ),
       );
-      assert.ok(errors.some((e) => e.includes('scene "qa-bad-idx": qa correctIndex 5 is outside options (0-1)')));
+      assert.ok(
+        errors.some((e) =>
+          e.includes(
+            'scene "compare-empty-side": each compare side must have a non-empty title and at least one non-empty item or code snippet',
+          ),
+        ),
+      );
+      assert.ok(
+        errors.some((e) => e.includes('scene "qa-bad-idx": qa correctIndex 5 is outside options (0-1)')),
+      );
     });
 
     it('validates Batch 4 scenes & visualizers (memory, complexity, diagram, transition) and resolves sceneShowcase', () => {
-
-
       const badEp: Episode = {
         id: 'batch4-bad',
         title: 'Batch 4 Bad',
@@ -549,9 +563,19 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
         ],
       };
       const errors = validateEpisode(badEp);
-      assert.ok(errors.some((e) => e.includes('scene "mem-bad-ref": viz.stack ref(s) user -> 0x9999 do not match any viz.heap id')));
-      assert.ok(errors.some((e) => e.includes('scene "diag-bad-sub": diagram subLayer must have a non-empty label')));
-      assert.ok(errors.some((e) => e.includes('scene "trans-bad": transition fromTitle and toTitle must not be empty')));
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "mem-bad-ref": viz.stack ref(s) user -> 0x9999 do not match any viz.heap id'),
+        ),
+      );
+      assert.ok(
+        errors.some((e) => e.includes('scene "diag-bad-sub": diagram subLayer must have a non-empty label')),
+      );
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "trans-bad": transition fromTitle and toTitle must not be empty'),
+        ),
+      );
     });
 
     it('validates statement codePreview, diagram edgeLabels, compare progress, and qa revealDelayFrames', () => {
@@ -601,11 +625,35 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       };
 
       const errors = validateEpisode(badEp);
-      assert.ok(errors.some((e) => e.includes('scene "stmt-bad-preview": codePreview.code must not be empty when specified')));
-      assert.ok(errors.some((e) => e.includes('scene "diag-bad-edges": edgeLabels length (3) cannot exceed node transitions (1)')));
-      assert.ok(errors.some((e) => e.includes('scene "compare-bad-progress": compare side progress (150) must be a number between 0 and 100')));
-      assert.ok(errors.some((e) => e.includes('scene "compare-bad-progress": compare side progress (-10) must be a number between 0 and 100')));
-      assert.ok(errors.some((e) => e.includes('scene "qa-bad-reveal": qa revealDelayFrames (-5) must be a non-negative number')));
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "stmt-bad-preview": codePreview.code must not be empty when specified'),
+        ),
+      );
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "diag-bad-edges": edgeLabels length (3) cannot exceed node transitions (1)'),
+        ),
+      );
+      assert.ok(
+        errors.some((e) =>
+          e.includes(
+            'scene "compare-bad-progress": compare side progress (150) must be a number between 0 and 100',
+          ),
+        ),
+      );
+      assert.ok(
+        errors.some((e) =>
+          e.includes(
+            'scene "compare-bad-progress": compare side progress (-10) must be a number between 0 and 100',
+          ),
+        ),
+      );
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "qa-bad-reveal": qa revealDelayFrames (-5) must be a non-negative number'),
+        ),
+      );
     });
 
     it('provides inspectable match details (rawIndex, rawEndIndex, wordIndex, text, rawText, startSeconds) for every resolved scene', () => {
@@ -619,10 +667,7 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
           { text: 'سينكرونس', start: 2.0, end: 2.4 },
           { text: 'كود', start: 2.5, end: 2.9 },
         ],
-        scenes: [
-          makeStatement('s0', 0),
-          makeStatement('s1', 'سينكرونس كود'),
-        ],
+        scenes: [makeStatement('s0', 0), makeStatement('s1', 'سينكرونس كود')],
       });
 
       const timeline = resolveTimeline(ep, FPS);
@@ -669,11 +714,7 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
             code: 'class Node { val: number; next: Node | null; }',
             viz: {
               type: 'linkedList',
-              nodes: [
-                { value: '10', badge: 'HEAD' },
-                '20',
-                { value: '30', address: '0x3F', badge: 'TAIL' },
-              ],
+              nodes: [{ value: '10', badge: 'HEAD' }, '20', { value: '30', address: '0x3F', badge: 'TAIL' }],
               activePointer: 1,
               pointerLabel: 'curr',
               note: 'O(1) insert at head',
@@ -729,10 +770,16 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       const errors = validateEpisode(invalidEp);
       assert.ok(errors.some((e) => e.includes('scene "bad-myth": myth must contain non-empty text')));
       assert.ok(errors.some((e) => e.includes('scene "bad-myth": reality must contain non-empty text')));
-      assert.ok(errors.some((e) => e.includes('scene "bad-myth": mythReality revealDelayFrames (-10) must be a non-negative number')));
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "bad-myth": mythReality revealDelayFrames (-10) must be a non-negative number'),
+        ),
+      );
       assert.ok(errors.some((e) => e.includes('scene "bad-list": viz.nodes must contain at least one node')));
       assert.ok(errors.some((e) => e.includes('scene "bad-list": viz.activePointer 5 is outside viz.nodes')));
-      assert.ok(errors.some((e) => e.includes('scene "bad-list": viz.framesPerStep (-2) must be a positive number')));
+      assert.ok(
+        errors.some((e) => e.includes('scene "bad-list": viz.framesPerStep (-2) must be a positive number')),
+      );
     });
 
     it('validates Phase 5B Batch 2 scenes and visualizers (asyncFlow and persistCode)', () => {
@@ -800,9 +847,7 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
         id: 'phase5b-batch2-invalid',
         title: 'Phase 5B Batch 2 Invalid',
         voice: null,
-        words: [
-          { text: 'كلمة', start: 0.0, end: 0.5 },
-        ],
+        words: [{ text: 'كلمة', start: 0.0, end: 0.5 }],
         scenes: [
           {
             id: 'bad-async-empty',
@@ -819,7 +864,9 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
       const errors = validateEpisode(invalidEp);
       assert.ok(
         errors.some((e) =>
-          e.includes('scene "bad-async-empty": viz of type asyncFlow must provide at least one of promise, lanes, or steps'),
+          e.includes(
+            'scene "bad-async-empty": viz of type asyncFlow must provide at least one of promise, lanes, or steps',
+          ),
         ),
       );
     });
@@ -864,10 +911,7 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
               tables: [
                 {
                   name: 'users',
-                  columns: [
-                    { name: 'id', role: 'pk' },
-                    { name: 'name' },
-                  ],
+                  columns: [{ name: 'id', role: 'pk' }, { name: 'name' }],
                   rows: [[42, 'Sara']],
                 },
                 {
@@ -956,15 +1000,40 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
 
       const errors = validateEpisode(invalidEp);
       assert.ok(errors.some((e) => e.includes('scene "rel-empty": viz.tables must contain 1 or 2 tables')));
-      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": table "users" highlightRow 4 is outside rows (0-0)')));
-      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": table "users" highlightColumns (missing_col) do not exist in columns')));
-      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": table "orders" must contain at least one sample row')));
-      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": viz.link.fromColumn "bad_fk" does not exist in table "orders"')));
-      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": viz.link.toTable "unknown_table" does not match any table in viz.tables')));
-      assert.ok(errors.some((e) => e.includes('scene "rel-bad-link": viz.framesPerStep (0) must be a positive number')));
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "rel-bad-link": table "users" highlightRow 4 is outside rows (0-0)'),
+        ),
+      );
+      assert.ok(
+        errors.some((e) =>
+          e.includes(
+            'scene "rel-bad-link": table "users" highlightColumns (missing_col) do not exist in columns',
+          ),
+        ),
+      );
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "rel-bad-link": table "orders" must contain at least one sample row'),
+        ),
+      );
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "rel-bad-link": viz.link.fromColumn "bad_fk" does not exist in table "orders"'),
+        ),
+      );
+      assert.ok(
+        errors.some((e) =>
+          e.includes(
+            'scene "rel-bad-link": viz.link.toTable "unknown_table" does not match any table in viz.tables',
+          ),
+        ),
+      );
+      assert.ok(
+        errors.some((e) =>
+          e.includes('scene "rel-bad-link": viz.framesPerStep (0) must be a positive number'),
+        ),
+      );
     });
   });
 });
-
-
-

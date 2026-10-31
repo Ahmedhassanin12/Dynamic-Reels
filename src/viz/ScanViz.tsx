@@ -15,7 +15,10 @@ export const ScanViz = ({ viz, result }: VizProps<'scan'>) => {
   const progressPct = Math.round(((scanIndex + 1) / viz.cells.length) * 100);
 
   return (
-    <Box tone="bad" style={{ direction: 'ltr', display: 'flex', flexDirection: 'column', gap: 22, fontFamily: CODE_FONT }}>
+    <Box
+      tone="bad"
+      style={{ direction: 'ltr', display: 'flex', flexDirection: 'column', gap: 22, fontFamily: CODE_FONT }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: 18, color: theme.bad, letterSpacing: 1 }}>linear scan · array.find()</span>
         <span style={{ fontSize: 18, color: theme.muted }}>
@@ -81,4 +84,3 @@ export const ScanViz = ({ viz, result }: VizProps<'scan'>) => {
     </Box>
   );
 };
-

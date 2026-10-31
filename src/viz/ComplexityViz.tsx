@@ -82,9 +82,7 @@ export const ComplexityViz = ({ viz }: VizProps<'complexity'>) => {
             TIME COMPLEXITY · BIG-O
           </span>
           {viz.highlight && (
-            <span style={{ fontSize: 17, color: theme.good, fontWeight: 600 }}>
-              focus: {viz.highlight}
-            </span>
+            <span style={{ fontSize: 17, color: theme.good, fontWeight: 600 }}>focus: {viz.highlight}</span>
           )}
         </div>
         <span style={{ fontSize: 16, color: theme.muted }}>Operations vs Input Size (n)</span>

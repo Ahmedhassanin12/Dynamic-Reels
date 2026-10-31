@@ -30,9 +30,5 @@ export const Enter = ({
     preset,
   });
 
-  return (
-    <div style={{ opacity, transform, ...style }}>
-      {children}
-    </div>
-  );
+  return <div style={{ opacity, transform, ...style }}>{children}</div>;
 };

@@ -76,9 +76,27 @@ export const SHARED_CODE = {
 
 /** `ink` is the brand accent, `onInk` is the text color used on top of it. Each episode can pick its own theme. */
 export const THEMES = {
-  amber: { ...SHARED_UI, ink: '#f59e0b', onInk: '#060608', tint: 'rgba(245, 158, 11, 0.12)', code: SHARED_CODE },
-  mint: { ...SHARED_UI, ink: '#22c55e', onInk: '#04140d', tint: 'rgba(34, 197, 94, 0.12)', code: SHARED_CODE },
-  rose: { ...SHARED_UI, ink: '#f43f5e', onInk: '#1a0509', tint: 'rgba(244, 63, 94, 0.12)', code: SHARED_CODE },
+  amber: {
+    ...SHARED_UI,
+    ink: '#f59e0b',
+    onInk: '#060608',
+    tint: 'rgba(245, 158, 11, 0.12)',
+    code: SHARED_CODE,
+  },
+  mint: {
+    ...SHARED_UI,
+    ink: '#22c55e',
+    onInk: '#04140d',
+    tint: 'rgba(34, 197, 94, 0.12)',
+    code: SHARED_CODE,
+  },
+  rose: {
+    ...SHARED_UI,
+    ink: '#f43f5e',
+    onInk: '#1a0509',
+    tint: 'rgba(244, 63, 94, 0.12)',
+    code: SHARED_CODE,
+  },
 } as const satisfies Record<ThemeName, Theme>;
 
 export const DEFAULT_THEME: ThemeName = 'amber';

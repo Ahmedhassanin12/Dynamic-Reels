@@ -20,7 +20,9 @@ export const StepsScene = ({ label, title, pill = 'STEP BY STEP', steps, showSta
 
   return (
     <SceneFrame label={label} title={title} pill={pill} pillTone="neutral">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 18, direction: 'rtl', position: 'relative' }}>
+      <div
+        style={{ display: 'flex', flexDirection: 'column', gap: 18, direction: 'rtl', position: 'relative' }}
+      >
         {normalizedSteps.map((step, i) => {
           const isGood = step.tone === 'good';
           const isBad = step.tone === 'bad';
@@ -184,5 +186,3 @@ export const StepsScene = ({ label, title, pill = 'STEP BY STEP', steps, showSta
     </SceneFrame>
   );
 };
-
-

@@ -1,5 +1,5 @@
-import { FPS, MOTION } from '../config';
-import type { Episode, SceneConfig, Word } from '../types';
+import { FPS } from '../config';
+import type { Episode, SceneConfig } from '../types';
 import { getMinSceneFrames, resolveTimeline } from './timeline';
 
 export type EducationalArcType =
@@ -114,13 +114,30 @@ export const EDUCATIONAL_ARCS: Record<
 > = {
   'problem-solution': {
     title: 'Problem to Solution (Optimization & Refactoring)',
-    description: 'Starts with a real bottleneck/pain point, reveals the optimized solution, and concludes with a decision rule.',
+    description:
+      'Starts with a real bottleneck/pain point, reveals the optimized solution, and concludes with a decision rule.',
     recommendedScenes: ['statement', 'codeDemo', 'codeDemo', 'compare', 'statement'],
     structure: [
-      { role: 'hook', description: 'Intriguing question showing the real-world problem', defaultKind: 'statement' },
-      { role: 'problem', description: 'Naive / unoptimized code demonstrating the bottleneck (e.g. O(n) array scan)', defaultKind: 'codeDemo' },
-      { role: 'demo', description: 'Optimized approach with live data visualizer (e.g. O(1) hash map lookup)', defaultKind: 'codeDemo' },
-      { role: 'comparison', description: 'Side-by-side trade-off matrix or rule of thumb', defaultKind: 'compare' },
+      {
+        role: 'hook',
+        description: 'Intriguing question showing the real-world problem',
+        defaultKind: 'statement',
+      },
+      {
+        role: 'problem',
+        description: 'Naive / unoptimized code demonstrating the bottleneck (e.g. O(n) array scan)',
+        defaultKind: 'codeDemo',
+      },
+      {
+        role: 'demo',
+        description: 'Optimized approach with live data visualizer (e.g. O(1) hash map lookup)',
+        defaultKind: 'codeDemo',
+      },
+      {
+        role: 'comparison',
+        description: 'Side-by-side trade-off matrix or rule of thumb',
+        defaultKind: 'compare',
+      },
       { role: 'takeaway', description: 'Single golden rule to remember', defaultKind: 'statement' },
     ],
   },
@@ -129,19 +146,36 @@ export const EDUCATIONAL_ARCS: Record<
     description: 'Demystifies abstract JavaScript runtime mechanics step by step.',
     recommendedScenes: ['statement', 'codeDemo', 'diagram', 'compare', 'statement'],
     structure: [
-      { role: 'hook', description: 'Counter-intuitive question (e.g. setTimeout(0) vs Promise)', defaultKind: 'statement' },
+      {
+        role: 'hook',
+        description: 'Counter-intuitive question (e.g. setTimeout(0) vs Promise)',
+        defaultKind: 'statement',
+      },
       { role: 'demo', description: 'Code execution trace stepping line by line', defaultKind: 'codeDemo' },
-      { role: 'concept', description: 'Runtime architecture / visualizer (Call Stack vs Microtasks vs Event Loop)', defaultKind: 'codeDemo' },
-      { role: 'comparison', description: 'Key distinction or execution priority rule', defaultKind: 'compare' },
+      {
+        role: 'concept',
+        description: 'Runtime architecture / visualizer (Call Stack vs Microtasks vs Event Loop)',
+        defaultKind: 'codeDemo',
+      },
+      {
+        role: 'comparison',
+        description: 'Key distinction or execution priority rule',
+        defaultKind: 'compare',
+      },
       { role: 'takeaway', description: 'Summary mental model formula', defaultKind: 'statement' },
     ],
   },
   'myth-buster': {
     title: 'Myth Buster (Debunking Misconceptions)',
-    description: 'Challenges a widespread programming myth and replaces it with accurate engineering reality.',
+    description:
+      'Challenges a widespread programming myth and replaces it with accurate engineering reality.',
     recommendedScenes: ['statement', 'mythReality', 'codeDemo', 'statement'],
     structure: [
-      { role: 'hook', description: 'The widespread belief everyone takes for granted', defaultKind: 'statement' },
+      {
+        role: 'hook',
+        description: 'The widespread belief everyone takes for granted',
+        defaultKind: 'statement',
+      },
       { role: 'problem', description: 'Contrasting the Myth vs Proven Reality', defaultKind: 'mythReality' },
       { role: 'demo', description: 'Under-the-hood proof / visual inspection', defaultKind: 'codeDemo' },
       { role: 'takeaway', description: 'Actionable conclusion for daily coding', defaultKind: 'statement' },
@@ -149,12 +183,21 @@ export const EDUCATIONAL_ARCS: Record<
   },
   'prediction-quiz': {
     title: 'Interactive Prediction Quiz (Engagement & Active Learning)',
-    description: 'Shows a code snippet, invites the viewer to predict output, and reveals the answer with explanation.',
+    description:
+      'Shows a code snippet, invites the viewer to predict output, and reveals the answer with explanation.',
     recommendedScenes: ['statement', 'qa', 'codeDemo', 'statement'],
     structure: [
       { role: 'hook', description: 'Setup the question or challenge', defaultKind: 'statement' },
-      { role: 'quiz', description: 'Code snippet with A/B/C options and timed answer reveal', defaultKind: 'qa' },
-      { role: 'explanation', description: 'Execution breakdown explaining why the answer is correct', defaultKind: 'codeDemo' },
+      {
+        role: 'quiz',
+        description: 'Code snippet with A/B/C options and timed answer reveal',
+        defaultKind: 'qa',
+      },
+      {
+        role: 'explanation',
+        description: 'Execution breakdown explaining why the answer is correct',
+        defaultKind: 'codeDemo',
+      },
       { role: 'takeaway', description: 'Key rule of thumb to avoid this pitfall', defaultKind: 'statement' },
     ],
   },
@@ -164,7 +207,11 @@ export const EDUCATIONAL_ARCS: Record<
     recommendedScenes: ['statement', 'codeDemo', 'steps', 'codeDemo', 'statement'],
     structure: [
       { role: 'hook', description: 'Real-world use case or search challenge', defaultKind: 'statement' },
-      { role: 'concept', description: 'Visual structure (e.g. linked list nodes, binary tree, sorted cells)', defaultKind: 'codeDemo' },
+      {
+        role: 'concept',
+        description: 'Visual structure (e.g. linked list nodes, binary tree, sorted cells)',
+        defaultKind: 'codeDemo',
+      },
       { role: 'demo', description: 'Step-by-step traversal or pointer manipulation', defaultKind: 'steps' },
       { role: 'comparison', description: 'Big-O complexity comparison curve', defaultKind: 'codeDemo' },
       { role: 'takeaway', description: 'When to choose this data structure', defaultKind: 'statement' },
@@ -190,7 +237,12 @@ export const createScriptTemplate = (
     suggestedSceneKind: item.defaultKind,
     suggestedAnchor: '',
     estimatedDurationSec: 6,
-    deliveryNote: item.role === 'hook' ? 'High energy, direct eye contact' : item.role === 'takeaway' ? 'Deliberate, clear cadence' : undefined,
+    deliveryNote:
+      item.role === 'hook'
+        ? 'High energy, direct eye contact'
+        : item.role === 'takeaway'
+          ? 'Deliberate, clear cadence'
+          : undefined,
   }));
 
   return {
@@ -225,7 +277,7 @@ export const analyzeChoreography = (episode: Episode, fps: number = FPS): Choreo
   const recommendations: string[] = [];
 
   // 1. Analyze scenes
-  const scenes: SceneChoreographyReport[] = timeline.map((item, i) => {
+  const scenes: SceneChoreographyReport[] = timeline.map((item) => {
     const { scene, from, durationInFrames, match } = item;
     const startSec = from / fps;
     const durationSec = durationInFrames / fps;
@@ -244,18 +296,25 @@ export const analyzeChoreography = (episode: Episode, fps: number = FPS): Choreo
     if (durationInFrames < minFramesNeeded) {
       pacing = 'rushed';
       note = `Needs at least ${minFramesNeeded} frames (${(minFramesNeeded / fps).toFixed(1)}s) for animations to complete, but only has ${durationInFrames} frames (${durationSec.toFixed(1)}s).`;
-      warnings.push(`Scene "${scene.id}" (${scene.kind}) is rushed: animation needs ${(minFramesNeeded / fps).toFixed(1)}s but scene only lasts ${durationSec.toFixed(1)}s.`);
+      warnings.push(
+        `Scene "${scene.id}" (${scene.kind}) is rushed: animation needs ${(minFramesNeeded / fps).toFixed(1)}s but scene only lasts ${durationSec.toFixed(1)}s.`,
+      );
     } else if (durationInFrames < minFramesNeeded + 15) {
       pacing = 'tight';
       note = 'Animation completes just in time with minimal buffer.';
     } else if (durationSec > 11.0) {
       pacing = 'stale';
-      note = 'Scene on screen for over 11s. Consider splitting or adding line highlights / step progression to maintain visual interest.';
-      warnings.push(`Scene "${scene.id}" may feel stale: lasts ${durationSec.toFixed(1)}s without scene transition.`);
+      note =
+        'Scene on screen for over 11s. Consider splitting or adding line highlights / step progression to maintain visual interest.';
+      warnings.push(
+        `Scene "${scene.id}" may feel stale: lasts ${durationSec.toFixed(1)}s without scene transition.`,
+      );
     }
 
     if (wpm > 185 && durationSec > 3) {
-      warnings.push(`Scene "${scene.id}" speech rate is very fast (${wpm} WPM). Technical explanation may be hard to follow.`);
+      warnings.push(
+        `Scene "${scene.id}" speech rate is very fast (${wpm} WPM). Technical explanation may be hard to follow.`,
+      );
     }
 
     return {
@@ -294,11 +353,17 @@ export const analyzeChoreography = (episode: Episode, fps: number = FPS): Choreo
 
   // 3. Overall recommendations
   if (overallWpm < 120) {
-    recommendations.push('Overall speaking pace is relaxed. Good for deep concepts, but trim silences if aiming for TikTok/Reels retention.');
+    recommendations.push(
+      'Overall speaking pace is relaxed. Good for deep concepts, but trim silences if aiming for TikTok/Reels retention.',
+    );
   } else if (overallWpm > 175) {
-    recommendations.push('Overall speaking pace is very fast. Consider slowing down on code snippets and key takeaways.');
+    recommendations.push(
+      'Overall speaking pace is very fast. Consider slowing down on code snippets and key takeaways.',
+    );
   } else {
-    recommendations.push('Overall speaking pace is in the optimal range (120-165 WPM) for educational Reels.');
+    recommendations.push(
+      'Overall speaking pace is in the optimal range (120-165 WPM) for educational Reels.',
+    );
   }
 
   if (dramaticGaps.length > 0) {

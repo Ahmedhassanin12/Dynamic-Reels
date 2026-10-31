@@ -1,6 +1,6 @@
 import { DEFAULT_THEME, FPS } from '../config';
-import { GLOSSARY, applyGlossary, type GlossaryEntry } from '../glossary';
-import type { Episode, Word } from '../types';
+import { applyGlossary } from '../glossary';
+import type { Episode } from '../types';
 import { applyCorrections, validateCorrections } from './corrections';
 import { resolveTimeline } from './timeline';
 
@@ -88,7 +88,8 @@ export const validateEpisode = (episode: Episode): string[] => {
       } else {
         const lineCount = scene.code.split('\n').length;
         const bad = (scene.highlightLines ?? []).filter((line) => !inRange(line - 1, lineCount));
-        if (bad.length) fail(`highlightLines ${bad.join(', ')} are outside the code (1-${lineCount}, 1-based).`);
+        if (bad.length)
+          fail(`highlightLines ${bad.join(', ')} are outside the code (1-${lineCount}, 1-based).`);
       }
     }
     if (scene.kind === 'codeDemo') {
@@ -112,7 +113,8 @@ export const validateEpisode = (episode: Episode): string[] => {
         if (viz.steps.length === 0) fail('viz.steps must not be empty.');
         if (lineCount > 0) {
           const badLines = viz.steps.map((s) => s.line).filter((l) => !inRange(l - 1, lineCount));
-          if (badLines.length) fail(`viz.steps line(s) ${badLines.join(', ')} are outside the code (1-${lineCount}).`);
+          if (badLines.length)
+            fail(`viz.steps line(s) ${badLines.join(', ')} are outside the code (1-${lineCount}).`);
         }
       }
       if (viz.type === 'eventLoop') {
@@ -121,7 +123,8 @@ export const validateEpisode = (episode: Episode): string[] => {
           const badLines = viz.steps
             .map((s) => s.line)
             .filter((l): l is number => l !== undefined && !inRange(l - 1, lineCount));
-          if (badLines.length) fail(`viz.steps line(s) ${badLines.join(', ')} are outside the code (1-${lineCount}).`);
+          if (badLines.length)
+            fail(`viz.steps line(s) ${badLines.join(', ')} are outside the code (1-${lineCount}).`);
         }
       }
       if (viz.type === 'callStack') {
@@ -129,11 +132,14 @@ export const validateEpisode = (episode: Episode): string[] => {
           fail('viz.frames must contain at least one non-empty frame label.');
         }
         if (viz.returns && viz.returns.length > viz.frames.length) {
-          fail(`viz.returns length (${viz.returns.length}) cannot exceed viz.frames length (${viz.frames.length}).`);
+          fail(
+            `viz.returns length (${viz.returns.length}) cannot exceed viz.frames length (${viz.frames.length}).`,
+          );
         }
         if (viz.lines && lineCount > 0) {
           const badLines = viz.lines.filter((l) => !inRange(l - 1, lineCount));
-          if (badLines.length) fail(`viz.lines ${badLines.join(', ')} are outside the code (1-${lineCount}).`);
+          if (badLines.length)
+            fail(`viz.lines ${badLines.join(', ')} are outside the code (1-${lineCount}).`);
         }
       }
       if (viz.type === 'binarySearch') {
@@ -158,7 +164,9 @@ export const validateEpisode = (episode: Episode): string[] => {
           fail('viz.stack must contain at least one variable with a non-empty name.');
         }
         const heapIds = new Set(viz.heap.map((h) => h.id));
-        const badRefs = viz.stack.filter((s) => s.ref && !heapIds.has(s.ref)).map((s) => `${s.name} -> ${s.ref}`);
+        const badRefs = viz.stack
+          .filter((s) => s.ref && !heapIds.has(s.ref))
+          .map((s) => `${s.name} -> ${s.ref}`);
         if (badRefs.length) {
           fail(`viz.stack ref(s) ${badRefs.join(', ')} do not match any viz.heap id.`);
         }
@@ -175,7 +183,10 @@ export const validateEpisode = (episode: Episode): string[] => {
         if (typeof viz.activePointer === 'number' && !inRange(viz.activePointer, viz.nodes.length)) {
           fail(`viz.activePointer ${viz.activePointer} is outside viz.nodes (0-${viz.nodes.length - 1}).`);
         }
-        if (viz.framesPerStep !== undefined && (!Number.isFinite(viz.framesPerStep) || viz.framesPerStep <= 0)) {
+        if (
+          viz.framesPerStep !== undefined &&
+          (!Number.isFinite(viz.framesPerStep) || viz.framesPerStep <= 0)
+        ) {
           fail(`viz.framesPerStep (${viz.framesPerStep}) must be a positive number.`);
         }
       }
@@ -187,7 +198,9 @@ export const validateEpisode = (episode: Episode): string[] => {
           fail('viz of type asyncFlow must provide at least one of promise, lanes, or steps.');
         }
         if (viz.promise && !['pending', 'fulfilled', 'rejected'].includes(viz.promise.state)) {
-          fail(`viz.promise.state "${viz.promise.state}" must be one of 'pending', 'fulfilled', or 'rejected'.`);
+          fail(
+            `viz.promise.state "${viz.promise.state}" must be one of 'pending', 'fulfilled', or 'rejected'.`,
+          );
         }
         if (viz.lanes && viz.lanes.length === 0) {
           fail('viz.lanes must contain at least one lane when specified.');
@@ -195,7 +208,10 @@ export const validateEpisode = (episode: Episode): string[] => {
         if (viz.steps && viz.steps.length === 0) {
           fail('viz.steps must contain at least one step when specified.');
         }
-        if (viz.framesPerStep !== undefined && (!Number.isFinite(viz.framesPerStep) || viz.framesPerStep <= 0)) {
+        if (
+          viz.framesPerStep !== undefined &&
+          (!Number.isFinite(viz.framesPerStep) || viz.framesPerStep <= 0)
+        ) {
           fail(`viz.framesPerStep (${viz.framesPerStep}) must be a positive number.`);
         }
       }
@@ -209,14 +225,18 @@ export const validateEpisode = (episode: Episode): string[] => {
             if (!tName) {
               fail('each table in viz.tables must have a non-empty name.');
             }
-            const colNames = (table.columns ?? []).map((c) => (typeof c === 'string' ? c.trim() : c.name?.trim() ?? ''));
+            const colNames = (table.columns ?? []).map((c) =>
+              typeof c === 'string' ? c.trim() : (c.name?.trim() ?? ''),
+            );
             if (colNames.length === 0 || colNames.some((n) => !n)) {
               fail(`table "${tName || 'unnamed'}" must contain at least one non-empty column.`);
             }
             if (!table.rows || table.rows.length === 0) {
               fail(`table "${tName || 'unnamed'}" must contain at least one sample row.`);
             } else if (table.highlightRow !== undefined && !inRange(table.highlightRow, table.rows.length)) {
-              fail(`table "${tName}" highlightRow ${table.highlightRow} is outside rows (0-${table.rows.length - 1}).`);
+              fail(
+                `table "${tName}" highlightRow ${table.highlightRow} is outside rows (0-${table.rows.length - 1}).`,
+              );
             }
             const colSet = new Set(colNames.filter(Boolean));
             if (tName) tableColMap.set(tName, colSet);
@@ -243,16 +263,16 @@ export const validateEpisode = (episode: Episode): string[] => {
             }
           }
         }
-        if (viz.framesPerStep !== undefined && (!Number.isFinite(viz.framesPerStep) || viz.framesPerStep <= 0)) {
+        if (
+          viz.framesPerStep !== undefined &&
+          (!Number.isFinite(viz.framesPerStep) || viz.framesPerStep <= 0)
+        ) {
           fail(`viz.framesPerStep (${viz.framesPerStep}) must be a positive number.`);
         }
       }
     }
     if (scene.kind === 'steps') {
-      if (
-        scene.steps.length === 0 ||
-        scene.steps.some((s) => !(typeof s === 'string' ? s : s.text).trim())
-      ) {
+      if (scene.steps.length === 0 || scene.steps.some((s) => !(typeof s === 'string' ? s : s.text).trim())) {
         fail('steps must contain at least one non-empty step.');
       }
     }
@@ -266,10 +286,15 @@ export const validateEpisode = (episode: Episode): string[] => {
         return false;
       });
       if (badSide) {
-        fail('each compare side must have a non-empty title and at least one non-empty item or code snippet.');
+        fail(
+          'each compare side must have a non-empty title and at least one non-empty item or code snippet.',
+        );
       }
       for (const side of scene.sides) {
-        if (side.progress !== undefined && (!Number.isFinite(side.progress) || side.progress < 0 || side.progress > 100)) {
+        if (
+          side.progress !== undefined &&
+          (!Number.isFinite(side.progress) || side.progress < 0 || side.progress > 100)
+        ) {
           fail(`compare side progress (${side.progress}) must be a number between 0 and 100.`);
         }
       }
@@ -278,7 +303,10 @@ export const validateEpisode = (episode: Episode): string[] => {
       if (!scene.question.trim() || !scene.answer.trim()) {
         fail('question and answer must not be empty.');
       }
-      if (scene.revealDelayFrames !== undefined && (!Number.isFinite(scene.revealDelayFrames) || scene.revealDelayFrames < 0)) {
+      if (
+        scene.revealDelayFrames !== undefined &&
+        (!Number.isFinite(scene.revealDelayFrames) || scene.revealDelayFrames < 0)
+      ) {
         fail(`qa revealDelayFrames (${scene.revealDelayFrames}) must be a non-negative number.`);
       }
       if (scene.options !== undefined) {
@@ -295,7 +323,8 @@ export const validateEpisode = (episode: Episode): string[] => {
       const { anim } = scene;
       if (anim.type === 'likeHeart') {
         const tapAt = anim.tapAt ?? 12;
-        if (!Number.isFinite(tapAt) || tapAt < 0) fail(`motion tapAt (${tapAt}) must be a non-negative number.`);
+        if (!Number.isFinite(tapAt) || tapAt < 0)
+          fail(`motion tapAt (${tapAt}) must be a non-negative number.`);
         if (anim.revertAt !== undefined && (!Number.isFinite(anim.revertAt) || anim.revertAt <= tapAt + 14)) {
           fail(`motion revertAt (${anim.revertAt}) must be later than tapAt + 14 (${tapAt + 14}).`);
         }
@@ -311,8 +340,14 @@ export const validateEpisode = (episode: Episode): string[] => {
         }
         if (anim.arriveAt) {
           if (anim.arriveAt.length !== anim.stops.length) {
-            fail(`motion arriveAt length (${anim.arriveAt.length}) must match stops length (${anim.stops.length}).`);
-          } else if (anim.arriveAt.some((f, i) => !Number.isFinite(f) || f < 0 || (i > 0 && f <= anim.arriveAt![i - 1]))) {
+            fail(
+              `motion arriveAt length (${anim.arriveAt.length}) must match stops length (${anim.stops.length}).`,
+            );
+          } else if (
+            anim.arriveAt.some(
+              (f, i) => !Number.isFinite(f) || f < 0 || (i > 0 && f <= anim.arriveAt![i - 1]),
+            )
+          ) {
             fail('motion arriveAt must be non-negative and strictly increasing.');
           }
         }
@@ -332,7 +367,10 @@ export const validateEpisode = (episode: Episode): string[] => {
       if (!realityText || !realityText.trim()) {
         fail('reality must contain non-empty text.');
       }
-      if (scene.revealDelayFrames !== undefined && (!Number.isFinite(scene.revealDelayFrames) || scene.revealDelayFrames < 0)) {
+      if (
+        scene.revealDelayFrames !== undefined &&
+        (!Number.isFinite(scene.revealDelayFrames) || scene.revealDelayFrames < 0)
+      ) {
         fail(`mythReality revealDelayFrames (${scene.revealDelayFrames}) must be a non-negative number.`);
       }
     }
@@ -374,7 +412,7 @@ export const defineEpisode = (episode: Episode): Episode => {
     words,
   };
   const errors = validateEpisode(prepared);
-  if (errors.length) throw new Error(`Episode "${episode.id}" has ${errors.length} problem(s):\n- ${errors.join('\n- ')}`);
+  if (errors.length)
+    throw new Error(`Episode "${episode.id}" has ${errors.length} problem(s):\n- ${errors.join('\n- ')}`);
   return prepared;
 };
-

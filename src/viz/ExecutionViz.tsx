@@ -29,7 +29,9 @@ export const ExecutionViz = ({ viz, result }: VizProps<'execution'>) => {
   const progressPct = Math.round(((stepIndex + 1) / viz.steps.length) * 100);
 
   return (
-    <Box style={{ direction: 'ltr', display: 'flex', flexDirection: 'column', gap: 20, fontFamily: CODE_FONT }}>
+    <Box
+      style={{ direction: 'ltr', display: 'flex', flexDirection: 'column', gap: 20, fontFamily: CODE_FONT }}
+    >
       {/* Header + active line indicator */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

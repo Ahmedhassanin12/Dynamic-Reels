@@ -45,10 +45,7 @@ export const foreignKey = defineEpisode({
             name: 'users',
             badge: 'PARENT · PK',
             tone: 'good',
-            columns: [
-              { name: 'id', pk: true, highlight: true },
-              { name: 'name' },
-            ],
+            columns: [{ name: 'id', pk: true, highlight: true }, { name: 'name' }],
             rows: [
               [42, 'Sara'],
               [43, 'Ali'],
@@ -125,11 +122,7 @@ export const foreignKey = defineEpisode({
           },
           {
             name: 'orders',
-            columns: [
-              { name: 'id', pk: true },
-              { name: 'user_id', fk: true, highlight: true },
-              'total',
-            ],
+            columns: [{ name: 'id', pk: true }, { name: 'user_id', fk: true, highlight: true }, 'total'],
             rows: [[101, 42, 250]],
           },
         ],
@@ -160,20 +153,14 @@ export const foreignKey = defineEpisode({
           badge: 'users.id',
           tone: 'good',
           code: `id INT PRIMARY KEY`,
-          items: [
-            'بيعرّف الصف جوه نفس الجدول',
-            'لازم يكون Unique وممنوع يبقى NULL',
-          ],
+          items: ['بيعرّف الصف جوه نفس الجدول', 'لازم يكون Unique وممنوع يبقى NULL'],
         },
         {
           title: 'Foreign Key (FK)',
           badge: 'orders.user_id',
           tone: 'ink',
           code: `user_id INT REFERENCES users(id)`,
-          items: [
-            'بيربط الجدول بـ Primary Key في جدول تاني',
-            'ممكن يتكرر لو المستخدم عنده كذا طلب',
-          ],
+          items: ['بيربط الجدول بـ Primary Key في جدول تاني', 'ممكن يتكرر لو المستخدم عنده كذا طلب'],
         },
       ],
     },

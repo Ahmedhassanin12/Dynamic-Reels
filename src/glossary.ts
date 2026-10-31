@@ -53,18 +53,24 @@ export function validateGlossary(entries: GlossaryEntry[] = GLOSSARY): string[] 
  */
 export function applyGlossary(words: Word[], entries: GlossaryEntry[] = GLOSSARY): Word[] {
   // Prevent accidental double-application on already-normalized words when using default glossary
-  if (entries === GLOSSARY && words.length > 0 && Boolean((words as unknown as { _glossaryApplied?: boolean })._glossaryApplied)) {
+  if (
+    entries === GLOSSARY &&
+    words.length > 0 &&
+    Boolean((words as unknown as { _glossaryApplied?: boolean })._glossaryApplied)
+  ) {
     return words;
   }
 
   const byLength = [...entries].sort((a, b) => b.say.length - a.say.length);
   const out: Word[] = [];
 
-  for (let i = 0; i < words.length; ) {
+  for (let i = 0; i < words.length;) {
     const hit = byLength.find(
       (entry) =>
         entry.say.length > 0 &&
-        entry.say.every((token, k) => words[i + k] && normalizeText(words[i + k].text) === normalizeText(token)),
+        entry.say.every(
+          (token, k) => words[i + k] && normalizeText(words[i + k].text) === normalizeText(token),
+        ),
     );
     if (hit) {
       const endIdx = i + hit.say.length - 1;
@@ -101,5 +107,3 @@ export function applyGlossary(words: Word[], entries: GlossaryEntry[] = GLOSSARY
   }
   return out;
 }
-
-

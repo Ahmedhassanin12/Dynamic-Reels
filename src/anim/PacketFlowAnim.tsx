@@ -40,7 +40,10 @@ export const PacketFlowAnim = ({ anim }: { anim: Extract<MotionAnim, { type: 'pa
       continue;
     }
     if (frame >= arr[i] - travel) {
-      forward = i - 1 + interpolate(frame, [arr[i] - travel, arr[i]], [0, 1], { ...CLAMP, easing: EASINGS.inOutCubic });
+      forward =
+        i -
+        1 +
+        interpolate(frame, [arr[i] - travel, arr[i]], [0, 1], { ...CLAMP, easing: EASINGS.inOutCubic });
     }
     break;
   }
@@ -62,9 +65,21 @@ export const PacketFlowAnim = ({ anim }: { anim: Extract<MotionAnim, { type: 'pa
   const toneColor = (tone?: string) =>
     tone === 'bad' ? theme.bad : tone === 'warn' ? theme.warn : tone === 'ink' ? theme.ink : theme.good;
   const toneBorder = (tone?: string) =>
-    tone === 'bad' ? theme.badBorder : tone === 'warn' ? theme.warnBorder : tone === 'ink' ? theme.borderStrong : theme.goodBorder;
+    tone === 'bad'
+      ? theme.badBorder
+      : tone === 'warn'
+        ? theme.warnBorder
+        : tone === 'ink'
+          ? theme.borderStrong
+          : theme.goodBorder;
   const toneTint = (tone?: string) =>
-    tone === 'bad' ? theme.badTint : tone === 'warn' ? theme.warnTint : tone === 'ink' ? theme.tint : theme.goodTint;
+    tone === 'bad'
+      ? theme.badTint
+      : tone === 'warn'
+        ? theme.warnTint
+        : tone === 'ink'
+          ? theme.tint
+          : theme.goodTint;
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -99,7 +114,10 @@ export const PacketFlowAnim = ({ anim }: { anim: Extract<MotionAnim, { type: 'pa
           const lit = frame >= arr[i];
           const pop = scalePop(frame, fps, { delay: arr[i], from: 0.94 });
           const enter = fadeSlide(frame, fps, { delay: i * 5, distance: 28, axis: 'x' });
-          const litT = interpolate(frame, [arr[i], arr[i] + 8], [0, 1], { ...CLAMP, easing: EASINGS.outCubic });
+          const litT = interpolate(frame, [arr[i], arr[i] + 8], [0, 1], {
+            ...CLAMP,
+            easing: EASINGS.outCubic,
+          });
           const color = toneColor(stop.tone);
           return (
             <div

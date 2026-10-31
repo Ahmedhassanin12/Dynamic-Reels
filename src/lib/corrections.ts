@@ -5,10 +5,7 @@ import { normalizeText } from './text';
  * Validates a list of transcript corrections against raw transcript words.
  * Detects out-of-range indices, duplicate indices, and transcript drift (mismatched original text).
  */
-export function validateCorrections(
-  rawWords: Word[],
-  corrections: TranscriptCorrection[] = [],
-): string[] {
+export function validateCorrections(rawWords: Word[], corrections: TranscriptCorrection[] = []): string[] {
   const errors: string[] = [];
   const seenIndices = new Set<number>();
 
@@ -51,10 +48,7 @@ export function validateCorrections(
  * 3. Exact Whisper start/end audio timestamps are 100% preserved.
  * 4. Distinctly records `rawText`, `correctedText`, and `text`.
  */
-export function applyCorrections(
-  rawWords: Word[],
-  corrections: TranscriptCorrection[] = [],
-): Word[] {
+export function applyCorrections(rawWords: Word[], corrections: TranscriptCorrection[] = []): Word[] {
   if (!corrections || corrections.length === 0) {
     return rawWords.map((w, i) => ({
       ...w,

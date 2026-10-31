@@ -10,7 +10,13 @@ export const behind01OneTap = defineEpisode({
   words,
   theme: 'mint',
   corrections: [
-    { index: 51, original: 'Viber', corrected: 'فايبر', status: 'approved', reason: 'Whisper misheard fiber' },
+    {
+      index: 51,
+      original: 'Viber',
+      corrected: 'فايبر',
+      status: 'approved',
+      reason: 'Whisper misheard fiber',
+    },
     { index: 17, original: 'الوحده', corrected: 'لوحده', status: 'approved', reason: 'Spelling correction' },
     { index: 116, original: 'أزكى', corrected: 'أذكى', status: 'approved', reason: 'Spelling correction' },
   ],
@@ -63,8 +69,20 @@ export const behind01OneTap = defineEpisode({
         arriveAt: [8, 48, 88, 128],
         stops: [
           { icon: '📱', label: 'موبايلك', sub: 'ترجمة عنوان الـ IP عبر DNS', badge: 'DNS', tone: 'ink' },
-          { icon: '🔒', label: 'تشفير HTTPS', sub: 'تأمين البيانات بـ TLS Handshake', badge: 'TLS', tone: 'good' },
-          { icon: '🌊', label: 'كابلات فايبر البحر', sub: 'سفر الإشارة بسرعة الضوء ~40ms', badge: 'FIBER', tone: 'warn' },
+          {
+            icon: '🔒',
+            label: 'تشفير HTTPS',
+            sub: 'تأمين البيانات بـ TLS Handshake',
+            badge: 'TLS',
+            tone: 'good',
+          },
+          {
+            icon: '🌊',
+            label: 'كابلات فايبر البحر',
+            sub: 'سفر الإشارة بسرعة الضوء ~40ms',
+            badge: 'FIBER',
+            tone: 'warn',
+          },
           { icon: '🏢', label: 'الداتا سنتر', sub: 'وصول الطلب لمركز البيانات', badge: 'DC', tone: 'good' },
         ],
       },

@@ -49,7 +49,8 @@ export const CodeSnap = ({
     : 0;
 
   const tagColor = tagTone === 'good' ? theme.good : tagTone === 'bad' ? theme.bad : theme.ink;
-  const tagBorder = tagTone === 'good' ? theme.goodBorder : tagTone === 'bad' ? theme.badBorder : theme.borderStrong;
+  const tagBorder =
+    tagTone === 'good' ? theme.goodBorder : tagTone === 'bad' ? theme.badBorder : theme.borderStrong;
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
@@ -101,7 +102,12 @@ export const CodeSnap = ({
             {dots.map((color) => (
               <span
                 key={color}
-                style={{ width: CODE_SNAP.dotSize, height: CODE_SNAP.dotSize, borderRadius: '50%', background: color }}
+                style={{
+                  width: CODE_SNAP.dotSize,
+                  height: CODE_SNAP.dotSize,
+                  borderRadius: '50%',
+                  background: color,
+                }}
               />
             ))}
           </div>

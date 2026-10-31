@@ -36,7 +36,9 @@ if (args.includes('--arcs')) {
     console.log(`  Recommended Scenes: ${arc.recommendedScenes.join(' -> ')}`);
     console.log('  Segments:');
     arc.structure.forEach((s, idx) => {
-      console.log(`    ${idx + 1}. \x1b[33m${s.role.padEnd(12)}\x1b[0m (${s.defaultKind}) - ${s.description}`);
+      console.log(
+        `    ${idx + 1}. \x1b[33m${s.role.padEnd(12)}\x1b[0m (${s.defaultKind}) - ${s.description}`,
+      );
     });
     console.log('');
   }
@@ -58,13 +60,17 @@ if (templateIdx !== -1) {
   console.log('Segments Breakdown:\n');
 
   script.segments.forEach((seg, i) => {
-    console.log(`\x1b[1m${i + 1}. [${seg.role.toUpperCase()}] -> ${seg.suggestedSceneKind}\x1b[0m (~${seg.estimatedDurationSec}s)`);
+    console.log(
+      `\x1b[1m${i + 1}. [${seg.role.toUpperCase()}] -> ${seg.suggestedSceneKind}\x1b[0m (~${seg.estimatedDurationSec}s)`,
+    );
     console.log(`   Goal: \x1b[90m${seg.goal}\x1b[0m`);
     if (seg.deliveryNote) console.log(`   Delivery Tip: \x1b[33m${seg.deliveryNote}\x1b[0m`);
     console.log('');
   });
 
-  console.log('\x1b[32mTip: Use this scaffold to write your natural Egyptian Arabic narration before recording audio.\x1b[0m\n');
+  console.log(
+    '\x1b[32mTip: Use this scaffold to write your natural Egyptian Arabic narration before recording audio.\x1b[0m\n',
+  );
   process.exit(0);
 }
 
@@ -83,19 +89,21 @@ console.log('\n=================================================================
 console.log(`  AUDIO CHOREOGRAPHY AUDIT: ${episode.title} (${episode.id})`);
 console.log('================================================================================\n');
 
-console.log(`Total Duration: \x1b[1m${audit.totalDurationSeconds}s\x1b[0m (${Math.round(audit.totalDurationSeconds * 30)} frames @ 30 FPS)`);
+console.log(
+  `Total Duration: \x1b[1m${audit.totalDurationSeconds}s\x1b[0m (${Math.round(audit.totalDurationSeconds * 30)} frames @ 30 FPS)`,
+);
 console.log(`Total Spoken Words: \x1b[1m${audit.totalWords}\x1b[0m`);
 console.log(`Speaking Rate: \x1b[1m${audit.overallWpm} WPM\x1b[0m (${audit.pacingRating.toUpperCase()})\n`);
 
 console.log('--- SCENE CHOREOGRAPHY & TIMELINE BREAKDOWN ---');
 console.log(
   'Scene ID'.padEnd(20) +
-  'Kind'.padEnd(14) +
-  'Time (s)'.padEnd(16) +
-  'Frames'.padEnd(10) +
-  'Min Need'.padEnd(10) +
-  'WPM'.padEnd(8) +
-  'Pacing',
+    'Kind'.padEnd(14) +
+    'Time (s)'.padEnd(16) +
+    'Frames'.padEnd(10) +
+    'Min Need'.padEnd(10) +
+    'WPM'.padEnd(8) +
+    'Pacing',
 );
 console.log('-'.repeat(86));
 
@@ -104,7 +112,7 @@ for (const s of audit.scenes) {
   const frameText = `${s.durationInFrames}`;
   const minText = `${s.minFramesNeeded}`;
   const wpmText = `${s.wpm}`;
-  
+
   let pacingColor = '\x1b[32m'; // green
   if (s.pacing === 'rushed') pacingColor = '\x1b[31m'; // red
   else if (s.pacing === 'tight') pacingColor = '\x1b[33m'; // yellow
@@ -112,12 +120,12 @@ for (const s of audit.scenes) {
 
   console.log(
     s.sceneId.padEnd(20) +
-    s.sceneKind.padEnd(14) +
-    timeRange.padEnd(16) +
-    frameText.padEnd(10) +
-    minText.padEnd(10) +
-    wpmText.padEnd(8) +
-    `${pacingColor}${s.pacing.toUpperCase()}\x1b[0m`,
+      s.sceneKind.padEnd(14) +
+      timeRange.padEnd(16) +
+      frameText.padEnd(10) +
+      minText.padEnd(10) +
+      wpmText.padEnd(8) +
+      `${pacingColor}${s.pacing.toUpperCase()}\x1b[0m`,
   );
   if (s.note) {
     console.log(`  \x1b[90m↳ ${s.note}\x1b[0m`);

@@ -20,7 +20,16 @@ export const EventLoopViz = ({ viz, result }: VizProps<'eventLoop'>) => {
   const active = step?.activeZone ?? 'stack';
 
   return (
-    <Box style={{ direction: 'ltr', display: 'flex', flexDirection: 'column', gap: 18, fontFamily: CODE_FONT, padding: '22px 24px' }}>
+    <Box
+      style={{
+        direction: 'ltr',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 18,
+        fontFamily: CODE_FONT,
+        padding: '22px 24px',
+      }}
+    >
       {/* Top status bar: step counter + educational note */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -56,7 +65,14 @@ export const EventLoopViz = ({ viz, result }: VizProps<'eventLoop'>) => {
       </div>
 
       {/* 3-Zone Runtime Diagram: Call Stack | Queues | Event Loop Hub */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 1.35fr 0.75fr', gap: 14, alignItems: 'stretch' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1.15fr 1.35fr 0.75fr',
+          gap: 14,
+          alignItems: 'stretch',
+        }}
+      >
         {/* 1. CALL STACK */}
         <div
           style={{
@@ -70,12 +86,16 @@ export const EventLoopViz = ({ viz, result }: VizProps<'eventLoop'>) => {
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 16, fontWeight: 700, color: active === 'stack' ? theme.ink : theme.text }}>
+            <span
+              style={{ fontSize: 16, fontWeight: 700, color: active === 'stack' ? theme.ink : theme.text }}
+            >
               Call Stack
             </span>
             <span style={{ fontSize: 13, color: theme.muted }}>LIFO</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1, justifyContent: 'flex-end' }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1, justifyContent: 'flex-end' }}
+          >
             {step.stack.length === 0 ? (
               <div
                 style={{

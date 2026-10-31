@@ -24,8 +24,6 @@ describe('Phase 8 — Automated Quality Assurance (Pre-Render Verification)', ()
       assert.equal(report.failCount, 0);
       assert.ok(report.sceneCount >= 10);
     });
-
-
   });
 
   describe('2. Deterministic Error Safeguards', () => {
@@ -153,12 +151,8 @@ describe('Phase 8 — Automated Quality Assurance (Pre-Render Verification)', ()
         id: 'test-tail',
         title: 'Test Tail',
         voice: 'voice.mp3',
-        words: [
-          { text: 'كلمة', start: 0, end: 2 },
-        ],
-        scenes: [
-          { id: 'sc-1', kind: 'statement', at: 0, text: 'مشهد' },
-        ],
+        words: [{ text: 'كلمة', start: 0, end: 2 }],
+        scenes: [{ id: 'sc-1', kind: 'statement', at: 0, text: 'مشهد' }],
       };
 
       // If speech ends at 2.0s, but we calculate 60fps or an explicit long duration

@@ -25,5 +25,3 @@ export const VIZ_REGISTRY = {
   asyncFlow: AsyncFlowViz,
   relation: RelationViz,
 } satisfies { [K in VizType]: FC<VizProps<K>> };
-
-

@@ -126,7 +126,16 @@ export const MythRealityScene = ({
             {mythSide.bullets && mythSide.bullets.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
                 {mythSide.bullets.map((b, idx) => (
-                  <div key={idx} style={{ display: 'flex', alignItems: 'baseline', gap: 10, fontSize: 22, color: theme.muted }}>
+                  <div
+                    key={idx}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'baseline',
+                      gap: 10,
+                      fontSize: 22,
+                      color: theme.muted,
+                    }}
+                  >
                     <span style={{ color: theme.bad, fontSize: 16 }}>✗</span>
                     <BidiText>{b}</BidiText>
                   </div>
@@ -224,7 +233,16 @@ export const MythRealityScene = ({
               {realitySide.bullets && realitySide.bullets.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
                   {realitySide.bullets.map((b, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'baseline', gap: 10, fontSize: 22, color: theme.muted }}>
+                    <div
+                      key={idx}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'baseline',
+                        gap: 10,
+                        fontSize: 22,
+                        color: theme.muted,
+                      }}
+                    >
                       <span style={{ color: theme.good, fontSize: 16 }}>✓</span>
                       <BidiText>{b}</BidiText>
                     </div>

@@ -57,9 +57,24 @@ export const behind02Api = defineEpisode({
       pill: 'SECURITY PIPELINE',
       showStack: true,
       steps: [
-        { text: 'فحص الـ Headers وتنسيق الـ JSON', badge: '1. JSON VALIDATION', code: 'JSON.parse(request.body);', tone: 'ink' },
-        { text: 'منع هجمات الـ DDoS بـ Rate Limiting', badge: '2. RATE LIMITING', code: 'maxRequests: 100 / min / IP', tone: 'warn' },
-        { text: 'تعقيم الكود ومنع ثغرات الـ SQL Injection', badge: '3. SQL SANITIZE', code: 'db.query("WHERE id = $1", [id]);', tone: 'good' },
+        {
+          text: 'فحص الـ Headers وتنسيق الـ JSON',
+          badge: '1. JSON VALIDATION',
+          code: 'JSON.parse(request.body);',
+          tone: 'ink',
+        },
+        {
+          text: 'منع هجمات الـ DDoS بـ Rate Limiting',
+          badge: '2. RATE LIMITING',
+          code: 'maxRequests: 100 / min / IP',
+          tone: 'warn',
+        },
+        {
+          text: 'تعقيم الكود ومنع ثغرات الـ SQL Injection',
+          badge: '3. SQL SANITIZE',
+          code: 'db.query("WHERE id = $1", [id]);',
+          tone: 'good',
+        },
       ],
     },
     {
@@ -80,7 +95,7 @@ export const behind02Api = defineEpisode({
           title: '✗ 401 & 500 · الأخطاء',
           badge: 'ERRORS',
           items: ['401: Unauthorized (مش مسجل دخول)', '500: Server Error (السيرفر وقع من الضغط)'],
-          tone: "bad"
+          tone: 'bad',
         },
       ],
     },

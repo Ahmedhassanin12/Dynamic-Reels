@@ -25,4 +25,3 @@ export const SCENE_REGISTRY = {
   mythReality: MythRealityScene,
   motion: MotionScene,
 } satisfies { [K in SceneKind]: FC<SceneOf<K>> };
-

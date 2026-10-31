@@ -30,7 +30,9 @@ export const TransitionScene = ({
 
   return (
     <SceneFrame label={label} title={title} pill={pill} pillTone="neutral">
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, direction: 'rtl' }}>
+      <div
+        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, direction: 'rtl' }}
+      >
         {/* Top Card: Previous / Completed Concept */}
         <Enter style={{ width: '100%' }}>
           <Box

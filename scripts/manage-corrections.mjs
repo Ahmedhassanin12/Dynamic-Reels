@@ -51,7 +51,9 @@ switch (command) {
     suggestions.forEach((s) => {
       console.log(`  [Word ${s.index}] "${s.original}" -> "${s.corrected}" (${s.reason})`);
     });
-    console.log(`\nTo approve suggestions into corrections.json, run:\n  node scripts/manage-corrections.mjs approve ${episodeId}`);
+    console.log(
+      `\nTo approve suggestions into corrections.json, run:\n  node scripts/manage-corrections.mjs approve ${episodeId}`,
+    );
     break;
   }
 
@@ -133,7 +135,9 @@ switch (command) {
       console.error(`Validation errors found in ${correctionsFile}:\n- ${errors.join('\n- ')}`);
       process.exit(1);
     } else {
-      console.log(`✓ All ${corrections.length} correction(s) in ${correctionsFile} are valid and in sync with raw words.`);
+      console.log(
+        `✓ All ${corrections.length} correction(s) in ${correctionsFile} are valid and in sync with raw words.`,
+      );
     }
     break;
   }

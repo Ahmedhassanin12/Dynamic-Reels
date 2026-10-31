@@ -78,7 +78,10 @@ export const RelationViz = ({ viz, result }: VizProps<'relation'>) => {
   }));
 
   const normalizedTables =
-    link && rawTables.length === 2 && rawTables[0].table.name === link.toTable && rawTables[1].table.name === link.fromTable
+    link &&
+    rawTables.length === 2 &&
+    rawTables[0].table.name === link.toTable &&
+    rawTables[1].table.name === link.fromTable
       ? [rawTables[1], rawTables[0]]
       : rawTables;
 
@@ -696,17 +699,12 @@ export const RelationViz = ({ viz, result }: VizProps<'relation'>) => {
                 <polygon
                   points="216,15 204,9 204,21"
                   fill={pkColFocus.isActive ? theme.good : theme.warn}
-                   opacity={(connectorDraw - 0.85) / 0.15}
+                  opacity={(connectorDraw - 0.85) / 0.15}
                 />
               )}
               {/* Traveling signal pulse dot */}
               {connectorDraw > 0.02 && connectorDraw < 0.99 && (
-                <circle
-                  cx={4 + connectorDraw * 206}
-                  cy={15}
-                  r={5}
-                  fill={theme.ink}
-                />
+                <circle cx={4 + connectorDraw * 206} cy={15} r={5} fill={theme.ink} />
               )}
             </svg>
             <span

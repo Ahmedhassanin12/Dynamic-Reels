@@ -10,10 +10,28 @@ export const behind03Database = defineEpisode({
   words,
   theme: 'mint',
   corrections: [
-    { index: 27, original: 'هنتطر', corrected: 'هنضطر', status: 'approved', reason: 'Whisper spelling drift' },
-    { index: 45, original: 'العلاقية', corrected: 'العلائقية', status: 'approved', reason: 'Whisper spelling drift' },
+    {
+      index: 27,
+      original: 'هنتطر',
+      corrected: 'هنضطر',
+      status: 'approved',
+      reason: 'Whisper spelling drift',
+    },
+    {
+      index: 45,
+      original: 'العلاقية',
+      corrected: 'العلائقية',
+      status: 'approved',
+      reason: 'Whisper spelling drift',
+    },
     { index: 65, original: 'جوا', corrected: 'جواه', status: 'approved', reason: 'Whisper spelling drift' },
-    { index: 115, original: 'للديتا', corrected: 'للداتا', status: 'approved', reason: 'Whisper spelling drift' },
+    {
+      index: 115,
+      original: 'للديتا',
+      corrected: 'للداتا',
+      status: 'approved',
+      reason: 'Whisper spelling drift',
+    },
     { index: 130, original: 'لك', corrected: 'لـ', status: 'approved', reason: 'Whisper spelling drift' },
   ],
   scenes: [
@@ -103,8 +121,16 @@ export const behind03Database = defineEpisode({
       showStack: true,
       steps: [
         { text: 'Atomicity: العملية تكتمل كاملة أو تتلغي تماماً', badge: '1. ATOMICITY', tone: 'good' },
-        { text: 'Consistency: حفظ سلامة العلاقات وتفادي أي بيانات تائهة', badge: '2. CONSISTENCY', tone: 'ink' },
-        { text: 'Durability: حفظ التعديل دائماً في القرص لو الكهربا قطعت', badge: '3. DURABILITY', tone: 'warn' },
+        {
+          text: 'Consistency: حفظ سلامة العلاقات وتفادي أي بيانات تائهة',
+          badge: '2. CONSISTENCY',
+          tone: 'ink',
+        },
+        {
+          text: 'Durability: حفظ التعديل دائماً في القرص لو الكهربا قطعت',
+          badge: '3. DURABILITY',
+          tone: 'warn',
+        },
       ],
     },
     {

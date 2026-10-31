@@ -1,4 +1,4 @@
-import { CHARACTER, FPS, THEMES, TIMELINE } from '../config';
+import { CHARACTER, FPS, THEMES } from '../config';
 import type { Episode } from '../types';
 import { auditEpisodeAuthoring } from './diagnostics';
 import { validateEpisode } from './episode';
@@ -40,18 +40,35 @@ export const runEpisodeQA = (episode: Episode, fps: number = FPS): EpisodeQARepo
     checks.push({ id, category, name, status: 'pass', message });
   };
 
-  const addWarn = (id: string, category: QACheck['category'], name: string, message: string, details?: unknown) => {
+  const addWarn = (
+    id: string,
+    category: QACheck['category'],
+    name: string,
+    message: string,
+    details?: unknown,
+  ) => {
     checks.push({ id, category, name, status: 'warn', message, details });
   };
 
-  const addFail = (id: string, category: QACheck['category'], name: string, message: string, details?: unknown) => {
+  const addFail = (
+    id: string,
+    category: QACheck['category'],
+    name: string,
+    message: string,
+    details?: unknown,
+  ) => {
     checks.push({ id, category, name, status: 'fail', message, details });
   };
 
   // 1. Schema & Episode Integrity
   const schemaErrors = validateEpisode(episode);
   if (schemaErrors.length === 0) {
-    addPass('schema-integrity', 'schema', 'Episode Schema & Configuration', 'Episode structure, scenes, and visualizers passed validation.');
+    addPass(
+      'schema-integrity',
+      'schema',
+      'Episode Schema & Configuration',
+      'Episode structure, scenes, and visualizers passed validation.',
+    );
   } else {
     for (const err of schemaErrors) {
       addFail('schema-error', 'schema', 'Episode Schema Error', err);
@@ -67,7 +84,12 @@ export const runEpisodeQA = (episode: Episode, fps: number = FPS): EpisodeQARepo
       `Theme "${episode.theme}" is not defined in THEMES (${Object.keys(THEMES).join(', ')}).`,
     );
   } else {
-    addPass('theme-validity', 'schema', 'Theme Verification', `Theme "${episode.theme ?? 'default'}" is valid.`);
+    addPass(
+      'theme-validity',
+      'schema',
+      'Theme Verification',
+      `Theme "${episode.theme ?? 'default'}" is valid.`,
+    );
   }
 
   // 2. Transcripts & Timestamps
@@ -75,7 +97,12 @@ export const runEpisodeQA = (episode: Episode, fps: number = FPS): EpisodeQARepo
   if (words.length === 0) {
     addFail('transcript-empty', 'timestamps', 'Transcript Availability', 'Episode has no transcript words.');
   } else {
-    addPass('transcript-presence', 'timestamps', 'Transcript Availability', `Transcript contains ${words.length} synchronized words.`);
+    addPass(
+      'transcript-presence',
+      'timestamps',
+      'Transcript Availability',
+      `Transcript contains ${words.length} synchronized words.`,
+    );
 
     // Check for extreme audio gaps (> 4.0 seconds silence)
     const longGaps: { fromWord: string; toWord: string; gapSec: number }[] = [];
@@ -98,7 +125,12 @@ export const runEpisodeQA = (episode: Episode, fps: number = FPS): EpisodeQARepo
         longGaps,
       );
     } else {
-      addPass('speech-gap', 'timestamps', 'Speech Continuity', 'Speech flow has natural pauses without excessive dead air.');
+      addPass(
+        'speech-gap',
+        'timestamps',
+        'Speech Continuity',
+        'Speech flow has natural pauses without excessive dead air.',
+      );
     }
   }
 
@@ -140,7 +172,12 @@ export const runEpisodeQA = (episode: Episode, fps: number = FPS): EpisodeQARepo
         `Video duration (${totalSeconds}s) extends ${postSpeechTail.toFixed(1)}s past the last voiceover word (${speechEnd}s). Keep tail within 1-2s.`,
       );
     } else {
-      addPass('duration-tail', 'duration', 'Video Tail Alignment', `Video concludes ${postSpeechTail.toFixed(1)}s after final voiceover word.`);
+      addPass(
+        'duration-tail',
+        'duration',
+        'Video Tail Alignment',
+        `Video concludes ${postSpeechTail.toFixed(1)}s after final voiceover word.`,
+      );
     }
   }
 
@@ -187,8 +224,20 @@ export const runEpisodeQA = (episode: Episode, fps: number = FPS): EpisodeQARepo
 const checkAssets = (
   episode: Episode,
   addPass: (id: string, category: QACheck['category'], name: string, message: string) => void,
-  addWarn: (id: string, category: QACheck['category'], name: string, message: string, details?: unknown) => void,
-  addFail: (id: string, category: QACheck['category'], name: string, message: string, details?: unknown) => void,
+  addWarn: (
+    id: string,
+    category: QACheck['category'],
+    name: string,
+    message: string,
+    details?: unknown,
+  ) => void,
+  addFail: (
+    id: string,
+    category: QACheck['category'],
+    name: string,
+    message: string,
+    details?: unknown,
+  ) => void,
 ) => {
   // Check Character Avatar Asset
   if (CHARACTER.src) {
@@ -201,7 +250,12 @@ const checkAssets = (
         if (fs) {
           const charPath = `public/${CHARACTER.src}`;
           if (fs.existsSync(charPath)) {
-            addPass('asset-character', 'assets', 'Character Avatar Asset', `Character graphic verified at ${charPath}.`);
+            addPass(
+              'asset-character',
+              'assets',
+              'Character Avatar Asset',
+              `Character graphic verified at ${charPath}.`,
+            );
           } else {
             addFail(
               'asset-character',
@@ -226,7 +280,12 @@ const checkAssets = (
       `Episode has voice: null (silent preview). For final production render, add voice.mp3.`,
     );
   } else if (typeof episode.voice === 'string' && episode.voice.length > 0) {
-    addPass('asset-voice', 'assets', 'Audio Voice Asset', `Voice audio asset is configured (${episode.voice.slice(0, 30)}...).`);
+    addPass(
+      'asset-voice',
+      'assets',
+      'Audio Voice Asset',
+      `Voice audio asset is configured (${episode.voice.slice(0, 30)}...).`,
+    );
   } else {
     addFail('asset-voice', 'assets', 'Audio Voice Asset', 'Voice asset is invalid.');
   }

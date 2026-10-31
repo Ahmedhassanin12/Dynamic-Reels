@@ -37,7 +37,11 @@ const sceneIdx = args.indexOf('--scene');
 const targetScene = sceneIdx !== -1 ? args[sceneIdx + 1] : undefined;
 const stillIdx = args.indexOf('--still');
 const isStill = stillIdx !== -1;
-const stillFrame = isStill ? (args[stillIdx + 1] && !args[stillIdx + 1].startsWith('-') ? args[stillIdx + 1] : '30') : undefined;
+const stillFrame = isStill
+  ? args[stillIdx + 1] && !args[stillIdx + 1].startsWith('-')
+    ? args[stillIdx + 1]
+    : '30'
+  : undefined;
 
 // First positional argument that isn't a flag
 const episodeId = args.find((a) => !a.startsWith('-'));
@@ -63,7 +67,9 @@ if (!isSkipQa) {
     console.error('\n\x1b[31mFix the fatal error(s) above or pass --skip-qa to force render.\x1b[0m\n');
     process.exit(1);
   }
-  console.log(`\x1b[32m✔ Pre-render QA passed (${qaReport.passCount} passed, ${qaReport.warnCount} warnings).\x1b[0m\n`);
+  console.log(
+    `\x1b[32m✔ Pre-render QA passed (${qaReport.passCount} passed, ${qaReport.warnCount} warnings).\x1b[0m\n`,
+  );
 }
 
 // 2. Setup Output Directory
@@ -104,13 +110,7 @@ if (isStill) {
 
 // 5. Construct Remotion Command
 const remotionArgs = isStill
-  ? [
-      'still',
-      compositionId,
-      outputPath,
-      `--frame=${stillFrame}`,
-      '--overwrite',
-    ]
+  ? ['still', compositionId, outputPath, `--frame=${stillFrame}`, '--overwrite']
   : [
       'render',
       'src/index.ts',
@@ -149,7 +149,9 @@ if (!existsSync(outputPath)) {
 
 const stats = statSync(outputPath);
 if (stats.size === 0) {
-  console.error(`\n\x1b[31m✖ Post-render check failed: Output file "${outputPath}" is empty (0 bytes).\x1b[0m`);
+  console.error(
+    `\n\x1b[31m✖ Post-render check failed: Output file "${outputPath}" is empty (0 bytes).\x1b[0m`,
+  );
   process.exit(1);
 }
 

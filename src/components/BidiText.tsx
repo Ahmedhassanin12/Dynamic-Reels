@@ -11,7 +11,7 @@ const ARABIC_CHAR_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
 
 // Match full Latin/alphanumeric runs (including parenthesized suffixes like "Primary Key (PK)", "users(id)", "O(log n)")
 const LATIN_RUN_RE =
-  /([a-zA-Z0-9][a-zA-Z0-9_#$@%<>()\[\]{}:.\/=+*^'"]*(?:(?:\s+[=+*\/<>&|!\u2192-]+\s+|\s+|,\s*)[(\['"]*[a-zA-Z0-9][a-zA-Z0-9_#$@%<>()\[\]{}:.\/=+*^'"]*)*)/g;
+  /([a-zA-Z0-9][a-zA-Z0-9_#$@%<>()[\]{}:./=+*^'"]*(?:(?:\s+[=+*/<>&|!\u2192-]+\s+|\s+|,\s*)[(['"]*[a-zA-Z0-9][a-zA-Z0-9_#$@%<>()[\]{}:./=+*^'"]*)*)/g;
 
 /**
  * Renders bidirectional text with explicit isolation.

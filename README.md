@@ -8,10 +8,10 @@ The platform couples word-level speech-to-text alignment with a declarative scen
 
 ## 🛠 Tech Stack
 
-* **Video Synthesis Engine**: Remotion 4.x with React 19 & TypeScript (GPU-accelerated programmatic video rendering).
-* **Speech-to-Text & Alignment**: Offline transcription via `faster-whisper` (`large-v3`) with prompt glossary seeding.
-* **Syntax Highlighting**: `prism-react-renderer` with custom dark-mode token palettes.
-* **Testing & Quality Assurance**: Node.js native test runner (`node --test`), native type-stripping (`test-loader.mjs`), and an automated pre-render QA audit suite (`scripts/validate.mjs`).
+- **Video Synthesis Engine**: Remotion 4.x with React 19 & TypeScript (GPU-accelerated programmatic video rendering).
+- **Speech-to-Text & Alignment**: Offline transcription via `faster-whisper` (`large-v3`) with prompt glossary seeding.
+- **Syntax Highlighting**: `prism-react-renderer` with custom dark-mode token palettes.
+- **Testing & Quality Assurance**: Node.js native test runner (`node --test`), native type-stripping (`test-loader.mjs`), and an automated pre-render QA audit suite (`scripts/validate.mjs`).
 
 ---
 
@@ -112,18 +112,18 @@ arabic-reel/
 
 Every scene is declared declaratively inside `src/episodes/<id>/index.ts` using the `defineEpisode` API:
 
-| Kind | Purpose | Key Props |
-| :--- | :--- | :--- |
-| `statement` | Opening hook, core rule, or closing takeaway | `text`, `variant: 'hook' \| 'takeaway'`, `codePreview` |
-| `code` | Code walkthrough with syntax highlighting | `code`, `language`, `filename`, `highlightLines`, `persistCode` |
-| `codeDemo` | Code side-by-side with animated visualizer | `code`, `viz: VizConfig`, `pill`, `tagText`, `result` |
-| `compare` | Split comparison (Before vs. After, Good vs. Bad) | `sides: [CompareSide, CompareSide]`, `code`, `errorLine` |
-| `diagram` | Architectural flow with arrows & badges | `nodes`, `edgeLabels`, `returnEdgeLabels`, `subLayer` |
-| `steps` | Sequential execution steps or pipeline stages | `steps: (string \| StepItem)[]`, `showStack` |
-| `qa` | Prediction quiz with delayed answer reveal | `question`, `answer`, `options`, `correctIndex`, `revealDelayFrames` |
-| `transition` | Topic change or chapter divider | `fromTitle`, `toTitle`, `bridgeText` |
-| `mythReality` | Debunking software myths with facts | `myth`, `reality`, `revealDelayFrames` |
-| `array` | Linear memory inspection | `cells`, `target`, `mode: 'scan' \| 'jump'` |
+| Kind          | Purpose                                           | Key Props                                                            |
+| :------------ | :------------------------------------------------ | :------------------------------------------------------------------- |
+| `statement`   | Opening hook, core rule, or closing takeaway      | `text`, `variant: 'hook' \| 'takeaway'`, `codePreview`               |
+| `code`        | Code walkthrough with syntax highlighting         | `code`, `language`, `filename`, `highlightLines`, `persistCode`      |
+| `codeDemo`    | Code side-by-side with animated visualizer        | `code`, `viz: VizConfig`, `pill`, `tagText`, `result`                |
+| `compare`     | Split comparison (Before vs. After, Good vs. Bad) | `sides: [CompareSide, CompareSide]`, `code`, `errorLine`             |
+| `diagram`     | Architectural flow with arrows & badges           | `nodes`, `edgeLabels`, `returnEdgeLabels`, `subLayer`                |
+| `steps`       | Sequential execution steps or pipeline stages     | `steps: (string \| StepItem)[]`, `showStack`                         |
+| `qa`          | Prediction quiz with delayed answer reveal        | `question`, `answer`, `options`, `correctIndex`, `revealDelayFrames` |
+| `transition`  | Topic change or chapter divider                   | `fromTitle`, `toTitle`, `bridgeText`                                 |
+| `mythReality` | Debunking software myths with facts               | `myth`, `reality`, `revealDelayFrames`                               |
+| `array`       | Linear memory inspection                          | `cells`, `target`, `mode: 'scan' \| 'jump'`                          |
 
 ---
 
@@ -148,33 +148,43 @@ The `codeDemo` scene can embed any of the following hardware/runtime visualizers
 ## ⚡ Developer Workflow & CLI Commands
 
 ### 1. Scaffolding a New Episode
+
 ```bash
 npm run new-episode -- <episode-id>
 ```
-*Creates `src/episodes/<episode-id>/` with an initial `index.ts` and registers the episode in `src/episodes/index.ts`.*
+
+_Creates `src/episodes/<episode-id>/` with an initial `index.ts` and registers the episode in `src/episodes/index.ts`._
 
 ### 2. Transcribing Voiceover Audio
+
 Place `voice.mp3` or `voice.wav` in `src/episodes/<episode-id>/`, then run:
+
 ```bash
 npm run transcribe -- <episode-id>
 # Or with CUDA GPU acceleration:
 npm run transcribe -- <episode-id> --cuda
 ```
-*Generates word-level timestamps in `words.json`, applying technical terms from `glossary.json` as initial Whisper prompts.*
+
+_Generates word-level timestamps in `words.json`, applying technical terms from `glossary.json` as initial Whisper prompts._
 
 ### 3. Choreographing Scenes Against Speech
+
 ```bash
 npm run choreograph -- <episode-id>
 ```
-*Inspects the transcript and interactively generates recommended `at:` textual anchors.*
+
+_Inspects the transcript and interactively generates recommended `at:` textual anchors._
 
 ### 4. Interactive Preview in Remotion Studio
+
 ```bash
 npm run dev
 ```
-*Launches Remotion Studio at `http://localhost:3000` with live reloading, timeline scrubbing, and the Authoring HUD.*
+
+_Launches Remotion Studio at `http://localhost:3000` with live reloading, timeline scrubbing, and the Authoring HUD._
 
 ### 5. Automated Pre-Render QA Audit
+
 ```bash
 # Audit a single episode:
 npm run validate -- <episode-id>
@@ -182,15 +192,19 @@ npm run validate -- <episode-id>
 # Audit all episodes in the project:
 npm run validate
 ```
-*Verifies schema integrity, word timestamps, timeline anchor continuity, mobile safe-zone bounds, and code line length limits.*
+
+_Verifies schema integrity, word timestamps, timeline anchor continuity, mobile safe-zone bounds, and code line length limits._
 
 ### 6. Subtitle Export & Final Video Render
+
 ```bash
 npm run render -- <episode-id> out/<episode-id>.mp4
 ```
-*Renders high-resolution 1080x1920 30fps MP4 and exports synchronized `.srt` and `.vtt` subtitles in `out/`.*
+
+_Renders high-resolution 1080x1920 30fps MP4 and exports synchronized `.srt` and `.vtt` subtitles in `out/`._
 
 ### 7. Automated Testing & Verification
+
 ```bash
 # Type check:
 npm run typecheck

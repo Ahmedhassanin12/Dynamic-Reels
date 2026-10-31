@@ -73,16 +73,8 @@ export const MemoryViz = ({ viz, result }: VizProps<'memory'>) => {
             {viz.stack.map((slot, i) => {
               const isRef = Boolean(slot.ref);
               const isChanged = Boolean(slot.changed);
-              const border = isChanged
-                ? theme.warnBorder
-                : isRef
-                  ? theme.goodBorder
-                  : theme.border;
-              const bg = isChanged
-                ? theme.warnTint
-                : isRef
-                  ? theme.goodTint
-                  : theme.paper;
+              const border = isChanged ? theme.warnBorder : isRef ? theme.goodBorder : theme.border;
+              const bg = isChanged ? theme.warnTint : isRef ? theme.goodTint : theme.paper;
 
               return (
                 <Enter key={slot.name} delay={i * stagger}>

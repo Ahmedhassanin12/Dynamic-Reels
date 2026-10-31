@@ -164,7 +164,11 @@ export const CompareScene = ({ label, title, pill, sides }: SceneOf<'compare'>) 
                       fontFamily: CODE_FONT,
                     }}
                   >
-                    <Highlight theme={theme.code.prism} code={side.code.trim()} language={side.language ?? 'tsx'}>
+                    <Highlight
+                      theme={theme.code.prism}
+                      code={side.code.trim()}
+                      language={side.language ?? 'tsx'}
+                    >
                       {({ tokens, getTokenProps, style: highlightStyle }) => (
                         <pre
                           style={{
@@ -266,6 +270,3 @@ export const CompareScene = ({ label, title, pill, sides }: SceneOf<'compare'>) 
     </SceneFrame>
   );
 };
-
-
-

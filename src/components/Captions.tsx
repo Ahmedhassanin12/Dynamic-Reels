@@ -27,17 +27,15 @@ const groupWordsByDirection = (words: Word[]): WordGroup[] => {
 
 const SelectionBox = ({
   children,
-  color,
+  color: _color,
   tint,
   textColor,
 }: {
   children: ReactNode;
-  color: string;
+  color?: string;
   tint: string;
   textColor: string;
 }) => {
-  const size = CAPTION.handleSize;
-  const offset = -(size / 2) - 1;
   return (
     <span
       style={{
@@ -122,12 +120,27 @@ export const Captions = ({ words }: { words: Word[] }) => {
       {wordGroups.map((group, gi) => {
         if (group.isLatin) {
           return (
-            <div key={gi} dir="ltr" style={{ display: 'flex', alignItems: 'center', gap: 12, unicodeBidi: 'isolate', fontFamily: CODE_FONT }}>
+            <div
+              key={gi}
+              dir="ltr"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                unicodeBidi: 'isolate',
+                fontFamily: CODE_FONT,
+              }}
+            >
               {group.items.map(({ word: w, index: i }) => {
                 const isActive = i === activeIndex;
                 if (isActive) {
                   return (
-                    <SelectionBox key={`${w.start}-${w.text}`} color={theme.ink} tint={theme.tint} textColor={theme.text}>
+                    <SelectionBox
+                      key={`${w.start}-${w.text}`}
+                      color={theme.ink}
+                      tint={theme.tint}
+                      textColor={theme.text}
+                    >
                       {w.text}
                     </SelectionBox>
                   );
@@ -146,7 +159,12 @@ export const Captions = ({ words }: { words: Word[] }) => {
           const isActive = i === activeIndex;
           if (isActive) {
             return (
-              <SelectionBox key={`${w.start}-${w.text}`} color={theme.ink} tint={theme.tint} textColor={theme.text}>
+              <SelectionBox
+                key={`${w.start}-${w.text}`}
+                color={theme.ink}
+                tint={theme.tint}
+                textColor={theme.text}
+              >
                 <span dir="rtl" style={{ unicodeBidi: 'isolate' }}>
                   {w.text}
                 </span>

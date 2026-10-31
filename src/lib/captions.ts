@@ -4,11 +4,7 @@ export type Chunk = { words: Word[]; start: number; end: number };
 
 const SENTENCE_PUNCTUATION = /[.?!؟]$/;
 
-export const groupWords = (
-  words: Word[],
-  size: number,
-  maxGapSeconds: number = 0.35,
-): Chunk[] => {
+export const groupWords = (words: Word[], size: number, maxGapSeconds: number = 0.35): Chunk[] => {
   if (!words.length) return [];
   const chunks: Chunk[] = [];
   let current: Word[] = [];
@@ -68,11 +64,7 @@ export const formatTimestampVtt = (seconds: number): string => {
 };
 
 /** Generates a standard SubRip (.srt) subtitle track string from synchronized words. */
-export const exportSrt = (
-  words: Word[],
-  size: number = 3,
-  maxGapSeconds: number = 0.35,
-): string => {
+export const exportSrt = (words: Word[], size: number = 3, maxGapSeconds: number = 0.35): string => {
   const chunks = groupWords(words, size, maxGapSeconds);
   return chunks
     .map((chunk, index) => {
@@ -83,11 +75,7 @@ export const exportSrt = (
 };
 
 /** Generates a standard WebVTT (.vtt) subtitle track string from synchronized words. */
-export const exportVtt = (
-  words: Word[],
-  size: number = 3,
-  maxGapSeconds: number = 0.35,
-): string => {
+export const exportVtt = (words: Word[], size: number = 3, maxGapSeconds: number = 0.35): string => {
   const chunks = groupWords(words, size, maxGapSeconds);
   const body = chunks
     .map((chunk, index) => {
@@ -97,4 +85,3 @@ export const exportVtt = (
     .join('\n');
   return `WEBVTT\n\n${body}`;
 };
-

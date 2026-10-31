@@ -38,7 +38,11 @@ export const EPISODES = [arrayVsHashMap, eventLoop] satisfies Episode[];
       const result = registerEpisodeInSource(mockSource, 'binary-search', 'binarySearch');
 
       assert.ok(result.includes("import { binarySearch } from './binary-search';"));
-      assert.ok(result.includes('export const EPISODES = [arrayVsHashMap, eventLoop, binarySearch] satisfies Episode[];'));
+      assert.ok(
+        result.includes(
+          'export const EPISODES = [arrayVsHashMap, eventLoop, binarySearch] satisfies Episode[];',
+        ),
+      );
     });
 
     it('rejects duplicate episode registration in episodes index', () => {

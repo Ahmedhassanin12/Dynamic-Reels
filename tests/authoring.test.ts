@@ -66,7 +66,9 @@ describe('Phase 7 — Preview and Authoring Experience', () => {
       });
 
       const audit = auditEpisodeAuthoring(testEp);
-      const warnings = audit.issues.filter((i) => i.category === 'code-readability' && i.message.includes('44 characters'));
+      const warnings = audit.issues.filter(
+        (i) => i.category === 'code-readability' && i.message.includes('44 characters'),
+      );
       assert.ok(warnings.length >= 1);
       assert.equal(warnings[0].sceneId, 'code-scene');
       assert.equal(warnings[0].severity, 'warn');
@@ -87,7 +89,9 @@ describe('Phase 7 — Preview and Authoring Experience', () => {
       });
 
       const audit = auditEpisodeAuthoring(testEp);
-      const warnings = audit.issues.filter((i) => i.category === 'code-readability' && i.message.includes('9 lines'));
+      const warnings = audit.issues.filter(
+        (i) => i.category === 'code-readability' && i.message.includes('9 lines'),
+      );
       assert.ok(warnings.length >= 1);
       assert.equal(warnings[0].sceneId, 'long-code');
     });
@@ -145,7 +149,8 @@ describe('Phase 7 — Preview and Authoring Experience', () => {
             id: 'long-qa',
             kind: 'qa',
             at: 0,
-            question: 'ما هي النتيجة المتوقعة لتنفيذ هذا الكود البرمجي عندما نمرر مصفوفة فارغة تماماً للدالة المسؤولة؟',
+            question:
+              'ما هي النتيجة المتوقعة لتنفيذ هذا الكود البرمجي عندما نمرر مصفوفة فارغة تماماً للدالة المسؤولة؟',
             answer: 'O(1)',
             options: ['O(1)', 'O(n)'],
             correctIndex: 0,
@@ -190,7 +195,9 @@ describe('Phase 7 — Preview and Authoring Experience', () => {
 
       const audit = auditEpisodeAuthoring(testEp, 30);
       assert.equal(audit.hasErrors, true);
-      const timingErrors = audit.issues.filter((i) => i.category === 'timing-budget' && i.severity === 'error');
+      const timingErrors = audit.issues.filter(
+        (i) => i.category === 'timing-budget' && i.severity === 'error',
+      );
       assert.ok(timingErrors.length >= 1);
       assert.equal(timingErrors[0].sceneId, 'rushed-demo');
       assert.ok(timingErrors[0].message.includes('needs at least'));

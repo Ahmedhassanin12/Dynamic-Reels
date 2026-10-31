@@ -34,7 +34,12 @@ export const QaScene = ({
   const isRevealed = frame >= revealAt;
 
   return (
-    <SceneFrame label={label} title={title} pill={resolvedPill} pillTone={isRevealed && hasOptions ? 'good' : 'neutral'}>
+    <SceneFrame
+      label={label}
+      title={title}
+      pill={resolvedPill}
+      pillTone={isRevealed && hasOptions ? 'good' : 'neutral'}
+    >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20, direction: 'rtl' }}>
         <Enter>
           <Box
@@ -173,5 +178,3 @@ export const QaScene = ({
     </SceneFrame>
   );
 };
-
-

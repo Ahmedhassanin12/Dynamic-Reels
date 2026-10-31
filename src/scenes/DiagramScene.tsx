@@ -258,5 +258,3 @@ export const DiagramScene = ({
     </SceneFrame>
   );
 };
-
-

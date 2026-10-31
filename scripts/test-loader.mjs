@@ -40,7 +40,8 @@ registerHooks({
           if (existsSync(candidate)) {
             return {
               url: pathToFileURL(candidate).href,
-              importAttributes: ext === '.json' ? { ...context.importAttributes, type: 'json' } : context.importAttributes,
+              importAttributes:
+                ext === '.json' ? { ...context.importAttributes, type: 'json' } : context.importAttributes,
               shortCircuit: true,
             };
           }

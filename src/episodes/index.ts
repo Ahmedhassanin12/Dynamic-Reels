@@ -2,7 +2,6 @@ import type { Episode } from '../types';
 import { arrayVsHashMap } from './array-vs-hash-map';
 import { eventLoop } from './event-loop';
 
-
 import { naming1 } from './naming-1';
 import { cleanCodeFunction } from './clean-code-function';
 import { foreignKey } from './foreign-key';
@@ -20,10 +19,21 @@ import { behind09BigO } from './behind-09-big-o';
 import { behind10Recap } from './behind-10-recap';
 
 /** Add new episodes here (one import + one entry). Each becomes a Composition in the Studio. */
-export const EPISODES = [arrayVsHashMap,
+export const EPISODES = [
+  arrayVsHashMap,
   eventLoop,
   naming1,
   cleanCodeFunction,
   usePronounceableNames,
-  foreignKey, behind01OneTap, behind02Api, behind03Database, behind04Index, behind05HashMap, behind06Cache, behind07Memory, behind08Async, behind09BigO, behind10Recap] satisfies Episode[];
-
+  foreignKey,
+  behind01OneTap,
+  behind02Api,
+  behind03Database,
+  behind04Index,
+  behind05HashMap,
+  behind06Cache,
+  behind07Memory,
+  behind08Async,
+  behind09BigO,
+  behind10Recap,
+] satisfies Episode[];

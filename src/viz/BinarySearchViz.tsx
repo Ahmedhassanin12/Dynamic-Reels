@@ -123,11 +123,7 @@ export const BinarySearchViz = ({ viz, result }: VizProps<'binarySearch'>) => {
                           ? theme.borderStrong
                           : theme.border
                   }`,
-                  background: isHit
-                    ? theme.goodTint
-                    : isMid
-                      ? theme.tint
-                      : theme.paperElevated,
+                  background: isHit ? theme.goodTint : isMid ? theme.tint : theme.paperElevated,
                   color: isHit ? theme.good : isMid ? theme.ink : theme.text,
                   fontSize: 22,
                   fontWeight: isMid ? 700 : 500,

@@ -12,4 +12,3 @@ export const Labeled = ({ label, children }: { label: string; children: ReactNod
     </div>
   );
 };
-

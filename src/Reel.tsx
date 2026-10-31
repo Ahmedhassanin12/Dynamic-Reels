@@ -16,14 +16,13 @@ export type ReelProps = {
   showSafeGuides?: boolean;
 };
 
-const ReelStage = ({
-  episode,
-  showDevHUD = false,
-  showSafeGuides = false,
-}: ReelProps) => {
+const ReelStage = ({ episode, showDevHUD = false, showSafeGuides = false }: ReelProps) => {
   const theme = useTheme();
   const { fps, durationInFrames: compositionFrames } = useVideoConfig();
-  const timeline = useMemo(() => resolveTimeline(episode, fps, compositionFrames), [episode, fps, compositionFrames]);
+  const timeline = useMemo(
+    () => resolveTimeline(episode, fps, compositionFrames),
+    [episode, fps, compositionFrames],
+  );
 
   return (
     <AbsoluteFill

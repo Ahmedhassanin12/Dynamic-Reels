@@ -8,15 +8,10 @@ export const normalizeText = (s: string) =>
     .replace(/ؤ/g, 'و')
     .replace(/ئ/g, 'ي')
     .replace(/[\u0660-\u0669]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x0660 + 48))
-    .replace(/[\u06F0-\u06F9]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x06F0 + 48))
+    .replace(/[\u06F0-\u06F9]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x06f0 + 48))
     .replace(/[^\p{L}\p{N}]/gu, '')
     .toLowerCase();
 
 /** Splits a string on whitespace and returns non-empty normalized tokens. */
 export const tokenizeNormalized = (s: string): string[] =>
-  s
-    .trim()
-    .split(/\s+/)
-    .map(normalizeText)
-    .filter(Boolean);
-
+  s.trim().split(/\s+/).map(normalizeText).filter(Boolean);

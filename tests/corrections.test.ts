@@ -171,9 +171,7 @@ describe('Phase 4 — Transcript and Glossary Workflow', () => {
         title: 'Correction Integration Test',
         voice: null,
         words: sampleRawWords,
-        corrections: [
-          { index: 4, original: 'بروموس', corrected: 'بروميس', status: 'approved' },
-        ],
+        corrections: [{ index: 4, original: 'بروموس', corrected: 'بروميس', status: 'approved' }],
         scenes: [
           { id: 's0', kind: 'statement', at: 0, text: 'مرحبا' },
           { id: 's1', kind: 'statement', at: 'بروميس', text: 'شرح البروميس' }, // Matches correctedText!
@@ -192,9 +190,7 @@ describe('Phase 4 — Transcript and Glossary Workflow', () => {
         title: 'Bad Corr Episode',
         voice: null,
         words: sampleRawWords,
-        corrections: [
-          { index: 99, original: 'خطأ', corrected: 'تصحيح', status: 'approved' },
-        ],
+        corrections: [{ index: 99, original: 'خطأ', corrected: 'تصحيح', status: 'approved' }],
         scenes: [{ id: 's0', kind: 'statement', at: 0, text: 'مشهد' }],
       };
 

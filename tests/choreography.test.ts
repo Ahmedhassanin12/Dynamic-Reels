@@ -34,13 +34,30 @@ describe('Phase 6 — Content Structure and Audio Choreography', () => {
 
         // All recommended scene kinds are valid strings
         for (const kind of arc.recommendedScenes) {
-          assert.ok(['statement', 'code', 'codeDemo', 'array', 'compare', 'diagram', 'qa', 'steps', 'transition', 'mythReality'].includes(kind));
+          assert.ok(
+            [
+              'statement',
+              'code',
+              'codeDemo',
+              'array',
+              'compare',
+              'diagram',
+              'qa',
+              'steps',
+              'transition',
+              'mythReality',
+            ].includes(kind),
+          );
         }
       }
     });
 
     it('generates reviewable script template with educational goals and timing estimates', () => {
-      const script = createScriptTemplate('react-fiber', 'React Fiber Reconciler', 'Understand how React schedules work');
+      const script = createScriptTemplate(
+        'react-fiber',
+        'React Fiber Reconciler',
+        'Understand how React schedules work',
+      );
       assert.equal(script.id, 'react-fiber');
       assert.equal(script.arc, 'problem-solution');
       assert.equal(script.segments.length, 5);
@@ -82,7 +99,7 @@ describe('Phase 6 — Content Structure and Audio Choreography', () => {
     it('detects stale scenes when a visualizer remains static for over 11 seconds', () => {
       const audit = analyzeChoreography(arrayVsHashMap);
       assert.equal(audit.episodeId, 'array-vs-hash-map');
-      
+
       const staleScenes = audit.scenes.filter((s) => s.pacing === 'stale');
       assert.ok(staleScenes.length >= 1);
       assert.ok(staleScenes.some((s) => s.sceneId === 'array'));
@@ -138,9 +155,7 @@ describe('Phase 6 — Content Structure and Audio Choreography', () => {
           { text: 'بعد', start: 1.3, end: 1.8 },
           { text: 'الوقفة', start: 1.9, end: 2.4 },
         ],
-        scenes: [
-          { id: 's1', kind: 'statement', at: 0, text: 'كلمة' },
-        ],
+        scenes: [{ id: 's1', kind: 'statement', at: 0, text: 'كلمة' }],
       };
 
       const audit = analyzeChoreography(pausedEp);

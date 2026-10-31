@@ -32,7 +32,15 @@ export const ArrayScene = ({ label, title, cells, target, mode, pointerLabel, re
       pillTone={mode === 'scan' ? 'neutral' : 'good'}
     >
       <Enter>
-        <Box style={{ display: 'flex', flexDirection: 'column', gap: 24, direction: 'ltr', fontFamily: CODE_FONT }}>
+        <Box
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 24,
+            direction: 'ltr',
+            fontFamily: CODE_FONT,
+          }}
+        >
           {/* Floating pointer + Array cells + Index row */}
           <div style={{ display: 'flex', gap: 10 }}>
             {cells.map((cell, i) => {
@@ -74,7 +82,9 @@ export const ArrayScene = ({ label, title, cells, target, mode, pointerLabel, re
                         >
                           <BidiText>{resolvedPointer}</BidiText>
                         </div>
-                        <span style={{ fontSize: 22, lineHeight: 1, color: isTargetHit ? theme.good : theme.ink }}>
+                        <span
+                          style={{ fontSize: 22, lineHeight: 1, color: isTargetHit ? theme.good : theme.ink }}
+                        >
                           ↓
                         </span>
                       </>
@@ -107,7 +117,13 @@ export const ArrayScene = ({ label, title, cells, target, mode, pointerLabel, re
                           : visited
                             ? theme.paper
                             : theme.paperElevated,
-                      color: isTargetHit ? theme.good : active ? theme.ink : visited ? theme.muted : theme.text,
+                      color: isTargetHit
+                        ? theme.good
+                        : active
+                          ? theme.ink
+                          : visited
+                            ? theme.muted
+                            : theme.text,
                       transform: active ? 'scale(1.06)' : undefined,
                       boxShadow: active ? theme.shadowSm : undefined,
                     }}
@@ -116,7 +132,13 @@ export const ArrayScene = ({ label, title, cells, target, mode, pointerLabel, re
                   </div>
 
                   {/* 0-based index row */}
-                  <span style={{ fontSize: 16, color: active ? theme.text : theme.muted, fontWeight: active ? 700 : 400 }}>
+                  <span
+                    style={{
+                      fontSize: 16,
+                      color: active ? theme.text : theme.muted,
+                      fontWeight: active ? 700 : 400,
+                    }}
+                  >
                     {i}
                   </span>
                 </div>
@@ -147,5 +169,3 @@ export const ArrayScene = ({ label, title, cells, target, mode, pointerLabel, re
     </SceneFrame>
   );
 };
-
-

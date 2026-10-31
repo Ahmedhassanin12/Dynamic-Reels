@@ -4,7 +4,9 @@ import { idToVariableName, isValidEpisodeId, registerEpisodeInSource } from '../
 
 const id = process.argv[2];
 if (!isValidEpisodeId(id)) {
-  console.error('Usage: npm run new-episode -- <kebab-case-id> (must start with a letter and contain only lowercase letters, digits, and hyphens)');
+  console.error(
+    'Usage: npm run new-episode -- <kebab-case-id> (must start with a letter and contain only lowercase letters, digits, and hyphens)',
+  );
   process.exit(1);
 }
 

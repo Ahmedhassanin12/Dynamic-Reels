@@ -12,7 +12,13 @@ const HEART_SIZE = 380;
 const PARTICLES = 10;
 
 /** A counter that rolls up (or down) whenever its value changes. */
-const RollingNumber = ({ changes, initial }: { changes: { at: number; value: number }[]; initial: number }) => {
+const RollingNumber = ({
+  changes,
+  initial,
+}: {
+  changes: { at: number; value: number }[];
+  initial: number;
+}) => {
   const frame = useCurrentFrame();
   const theme = useTheme();
   const passed = changes.filter((c) => frame >= c.at);
@@ -84,7 +90,9 @@ export const LikeHeartAnim = ({ anim }: { anim: Extract<MotionAnim, { type: 'lik
   const shake =
     revertAt === undefined
       ? 0
-      : interpolate(frame, [revertAt, revertAt + 16], [1, 0], CLAMP) * Math.sin((frame - revertAt) * 1.9) * 16;
+      : interpolate(frame, [revertAt, revertAt + 16], [1, 0], CLAMP) *
+        Math.sin((frame - revertAt) * 1.9) *
+        16;
 
   // Tap ripple
   const rippleT = interpolate(frame, [tapAt, tapAt + 16], [0, 1], { ...CLAMP, easing: EASINGS.outCubic });
@@ -99,9 +107,7 @@ export const LikeHeartAnim = ({ anim }: { anim: Extract<MotionAnim, { type: 'lik
   const chipColor = reverted ? theme.bad : theme.warn;
   const chipBg = reverted ? theme.badTint : theme.warnTint;
   const chipBorder = reverted ? theme.badBorder : theme.warnBorder;
-  const chipText = reverted
-    ? (anim.failText ?? 'فشل الإرسال')
-    : (anim.statusText ?? 'السيرفر: لسه ماعرفش');
+  const chipText = reverted ? (anim.failText ?? 'فشل الإرسال') : (anim.statusText ?? 'السيرفر: لسه ماعرفش');
 
   const changes = [{ at: tapAt + 8, value: likes + 1 }];
   if (revertAt !== undefined) changes.push({ at: revertAt + 4, value: likes });
@@ -119,7 +125,14 @@ export const LikeHeartAnim = ({ anim }: { anim: Extract<MotionAnim, { type: 'lik
         transform: `scale(${enterScale})`,
       }}
     >
-      <div style={{ position: 'relative', width: HEART_SIZE, height: HEART_SIZE, transform: `translateX(${shake}px)` }}>
+      <div
+        style={{
+          position: 'relative',
+          width: HEART_SIZE,
+          height: HEART_SIZE,
+          transform: `translateX(${shake}px)`,
+        }}
+      >
         {/* tap ripple */}
         <div
           style={{
@@ -156,7 +169,10 @@ export const LikeHeartAnim = ({ anim }: { anim: Extract<MotionAnim, { type: 'lik
         {Array.from({ length: PARTICLES }, (_, i) => {
           const angle = (i / PARTICLES) * Math.PI * 2 + 0.3;
           const reach = 215 + (i % 3) * 36;
-          const t = interpolate(frame, [tapAt + 6, tapAt + 28], [0, 1], { ...CLAMP, easing: EASINGS.outExpo });
+          const t = interpolate(frame, [tapAt + 6, tapAt + 28], [0, 1], {
+            ...CLAMP,
+            easing: EASINGS.outExpo,
+          });
           const size = 22 + (i % 3) * 9;
           return (
             <svg
@@ -191,14 +207,26 @@ export const LikeHeartAnim = ({ anim }: { anim: Extract<MotionAnim, { type: 'lik
             filter: fill > 0.05 ? `drop-shadow(0 0 ${28 * fill}px ${HEART_RED}88)` : undefined,
           }}
         >
-          <path d={HEART_PATH} fill={heartColor} stroke={strokeColor} strokeWidth={0.7} strokeLinejoin="round" />
+          <path
+            d={HEART_PATH}
+            fill={heartColor}
+            stroke={strokeColor}
+            strokeWidth={0.7}
+            strokeLinejoin="round"
+          />
         </svg>
       </div>
 
       {/* likes counter */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 18, direction: 'ltr' }}>
         <svg viewBox="0 0 24 24" width={52} height={52}>
-          <path d={HEART_PATH} fill={heartColor} stroke={strokeColor} strokeWidth={1} strokeLinejoin="round" />
+          <path
+            d={HEART_PATH}
+            fill={heartColor}
+            stroke={strokeColor}
+            strokeWidth={1}
+            strokeLinejoin="round"
+          />
         </svg>
         <RollingNumber changes={changes} initial={likes} />
       </div>

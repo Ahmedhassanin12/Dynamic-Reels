@@ -1,4 +1,4 @@
-import { CAPTION, FPS, STAGE } from '../config';
+import { CAPTION, FPS } from '../config';
 import type { Episode, SceneConfig } from '../types';
 import { getMinSceneFrames, resolveTimeline, type TimelineItem } from './timeline';
 
@@ -54,7 +54,8 @@ export const auditEpisodeAuthoring = (episode: Episode, fps: number = FPS): Auth
       severity: 'error',
       category: 'anchor',
       message: err instanceof Error ? err.message : String(err),
-      suggestion: 'Check the "at" anchor spelling in words.json or use explicit occurrence { text, occurrence }',
+      suggestion:
+        'Check the "at" anchor spelling in words.json or use explicit occurrence { text, occurrence }',
     });
   }
 

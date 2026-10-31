@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "jsxSingleQuote": false,
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "always",
+  "printWidth": 110,
+  "endOfLine": "lf",
+  "ignorePatterns": [
+    "node_modules",
+    "out",
+    "dist",
+    "skills",
+    ".agents",
+    ".claude",
+    "public",
+    "**/*.mp4",
+    "**/*.png",
+    "**/*.mp3",
+    "**/*.wav"
+  ]
+}

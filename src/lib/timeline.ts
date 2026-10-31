@@ -101,7 +101,9 @@ export const resolveAnchor = (
 ): AnchorMatch => {
   if (typeof scene.at === 'number') {
     if (!Number.isInteger(scene.at) || scene.at < 0 || scene.at >= rawWords.length) {
-      throw new Error(`Scene "${scene.id}": word index ${scene.at} is out of range (0-${rawWords.length - 1})`);
+      throw new Error(
+        `Scene "${scene.id}": word index ${scene.at} is out of range (0-${rawWords.length - 1})`,
+      );
     }
     if (scene.at < searchFromRaw) {
       const target = rawWords[scene.at];
@@ -226,9 +228,7 @@ export const resolveAnchor = (
       if (rawNorm.includes(fullNeedle) || dispNorm.includes(fullNeedle)) {
         const resolvedWIdx = wIdx ?? findDisplayWordIndex(displayWords, rIdx);
         const rawEndIndex =
-          !rawNorm.includes(fullNeedle) && wIdx !== undefined
-            ? (displayWords[wIdx].rawEnd ?? rIdx)
-            : rIdx;
+          !rawNorm.includes(fullNeedle) && wIdx !== undefined ? (displayWords[wIdx].rawEnd ?? rIdx) : rIdx;
         const matchedText = rawNorm.includes(fullNeedle)
           ? rawWords[rIdx].text
           : displayWords[resolvedWIdx].text;
@@ -264,15 +264,14 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
     case 'statement':
       return scene.codePreview ? 28 : 15;
     case 'array':
-      return scene.mode === 'scan'
-        ? (scene.target + 1) * SCAN.framesPerCell + 15
-        : SCAN.jumpDelayFrames + 15;
+      return scene.mode === 'scan' ? (scene.target + 1) * SCAN.framesPerCell + 15 : SCAN.jumpDelayFrames + 15;
     case 'code': {
       const codeTyping = scene.skipTyping || scene.persistCode ? 0 : typingFrames(scene.code);
       return codeTyping + (scene.highlightLines?.length ? CODE_SNAP.focusFadeFrames : 0) + 15;
     }
     case 'codeDemo': {
-      const codeTyping = scene.code && !(scene.skipTyping || scene.persistCode) ? typingFrames(scene.code) : 0;
+      const codeTyping =
+        scene.code && !(scene.skipTyping || scene.persistCode) ? typingFrames(scene.code) : 0;
       const delay = scene.code && !scene.persistCode ? CODE_DEMO.vizDelayFrames : 0;
       let vizFrames = 30;
       if (scene.viz.type === 'scan') {
@@ -290,13 +289,15 @@ export const getMinSceneFrames = (scene: SceneConfig): number => {
         const steps = computeBinarySearchSteps(scene.viz.cells, scene.viz.targetIndex).length;
         vizFrames = steps * (scene.viz.framesPerStep ?? BINARY_SEARCH.framesPerStep) + 15;
       } else if (scene.viz.type === 'memory') {
-        vizFrames = Math.max(scene.viz.stack.length, scene.viz.heap.length + 1) * MEMORY.stepStaggerFrames + 20;
+        vizFrames =
+          Math.max(scene.viz.stack.length, scene.viz.heap.length + 1) * MEMORY.stepStaggerFrames + 20;
       } else if (scene.viz.type === 'complexity') {
         vizFrames = COMPLEXITY.drawFrames + 20;
       } else if (scene.viz.type === 'linkedList') {
         const count = scene.viz.nodes.length;
         const stepFrames = scene.viz.framesPerStep ?? 18;
-        vizFrames = scene.viz.activePointer !== undefined || scene.viz.framesPerStep ? count * stepFrames + 15 : 35;
+        vizFrames =
+          scene.viz.activePointer !== undefined || scene.viz.framesPerStep ? count * stepFrames + 15 : 35;
       } else if (scene.viz.type === 'asyncFlow') {
         const stepCount = scene.viz.steps?.length ?? 1;
         const stepFrames = scene.viz.framesPerStep ?? 25;
@@ -402,4 +403,3 @@ export const resolveTimeline = (
     return { scene, from, durationInFrames, match };
   });
 };
-
