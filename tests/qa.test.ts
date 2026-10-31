@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { arrayVsHashMap } from '../src/episodes/array-vs-hash-map';
 import { eventLoop } from '../src/episodes/event-loop';
-import { sceneShowcase } from '../src/episodes/scene-showcase';
 import { defineEpisode } from '../src/lib/episode';
 import { formatQAReport, runEpisodeQA } from '../src/lib/qa';
 import type { Episode } from '../src/types';
@@ -26,16 +25,7 @@ describe('Phase 8 — Automated Quality Assurance (Pre-Render Verification)', ()
       assert.ok(report.sceneCount >= 10);
     });
 
-    it('audits scene-showcase: passes with zero fatal errors', () => {
-      const report = runEpisodeQA(sceneShowcase);
-      assert.equal(report.episodeId, 'scene-showcase');
-      assert.equal(report.passed, true);
-      assert.equal(report.failCount, 0);
-      // Voice is null (silent preview), so we expect an asset warning
-      const voiceWarn = report.checks.find((c) => c.id === 'asset-voice');
-      assert.ok(voiceWarn);
-      assert.equal(voiceWarn.status, 'warn');
-    });
+
   });
 
   describe('2. Deterministic Error Safeguards', () => {

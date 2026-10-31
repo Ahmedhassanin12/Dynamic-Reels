@@ -88,5 +88,18 @@
   { "say": ["jwt"], "show": "JWT" },
   { "say": ["داتا", "سنتر"], "show": "Data Center" },
   { "say": ["ايرور"], "show": "Error" },
-  { "say": ["error"], "show": "Error" }
+  { "say": ["error"], "show": "Error" },
+  { "say": ["هيدرز"], "show": "Headers" },
+  { "say": ["headers"], "show": "Headers" },
+  { "say": ["ديدوس"], "show": "DDoS" },
+  { "say": ["ddos"], "show": "DDoS" },
+  { "say": ["200", "ok"], "show": "200 OK" },
+  { "say": ["برايمري", "كي"], "show": "Primary Key" },
+  { "say": ["primary", "key"], "show": "Primary Key" },
+  { "say": ["جوين"], "show": "JOIN" },
+  { "say": ["join"], "show": "JOIN" },
+  { "say": ["اسيد"], "show": "ACID" },
+  { "say": ["acid"], "show": "ACID" },
+  { "say": ["بوستجريس"], "show": "PostgreSQL" },
+  { "say": ["ماي", "اس", "كيو", "ال"], "show": "MySQL" }
 ]

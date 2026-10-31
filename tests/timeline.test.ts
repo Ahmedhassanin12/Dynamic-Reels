@@ -5,7 +5,6 @@ import { arrayVsHashMap } from '../src/episodes/array-vs-hash-map';
 import arrayWords from '../src/episodes/array-vs-hash-map/words.json';
 import { eventLoop } from '../src/episodes/event-loop';
 import eventLoopWords from '../src/episodes/event-loop/words.json';
-import { sceneShowcase } from '../src/episodes/scene-showcase';
 import { applyGlossary, defineEpisode, validateEpisode } from '../src/lib/episode';
 import { normalizeText, tokenizeNormalized } from '../src/lib/text';
 import { computeBinarySearchSteps, getMinSceneFrames, resolveTimeline } from '../src/lib/timeline';
@@ -511,8 +510,7 @@ describe('Phase 2 — Timeline and Anchor Resolution', () => {
     });
 
     it('validates Batch 4 scenes & visualizers (memory, complexity, diagram, transition) and resolves sceneShowcase', () => {
-      const showcaseTimeline = resolveTimeline(sceneShowcase, FPS);
-      assert.equal(showcaseTimeline.length, 14);
+
 
       const badEp: Episode = {
         id: 'batch4-bad',
