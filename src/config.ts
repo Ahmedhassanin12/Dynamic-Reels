@@ -99,8 +99,8 @@ export const CODE_DEMO = { vizDelayFrames: 10, vizHeight: 340 } as const;
 /** Creator / Host branding configuration. You can put your photo or avatar in /public and point to it. */
 export const CHARACTER = {
   src: 'main.png' as string | null,
-  name: 'مطور برمجيات',
-  handle: '@tech',
+  name: 'ahmedCodes',
+  handle: '@codeit.with.ahmed',
   mode: 'header' as 'header' | 'bottom' | 'none',
   width: 370,
   height: 770,

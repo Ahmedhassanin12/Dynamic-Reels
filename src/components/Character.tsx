@@ -29,7 +29,7 @@ export const Character = () => {
           padding: '8px 20px 8px 12px',
           borderRadius: 999,
           background: theme.paperElevated,
-          border: `1.5px solid ${theme.borderStrong}`,
+          border: `.5px solid ${theme.borderStrong}`,
           boxShadow: `0 8px 24px rgba(0,0,0,0.35)`,
           zIndex: 50,
           pointerEvents: 'none',
@@ -39,12 +39,12 @@ export const Character = () => {
         <div
           style={{
             position: 'relative',
-            width: 64,
-            height: 64,
+            width: 94,
+            height: 94,
             borderRadius: '50%',
             padding: 3,
-            background: `linear-gradient(135deg, ${theme.good}, ${theme.ink})`,
-            boxShadow: `0 0 16px ${theme.good}44`,
+            // background: `linear-gradient(135deg, ${theme.good}, ${theme.ink})`,
+            // boxShadow: `0 0 6px ${theme.good}44`,
           }}
         >
           <div
@@ -63,7 +63,7 @@ export const Character = () => {
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  objectPosition: 'top 15% center',
+                  // objectPosition: 'top 15% center',
                 }}
               />
             ) : (
